@@ -1,0 +1,3 @@
+package = libcommon
+headers = aws/common/allocator.h aws/common/error.h
+headerFilter = aws/common/*

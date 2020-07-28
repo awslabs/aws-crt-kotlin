@@ -1,12 +1,18 @@
 package software.amazon.awssdk.crt
 
+//import kotlinx.cinterop.*
+import libcommon.*
+fun blah() {
+    aws_default_allocator()
+}
+
 actual object CRT {
     /**
      * Returns the last error on the current thread.
      * @return Last error code recorded in this thread
      */
     actual fun awsLastError(): Int {
-        TODO("Not yet implemented")
+        return aws_last_error()
     }
 
     /**
