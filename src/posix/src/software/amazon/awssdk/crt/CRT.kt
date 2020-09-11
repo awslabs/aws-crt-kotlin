@@ -1,6 +1,6 @@
 package software.amazon.awssdk.crt
 
-//import kotlinx.cinterop.*
+import kotlinx.cinterop.toKString
 import libcommon.*
 fun blah() {
     aws_default_allocator()
@@ -21,7 +21,7 @@ actual object CRT {
      * @return A user-friendly description of the error
      */
     actual fun awsErrorString(errorCode: Int): String? {
-        TODO("Not yet implemented")
+        return aws_error_str(errorCode)?.toKString()
     }
 
     /**
@@ -32,7 +32,7 @@ actual object CRT {
      * @return A string identifier for the error
      */
     actual fun awsErrorName(errorCode: Int): String? {
-        TODO("Not yet implemented")
+        return aws_error_name(errorCode)?.toKString()
     }
 
     /**
