@@ -2,9 +2,6 @@ package software.amazon.awssdk.crt
 
 import kotlinx.cinterop.toKString
 import libcommon.*
-fun blah() {
-    aws_default_allocator()
-}
 
 actual object CRT {
     /**

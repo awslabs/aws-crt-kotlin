@@ -10,6 +10,7 @@ kotlin {
         project.ext.isLinuxHost = linuxEnabled
         project.ext.isMacosHost = macosEnabled
         project.ext.isWinHost = winEnabled
+        println("idea active: ${project.ext.ideaActive}")
 
         if (project.ext.ideaActive) {
             def ideaPreset = presets.linuxX64

@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
-    kotlin("multiplatform") version "1.4-M3"
+    kotlin("multiplatform") version "1.4.10"
 }
 
 group = "software.amazon.awssdk.crt"
@@ -68,6 +68,7 @@ kotlin {
 
 
     targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
+        val target = this
         compilations["main"].cinterops {
             val interopDir = "$projectDir/src/posix/interop"
             val awsLibs = listOf(
@@ -75,7 +76,7 @@ kotlin {
             )
 
             awsLibs.forEach { name ->
-                println("configuring cinterop for: $name")
+                println("configuring cinterop for: $name [${target.name}]")
                 create(name){
                     // strip off `aws-c-`
                     val suffix = name.substring(6)

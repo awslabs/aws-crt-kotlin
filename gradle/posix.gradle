@@ -10,6 +10,7 @@ kotlin {
             // used by all native targets but setting it up that way is not currently supported
             // see: https://youtrack.jetbrains.com/issue/KT-36086
             fromPreset(project.ext.ideaPreset, 'posix')
+            println("[hack] enabled only for preset: ${project.ext.ideaPreset.name}")
         } else {
             fromPreset(presets.linuxX64, 'linuxX64')
             fromPreset(presets.macosX64, 'macosX64')
