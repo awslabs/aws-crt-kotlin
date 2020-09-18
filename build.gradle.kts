@@ -21,7 +21,7 @@ repositories {
 
 project.ext.set("hostManager", HostManager())
 apply(from = rootProject.file("gradle/utility.gradle"))
-apply(from = rootProject.file("gradle/posix.gradle"))
+apply(from = rootProject.file("gradle/native.gradle"))
 
 
 kotlin {
@@ -52,7 +52,7 @@ kotlin {
             }
         }
 
-        // see posix.gradle for how native sourceSets are configured
+        // see native.gradle for how native sourceSets are configured
 
     }
 
@@ -74,7 +74,7 @@ kotlin {
     targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
         val target = this
         compilations["main"].cinterops {
-            val interopDir = "$projectDir/src/posix/interop"
+            val interopDir = "$projectDir/src/native/interop"
             val awsLibs = listOf(
                 "aws-c-common"
             )
