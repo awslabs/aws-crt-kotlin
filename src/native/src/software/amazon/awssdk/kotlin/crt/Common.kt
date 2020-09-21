@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0.
  */
 
-package software.amazon.awssdk.crt
+package software.amazon.awssdk.kotlin.crt
 import libcommon.aws_default_allocator
 
 class DefaultAllocator {

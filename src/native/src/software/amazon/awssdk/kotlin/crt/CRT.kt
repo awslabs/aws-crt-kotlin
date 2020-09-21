@@ -3,7 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0.
  */
 
-package software.amazon.awssdk.crt
+package software.amazon.awssdk.kotlin.crt
+
+import kotlinx.cinterop.toKString
+import libcommon.*
 
 actual object CRT {
     /**
@@ -11,7 +14,7 @@ actual object CRT {
      * @return Last error code recorded in this thread
      */
     actual fun awsLastError(): Int {
-        TODO("Not yet implemented")
+        return aws_last_error()
     }
 
     /**
@@ -20,7 +23,7 @@ actual object CRT {
      * @return A user-friendly description of the error
      */
     actual fun awsErrorString(errorCode: Int): String? {
-        TODO("Not yet implemented")
+        return aws_error_str(errorCode)?.toKString()
     }
 
     /**
@@ -31,7 +34,7 @@ actual object CRT {
      * @return A string identifier for the error
      */
     actual fun awsErrorName(errorCode: Int): String? {
-        TODO("Not yet implemented")
+        return aws_error_name(errorCode)?.toKString()
     }
 
     /**
