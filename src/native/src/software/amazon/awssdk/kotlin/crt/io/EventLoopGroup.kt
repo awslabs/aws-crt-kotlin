@@ -4,9 +4,6 @@
  */
 
 package software.amazon.awssdk.kotlin.crt.io
-import kotlinx.cinterop.CPointer
-import libcrt.aws_event_loop_group
-import libcrt.aws_event_loop_group_new_default
 
 /**
  * Creates a new event loop group for the I/O subsystem to use to run blocking I/O requests
@@ -24,7 +21,7 @@ actual class EventLoopGroup actual constructor(numThreads: Int) {
 
     actual companion object {
         actual val DEFAULT: EventLoopGroup by lazy {
-           EventLoopGroup(1)
+            EventLoopGroup(1)
         }
     }
 
@@ -33,6 +30,4 @@ actual class EventLoopGroup actual constructor(numThreads: Int) {
      */
     actual suspend fun close() {
     }
-
 }
-

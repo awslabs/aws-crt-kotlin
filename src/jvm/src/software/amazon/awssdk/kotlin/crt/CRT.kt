@@ -41,5 +41,4 @@ actual object CRT {
     actual fun nativeMemory(): Long {
         TODO("Not yet implemented")
     }
-
 }

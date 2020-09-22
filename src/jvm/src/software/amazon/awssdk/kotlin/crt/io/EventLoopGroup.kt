@@ -23,5 +23,4 @@ actual class EventLoopGroup actual constructor(numThreads: Int) {
      */
     actual suspend fun close() {
     }
-
 }
