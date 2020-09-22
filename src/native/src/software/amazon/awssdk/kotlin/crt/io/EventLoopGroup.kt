@@ -4,8 +4,9 @@
  */
 
 package software.amazon.awssdk.kotlin.crt.io
-import libio.aws_event_loop_group
-import libio.aws_event_loop_group_new_default
+import kotlinx.cinterop.CPointer
+import libcrt.aws_event_loop_group
+import libcrt.aws_event_loop_group_new_default
 
 /**
  * Creates a new event loop group for the I/O subsystem to use to run blocking I/O requests
@@ -15,9 +16,10 @@ import libio.aws_event_loop_group_new_default
  * @throws [software.amazon.awssdk.kotlin.crt.CrtRuntimeException] If the system is unable to allocate space for a native event loop group
  */
 actual class EventLoopGroup actual constructor(numThreads: Int) {
-//    private val elg: aws_event_loop_group
+//    private val elg: CPointer<aws_event_loop_group>
+//
 //    init {
-//        elg = aws_event_loop_group_new_default()
+//        elg = aws_event_loop_group_new_default(DefaultAllocator.allocator, numThreads, null) ?: TODO()
 //    }
 
     actual companion object {

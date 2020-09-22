@@ -6,7 +6,7 @@
 package software.amazon.awssdk.kotlin.crt
 
 import kotlinx.cinterop.toKString
-import libcommon.*
+import libcrt.*
 
 actual object CRT {
     /**

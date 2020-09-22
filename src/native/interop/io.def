@@ -1,3 +1,0 @@
-package = libio
-headers = aws/io/io.h aws/io/event_loop.h
-headerFilter = aws/io/*

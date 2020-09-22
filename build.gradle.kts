@@ -73,6 +73,8 @@ kotlin {
     }
 
 
+    // create a single "umbrella" cinterop will all the aws-c-* API's we want to consume
+    // see: https://github.com/JetBrains/kotlin-native/issues/2423#issuecomment-466300153
     targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
         val target = this
         compilations["main"].cinterops {
@@ -82,22 +84,21 @@ kotlin {
                 "aws-c-io"
             )
 
-            val awsCCommonHeaderDirs = listOf(
-                "$rootDir/aws-common-runtime/aws-c-common/include",
-                // cmake configured files need included
+            // cmake configured files need included
+            val generatedIncludeDirs = listOf(
                 "$buildDir/cmake-build/aws-common-runtime/aws-c-common/generated/include"
             )
 
-            awsLibs.forEach { name ->
-                println("configuring cinterop for: $name [${target.name}]")
-                create(name){
-                    // strip off `aws-c-`
-                    val suffix = name.substring(6)
+            println("configuring cinterop for crt: [${target.name}]")
+            create("aws-crt"){
+                val includeDirs = awsLibs.map { name ->
                     val headerDir = "$rootDir/aws-common-runtime/$name/include"
                     println("header dir: $headerDir")
-                    defFile("$interopDir/$suffix.def")
-                    includeDirs(headerDir, awsCCommonHeaderDirs)
+                    headerDir
                 }
+
+                defFile("$interopDir/crt.def")
+                includeDirs(includeDirs, generatedIncludeDirs)
             }
         }
     }

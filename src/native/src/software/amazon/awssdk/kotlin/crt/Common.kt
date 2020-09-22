@@ -4,7 +4,11 @@
  */
 
 package software.amazon.awssdk.kotlin.crt
-import libcommon.aws_default_allocator
+import kotlinx.cinterop.CPointer
+import libcrt.aws_allocator
+import libcrt.aws_default_allocator
 
-class DefaultAllocator {
-}
+//internal object DefaultAllocator {
+//    val allocator: CPointer<aws_allocator> = aws_default_allocator() ?: throw CrtRuntimeException("default allocator init failed")
+//}
+
