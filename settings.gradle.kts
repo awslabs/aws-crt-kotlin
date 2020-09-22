@@ -7,4 +7,5 @@ pluginManagement {
 }
 
 rootProject.name = "aws-crt-kotlin"
+enableFeaturePreview("GRADLE_METADATA")
 

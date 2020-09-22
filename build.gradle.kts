@@ -15,6 +15,7 @@ description = "Kotlin Multiplatform bindings for AWS SDK Common Runtime"
 repositories {
     mavenLocal()
     mavenCentral()
+    jcenter()
     maven ("https://dl.bintray.com/kotlin/kotlin-eap")
     maven ("https://kotlin.bintray.com/kotlinx")
 }
@@ -25,6 +26,10 @@ apply(from = rootProject.file("gradle/utility.gradle"))
 // FIXME - only working from intellij at the moment...cli invocation of build task fails
 apply(from = rootProject.file("gradle/native.gradle"))
 
+// See: https://kotlinlang.org/docs/reference/opt-in-requirements.html#opting-in-to-using-api
+val experimentalAnnotations = listOf("kotlin.RequiresOptIn")
+
+val coroutinesVersion: String by project
 
 kotlin {
     jvm()
@@ -33,6 +38,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-common"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
             }
         }
         val commonTest by getting {
@@ -70,6 +76,7 @@ kotlin {
 
         kotlin.srcDir("src/$platform/$srcDir")
         resources.srcDir("src/$platform/${resourcesPrefix}resources")
+        experimentalAnnotations.forEach { languageSettings.useExperimentalAnnotation(it) }
     }
 
 
