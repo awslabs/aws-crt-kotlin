@@ -17,7 +17,7 @@ class ClientBootstrapTest {
         val hr = HostResolver(elg)
         val bootstrap = ClientBootstrap(elg, hr)
         bootstrap.close()
-        // hr.close()
+        hr.close()
         elg.close()
     }
 }

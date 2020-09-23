@@ -9,6 +9,7 @@ import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.convert
 import libcrt.aws_host_resolver
 import libcrt.aws_host_resolver_new_default
+import libcrt.aws_host_resolver_release
 import software.amazon.awssdk.kotlin.crt.Allocator
 import software.amazon.awssdk.kotlin.crt.CrtResource
 import software.amazon.awssdk.kotlin.crt.CrtRuntimeException
@@ -37,5 +38,9 @@ public actual class HostResolver actual constructor(
         public actual val Default: HostResolver by lazy {
             HostResolver(EventLoopGroup.Default)
         }
+    }
+
+    public actual suspend fun close() {
+        aws_host_resolver_release(resolver)
     }
 }

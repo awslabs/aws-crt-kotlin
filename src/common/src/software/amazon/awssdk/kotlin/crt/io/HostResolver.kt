@@ -14,4 +14,6 @@ public expect class HostResolver(elg: EventLoopGroup, maxEntries: Int) {
     public companion object {
         public val Default: HostResolver
     }
+
+    public suspend fun close()
 }
