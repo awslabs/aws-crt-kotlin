@@ -11,13 +11,14 @@ import libcrt.aws_host_resolver
 import libcrt.aws_host_resolver_new_default
 import libcrt.aws_host_resolver_release
 import software.amazon.awssdk.kotlin.crt.Allocator
+import software.amazon.awssdk.kotlin.crt.Closeable
 import software.amazon.awssdk.kotlin.crt.CrtResource
 import software.amazon.awssdk.kotlin.crt.CrtRuntimeException
 
 public actual class HostResolver actual constructor(
     elg: EventLoopGroup,
     maxEntries: Int
-) : CrtResource<aws_host_resolver>() {
+) : CrtResource<aws_host_resolver>(), Closeable {
 
     private val resolver: CPointer<aws_host_resolver>
 
@@ -40,7 +41,7 @@ public actual class HostResolver actual constructor(
         }
     }
 
-    public actual suspend fun close() {
+    override suspend fun close() {
         aws_host_resolver_release(resolver)
     }
 }

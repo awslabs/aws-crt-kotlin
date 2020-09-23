@@ -14,6 +14,7 @@ import libcrt.aws_client_bootstrap_new
 import libcrt.aws_client_bootstrap_options
 import libcrt.aws_client_bootstrap_release
 import software.amazon.awssdk.kotlin.crt.Allocator
+import software.amazon.awssdk.kotlin.crt.Closeable
 import software.amazon.awssdk.kotlin.crt.CrtResource
 import software.amazon.awssdk.kotlin.crt.CrtRuntimeException
 import kotlin.native.concurrent.freeze
@@ -29,7 +30,7 @@ private fun onShutdownComplete(userdata: COpaquePointer?) {
 public actual class ClientBootstrap actual constructor(
     elg: EventLoopGroup,
     hr: HostResolver
-) : CrtResource<aws_client_bootstrap>() {
+) : CrtResource<aws_client_bootstrap>(), Closeable {
 
     private val bootstrap: CPointer<aws_client_bootstrap>
     private val shutdownComplete = Channel<Unit>(0).freeze()
@@ -50,7 +51,7 @@ public actual class ClientBootstrap actual constructor(
         get() = bootstrap
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    public actual suspend fun close() {
+    override suspend fun close() {
         aws_client_bootstrap_release(bootstrap)
         shutdownComplete.receiveOrNull()
     }

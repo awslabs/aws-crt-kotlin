@@ -5,15 +5,15 @@
 
 package software.amazon.awssdk.kotlin.crt.io
 
+import software.amazon.awssdk.kotlin.crt.Closeable
+
 internal const val DEFAULT_MAX_ENTRIES = 8
 
-public expect class HostResolver(elg: EventLoopGroup, maxEntries: Int) {
+public expect class HostResolver(elg: EventLoopGroup, maxEntries: Int) : Closeable {
 
     public constructor(elg: EventLoopGroup)
 
     public companion object {
         public val Default: HostResolver
     }
-
-    public suspend fun close()
 }

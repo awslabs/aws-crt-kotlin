@@ -5,10 +5,12 @@
 
 package software.amazon.awssdk.kotlin.crt.io
 
-public actual class ClientBootstrap actual constructor(elg: EventLoopGroup, hr: HostResolver) {
+import software.amazon.awssdk.kotlin.crt.Closeable
+
+public actual class ClientBootstrap actual constructor(elg: EventLoopGroup, hr: HostResolver) : Closeable {
     // TODO - proxy to JNI
 
-    public actual suspend fun close() {
+    override suspend fun close() {
         TODO("not implemented")
     }
 }

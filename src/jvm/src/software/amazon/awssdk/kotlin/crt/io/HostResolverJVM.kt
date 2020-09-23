@@ -5,7 +5,9 @@
 
 package software.amazon.awssdk.kotlin.crt.io
 
-public actual class HostResolver actual constructor(elg: EventLoopGroup, maxEntries: Int) {
+import software.amazon.awssdk.kotlin.crt.Closeable
+
+public actual class HostResolver actual constructor(elg: EventLoopGroup, maxEntries: Int) : Closeable {
 
     public actual constructor(elg: EventLoopGroup) : this(elg, DEFAULT_MAX_ENTRIES) {
         TODO("Not yet implemented")
@@ -16,7 +18,7 @@ public actual class HostResolver actual constructor(elg: EventLoopGroup, maxEntr
             get() = TODO("Not yet implemented")
     }
 
-    public actual suspend fun close() {
+    override suspend fun close() {
         TODO("not implemented")
     }
 }

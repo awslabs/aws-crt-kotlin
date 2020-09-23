@@ -5,11 +5,10 @@
 
 package software.amazon.awssdk.kotlin.crt.io
 
+import software.amazon.awssdk.kotlin.crt.Closeable
+
 /**
  * This class wraps the aws_client_bootstrap from aws-c-io to provide
  * a client context for all protocol stacks in the AWS Common Runtime.
  */
-public expect class ClientBootstrap(elg: EventLoopGroup, hr: HostResolver) {
-
-    public suspend fun close()
-}
+public expect class ClientBootstrap(elg: EventLoopGroup, hr: HostResolver) : Closeable
