@@ -9,10 +9,7 @@ import kotlinx.cinterop.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.receiveOrNull
-import libcrt.aws_event_loop_group
-import libcrt.aws_event_loop_group_new_default
-import libcrt.aws_event_loop_group_release
-import libcrt.aws_shutdown_callback_options
+import libcrt.*
 import software.amazon.awssdk.kotlin.crt.Allocator
 import software.amazon.awssdk.kotlin.crt.CrtResource
 import software.amazon.awssdk.kotlin.crt.CrtRuntimeException
@@ -55,7 +52,8 @@ actual class EventLoopGroup actual constructor(numThreads: Int) : CrtResource<aw
         }
     }
 
-    override fun getPointer(scope: AutofreeScope): CPointer<aws_event_loop_group> = elg
+    override val ptr: CPointer<aws_event_loop_group>
+        get() = elg
 
     /**
      * Close this ELG

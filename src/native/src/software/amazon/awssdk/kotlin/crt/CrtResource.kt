@@ -5,7 +5,9 @@
 
 package software.amazon.awssdk.kotlin.crt
 
+import kotlinx.cinterop.AutofreeScope
 import kotlinx.cinterop.CPointed
+import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.CValuesRef
 
 /**
@@ -14,4 +16,8 @@ import kotlinx.cinterop.CValuesRef
  */
 abstract class CrtResource<T : CPointed> : CValuesRef<T>() {
     // TODO - ref counting api's
+
+    abstract val ptr: CPointer<T>
+
+    override fun getPointer(scope: AutofreeScope): CPointer<T> = ptr
 }

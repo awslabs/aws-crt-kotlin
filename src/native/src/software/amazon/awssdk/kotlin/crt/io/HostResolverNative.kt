@@ -5,7 +5,6 @@
 
 package software.amazon.awssdk.kotlin.crt.io
 
-import kotlinx.cinterop.AutofreeScope
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.convert
 import libcrt.aws_host_resolver
@@ -31,7 +30,8 @@ actual class HostResolver actual constructor(
 
     actual constructor(elg: EventLoopGroup) : this(elg, DEFAULT_MAX_ENTRIES)
 
-    override fun getPointer(scope: AutofreeScope): CPointer<aws_host_resolver> = resolver
+    override val ptr: CPointer<aws_host_resolver>
+        get() = resolver
 
     actual companion object {
         actual val Default: HostResolver by lazy {

@@ -1,3 +1,5 @@
 package = libcrt
-headers = aws/common/allocator.h aws/common/error.h aws/io/io.h aws/io/event_loop.h aws/io/host_resolver.h
+headers = aws/common/allocator.h aws/common/error.h \
+        aws/io/io.h aws/io/event_loop.h aws/io/host_resolver.h \
+        aws/io/channel_bootstrap.h
 headerFilter = aws/common/* aws/io/*
