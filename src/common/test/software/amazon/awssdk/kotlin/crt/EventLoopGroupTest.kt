@@ -17,7 +17,7 @@ class EventLoopGroupTest {
 
     @Test
     fun createDestroyDefault() = runSuspendTest {
-        val elg = EventLoopGroup.DEFAULT
+        val elg = EventLoopGroup.Default
         elg.close()
     }
 }

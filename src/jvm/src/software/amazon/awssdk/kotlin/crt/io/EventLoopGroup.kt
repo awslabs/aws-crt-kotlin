@@ -14,7 +14,7 @@ package software.amazon.awssdk.kotlin.crt.io
  */
 actual class EventLoopGroup actual constructor(numThreads: Int) {
     actual companion object {
-        actual val DEFAULT: EventLoopGroup
+        actual val Default: EventLoopGroup
             get() = TODO("Not yet implemented")
     }
 

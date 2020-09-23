@@ -14,7 +14,7 @@ package software.amazon.awssdk.kotlin.crt.io
 expect class EventLoopGroup(numThreads: Int = 1) {
 
     companion object {
-        val DEFAULT: EventLoopGroup
+        val Default: EventLoopGroup
     }
 
     /**
