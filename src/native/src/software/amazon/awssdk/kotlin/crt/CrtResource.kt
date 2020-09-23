@@ -14,10 +14,10 @@ import kotlinx.cinterop.CValuesRef
  * This wraps a native pointer to an AWS Common Runtime resource. It also ensures
  * that the first time a resource is referenced, the CRT will be loaded and bound.
  */
-abstract class CrtResource<T : CPointed> : CValuesRef<T>() {
+public abstract class CrtResource<T : CPointed> : CValuesRef<T>() {
     // TODO - ref counting api's
 
-    abstract val ptr: CPointer<T>
+    public abstract val ptr: CPointer<T>
 
     override fun getPointer(scope: AutofreeScope): CPointer<T> = ptr
 }

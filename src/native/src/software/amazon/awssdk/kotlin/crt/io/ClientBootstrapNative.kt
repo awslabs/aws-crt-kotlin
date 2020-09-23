@@ -26,7 +26,7 @@ private fun onShutdownComplete(userdata: COpaquePointer?) {
     }
 }
 
-actual class ClientBootstrap actual constructor(
+public actual class ClientBootstrap actual constructor(
     elg: EventLoopGroup,
     hr: HostResolver
 ) : CrtResource<aws_client_bootstrap>() {
@@ -50,7 +50,7 @@ actual class ClientBootstrap actual constructor(
         get() = bootstrap
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    actual suspend fun close() {
+    public actual suspend fun close() {
         aws_client_bootstrap_release(bootstrap)
         shutdownComplete.receiveOrNull()
     }

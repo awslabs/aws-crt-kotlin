@@ -11,14 +11,14 @@ package software.amazon.awssdk.kotlin.crt.io
  * @param numThreads The number of threads that the event loop group may run tasks across. Usually 1.
  * @throws [software.amazon.awssdk.kotlin.crt.CrtRuntimeException] If the system is unable to allocate space for a native event loop group
 */
-expect class EventLoopGroup(numThreads: Int = 1) {
+public expect class EventLoopGroup(numThreads: Int = 1) {
 
-    companion object {
-        val Default: EventLoopGroup
+    public companion object {
+        public val Default: EventLoopGroup
     }
 
     /**
      * Close this ELG
      */
-    suspend fun close()
+    public suspend fun close()
 }

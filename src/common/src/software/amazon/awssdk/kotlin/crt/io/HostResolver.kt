@@ -7,11 +7,11 @@ package software.amazon.awssdk.kotlin.crt.io
 
 internal const val DEFAULT_MAX_ENTRIES = 8
 
-expect class HostResolver(elg: EventLoopGroup, maxEntries: Int) {
+public expect class HostResolver(elg: EventLoopGroup, maxEntries: Int) {
 
-    constructor(elg: EventLoopGroup)
+    public constructor(elg: EventLoopGroup)
 
-    companion object {
-        val Default: HostResolver
+    public companion object {
+        public val Default: HostResolver
     }
 }

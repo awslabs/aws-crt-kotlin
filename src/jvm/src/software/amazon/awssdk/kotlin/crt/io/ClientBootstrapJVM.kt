@@ -5,10 +5,10 @@
 
 package software.amazon.awssdk.kotlin.crt.io
 
-actual class ClientBootstrap actual constructor(elg: EventLoopGroup, hr: HostResolver) {
+public actual class ClientBootstrap actual constructor(elg: EventLoopGroup, hr: HostResolver) {
     // TODO - proxy to JNI
 
-    actual suspend fun close() {
+    public actual suspend fun close() {
         TODO("not implemented")
     }
 }

@@ -13,7 +13,7 @@ import software.amazon.awssdk.kotlin.crt.Allocator
 import software.amazon.awssdk.kotlin.crt.CrtResource
 import software.amazon.awssdk.kotlin.crt.CrtRuntimeException
 
-actual class HostResolver actual constructor(
+public actual class HostResolver actual constructor(
     elg: EventLoopGroup,
     maxEntries: Int
 ) : CrtResource<aws_host_resolver>() {
@@ -28,13 +28,13 @@ actual class HostResolver actual constructor(
         ) ?: throw CrtRuntimeException("aws_host_resolver_new_default() failed")
     }
 
-    actual constructor(elg: EventLoopGroup) : this(elg, DEFAULT_MAX_ENTRIES)
+    public actual constructor(elg: EventLoopGroup) : this(elg, DEFAULT_MAX_ENTRIES)
 
     override val ptr: CPointer<aws_host_resolver>
         get() = resolver
 
-    actual companion object {
-        actual val Default: HostResolver by lazy {
+    public actual companion object {
+        public actual val Default: HostResolver by lazy {
             HostResolver(EventLoopGroup.Default)
         }
     }

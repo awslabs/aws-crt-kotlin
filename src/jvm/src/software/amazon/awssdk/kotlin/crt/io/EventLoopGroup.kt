@@ -12,15 +12,15 @@ package software.amazon.awssdk.kotlin.crt.io
  * @param numThreads The number of threads that the event loop group may run tasks across. Usually 1.
  * @throws [software.amazon.awssdk.kotlin.crt.CrtRuntimeException] If the system is unable to allocate space for a native event loop group
  */
-actual class EventLoopGroup actual constructor(numThreads: Int) {
-    actual companion object {
-        actual val Default: EventLoopGroup
+public actual class EventLoopGroup actual constructor(numThreads: Int) {
+    public actual companion object {
+        public actual val Default: EventLoopGroup
             get() = TODO("Not yet implemented")
     }
 
     /**
      * Close this ELG
      */
-    actual suspend fun close() {
+    public actual suspend fun close() {
     }
 }

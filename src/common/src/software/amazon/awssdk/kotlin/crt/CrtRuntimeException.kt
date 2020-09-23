@@ -5,7 +5,7 @@
 
 package software.amazon.awssdk.kotlin.crt
 
-class CrtRuntimeException(message: String?) : RuntimeException(message) {
-    val errorCode: Int = CRT.awsLastError()
-    val errorName: String? = CRT.awsErrorName(errorCode)
+public class CrtRuntimeException(message: String?) : RuntimeException(message) {
+    public val errorCode: Int = CRT.awsLastError()
+    public val errorName: String? = CRT.awsErrorName(errorCode)
 }

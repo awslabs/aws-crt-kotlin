@@ -32,6 +32,8 @@ val experimentalAnnotations = listOf("kotlin.RequiresOptIn")
 val coroutinesVersion: String by project
 
 kotlin {
+    explicitApi()
+
     jvm()
 
     sourceSets {

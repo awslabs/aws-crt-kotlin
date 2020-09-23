@@ -8,12 +8,12 @@ package software.amazon.awssdk.kotlin.crt
 import kotlinx.cinterop.toKString
 import libcrt.*
 
-actual object CRT {
+public actual object CRT {
     /**
      * Returns the last error on the current thread.
      * @return Last error code recorded in this thread
      */
-    actual fun awsLastError(): Int {
+    public actual fun awsLastError(): Int {
         return aws_last_error()
     }
 
@@ -22,7 +22,7 @@ actual object CRT {
      * @param errorCode An error code returned from an exception or other native function call
      * @return A user-friendly description of the error
      */
-    actual fun awsErrorString(errorCode: Int): String? {
+    public actual fun awsErrorString(errorCode: Int): String? {
         return aws_error_str(errorCode)?.toKString()
     }
 
@@ -33,7 +33,7 @@ actual object CRT {
      * function call
      * @return A string identifier for the error
      */
-    actual fun awsErrorName(errorCode: Int): String? {
+    public actual fun awsErrorName(errorCode: Int): String? {
         return aws_error_name(errorCode)?.toKString()
     }
 
@@ -41,7 +41,7 @@ actual object CRT {
      * @return The number of bytes allocated in native resources. If aws.crt.memory.tracing is 1 or 2, this will
      * be a non-zero value. Otherwise, no tracing will be done, and the value will always be 0
      */
-    actual fun nativeMemory(): Long {
+    public actual fun nativeMemory(): Long {
         TODO("Not yet implemented")
     }
 }

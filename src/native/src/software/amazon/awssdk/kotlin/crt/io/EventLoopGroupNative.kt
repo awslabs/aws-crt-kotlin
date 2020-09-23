@@ -32,7 +32,7 @@ private fun onShutdownComplete(userdata: COpaquePointer?) {
  * @throws [software.amazon.awssdk.kotlin.crt.CrtRuntimeException] If the system is unable to allocate space for a native event loop group
  */
 @OptIn(ExperimentalUnsignedTypes::class)
-actual class EventLoopGroup actual constructor(numThreads: Int) : CrtResource<aws_event_loop_group>() {
+public actual class EventLoopGroup actual constructor(numThreads: Int) : CrtResource<aws_event_loop_group>() {
     private val elg: CPointer<aws_event_loop_group>
     private val shutdownComplete = Channel<Unit>(0).freeze()
     private val stableRef = StableRef.create(shutdownComplete)
@@ -46,8 +46,8 @@ actual class EventLoopGroup actual constructor(numThreads: Int) : CrtResource<aw
         elg = aws_event_loop_group_new_default(Allocator.Default, numThreads.toUShort(), shutdownOpts) ?: throw CrtRuntimeException("aws_event_loop_group_new_default() failed")
     }
 
-    actual companion object {
-        actual val Default: EventLoopGroup by lazy {
+    public actual companion object {
+        public actual val Default: EventLoopGroup by lazy {
             EventLoopGroup(1)
         }
     }
@@ -59,7 +59,7 @@ actual class EventLoopGroup actual constructor(numThreads: Int) : CrtResource<aw
      * Close this ELG
      */
     @OptIn(ExperimentalCoroutinesApi::class)
-    actual suspend fun close() {
+    public actual suspend fun close() {
         aws_event_loop_group_release(elg)
         shutdownComplete.receiveOrNull()
         stableRef.dispose()

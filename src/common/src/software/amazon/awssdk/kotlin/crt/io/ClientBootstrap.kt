@@ -9,7 +9,7 @@ package software.amazon.awssdk.kotlin.crt.io
  * This class wraps the aws_client_bootstrap from aws-c-io to provide
  * a client context for all protocol stacks in the AWS Common Runtime.
  */
-expect class ClientBootstrap(elg: EventLoopGroup, hr: HostResolver) {
+public expect class ClientBootstrap(elg: EventLoopGroup, hr: HostResolver) {
 
-    suspend fun close()
+    public suspend fun close()
 }
