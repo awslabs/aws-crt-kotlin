@@ -38,7 +38,8 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-common"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+                // native multithreading support for coroutines is not stable...
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion-native-mt")
             }
         }
         val commonTest by getting {
@@ -84,12 +85,14 @@ kotlin {
     // see: https://github.com/JetBrains/kotlin-native/issues/2423#issuecomment-466300153
     targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
         val target = this
+
+        val awsLibs = listOf(
+            "aws-c-common",
+            "aws-c-io"
+        )
+
         compilations["main"].cinterops {
             val interopDir = "$projectDir/src/native/interop"
-            val awsLibs = listOf(
-                "aws-c-common",
-                "aws-c-io"
-            )
 
             // cmake configured files need included
             val generatedIncludeDirs = listOf(
@@ -107,6 +110,18 @@ kotlin {
                 defFile("$interopDir/crt.def")
                 includeDirs(includeDirs, generatedIncludeDirs)
             }
+        }
+
+        compilations["test"].kotlinOptions {
+            val linkDirs = awsLibs.map {
+                "-L$buildDir/cmake-build/aws-common-runtime/$it"
+            }
+            val libs = awsLibs.map { "-l$it" }
+
+            val linkOpts = (linkDirs + libs).joinToString(" ")
+
+            println("linker opts: $linkOpts")
+            freeCompilerArgs = listOf("-linker-options", linkOpts)
         }
     }
 }
@@ -158,8 +173,45 @@ val cmakeConfigure = tasks.register("cmakeConfigure") {
     }
 }
 
+val cmakeBuild = tasks.register("cmakeBuild") {
+    dependsOn(cmakeConfigure)
+    inputs.property("buildType", buildType)
+    inputs.file("${rootDir}/CMakeLists.txt")
+    inputs.file("${buildDir}/cmake-build/CMakeCache.txt")
+//    inputs.files(fileTree("${rootDir}/src/native").matching {
+//        include(listOf("**/*.c", "**/*.h"))
+//    })
+    inputs.files(fileTree("${rootDir}/aws-common-runtime").matching {
+        include(listOf("**/CMakeLists.txt", "**/*.c", "**/*.h"))
+    })
+//    outputs.files(fileTree("${buildDir}/cmake-build/lib/${targetOs}/${targetArch}"))
+
+    var cmakeArgs = listOf(
+        "--build", "${buildDir}/cmake-build",
+        "--config", buildType,
+        "--target", "all"
+    )
+
+    doLast {
+        val argsStr = cmakeArgs.joinToString(separator=" ")
+        logger.info("cmake ${argsStr}")
+        exec {
+            executable("cmake")
+            args(cmakeArgs)
+        }
+    }
+}
+
+// cinterop requires all headers to be available which unfortunately requires
+// cmake generated headers (e.g. aws-c-common/config.h)
 tasks.filter { it.name.startsWith("cinterop") }.forEach {
     it.dependsOn(cmakeConfigure)
+}
+
+// running native tests requires linking
+val nativeTestTasks = listOf("nativeTest", "linuxX64Test", "macosX64Test", "mingwX64Test")
+nativeTestTasks.forEach {
+    tasks.findByName(it)?.dependsOn(cmakeBuild)
 }
 
 val ktlint by configurations.creating

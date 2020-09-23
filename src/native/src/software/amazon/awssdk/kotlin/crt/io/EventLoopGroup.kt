@@ -15,13 +15,14 @@ import libcrt.aws_event_loop_group_release
 import libcrt.aws_shutdown_callback_options
 import software.amazon.awssdk.kotlin.crt.Allocator
 import software.amazon.awssdk.kotlin.crt.CrtRuntimeException
+import kotlin.native.concurrent.freeze
 
 private fun onShutdownComplete(userdata: COpaquePointer?) {
+    // initRuntimeIfNeeded()
     if (userdata != null) {
-        val elg = userdata.asStableRef<EventLoopGroup>().get()
-        // free the waiter
-        elg.shutdownComplete.offer(Unit)
-        elg.shutdownComplete.close()
+        val notify = userdata.asStableRef<Channel<Unit>>().get()
+        notify.offer(Unit)
+        notify.close()
     }
 }
 
@@ -32,10 +33,11 @@ private fun onShutdownComplete(userdata: COpaquePointer?) {
  * @param numThreads The number of threads that the event loop group may run tasks across. Usually 1.
  * @throws [software.amazon.awssdk.kotlin.crt.CrtRuntimeException] If the system is unable to allocate space for a native event loop group
  */
+@OptIn(ExperimentalUnsignedTypes::class)
 actual class EventLoopGroup actual constructor(numThreads: Int) {
     private val elg: CPointer<aws_event_loop_group>
-    internal val shutdownComplete = Channel<Unit>(0)
-    private val stableRef = StableRef.create(this)
+    private val shutdownComplete = Channel<Unit>(0).freeze()
+    private val stableRef = StableRef.create(shutdownComplete)
 
     init {
         val shutdownOpts = cValue<aws_shutdown_callback_options> {
