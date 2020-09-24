@@ -6,6 +6,10 @@
 package software.amazon.awssdk.kotlin.crt
 
 public actual object CRT {
+    public actual fun initRuntime() {
+        TODO("not implemented yet")
+    }
+
     /**
      * Returns the last error on the current thread.
      * @return Last error code recorded in this thread
