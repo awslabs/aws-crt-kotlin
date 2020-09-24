@@ -118,7 +118,7 @@ kotlin {
             val linkDirs = awsLibs.map {
                 "-L$buildDir/cmake-build/aws-common-runtime/$it"
             }
-            val libs = awsLibs.map { "-l$it" }
+            val libs = awsLibs.map { "-l$it" }.toMutableList()
 
             val linkOpts = (linkDirs + libs).joinToString(" ")
 

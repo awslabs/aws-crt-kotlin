@@ -7,6 +7,11 @@ package software.amazon.awssdk.kotlin.crt
 
 public expect object CRT {
     /**
+     * Initialize the CRT libraries if needed
+     */
+    public fun initRuntime()
+
+    /**
      * Returns the last error on the current thread.
      * @return Last error code recorded in this thread
      */

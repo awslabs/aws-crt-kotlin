@@ -8,7 +8,7 @@ package software.amazon.awssdk.kotlin.crt
 import software.amazon.awssdk.kotlin.crt.io.EventLoopGroup
 import kotlin.test.Test
 
-class EventLoopGroupTest {
+class EventLoopGroupTest : CrtTest() {
     @Test
     fun createDestroy() = runSuspendTest {
         val elg = EventLoopGroup()

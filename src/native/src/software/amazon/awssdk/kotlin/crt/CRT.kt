@@ -7,8 +7,20 @@ package software.amazon.awssdk.kotlin.crt
 
 import kotlinx.cinterop.toKString
 import libcrt.*
+import kotlin.native.concurrent.AtomicInt
 
 public actual object CRT {
+    init {
+        initRuntime()
+    }
+    private val initialized: AtomicInt = AtomicInt(0)
+
+    public actual fun initRuntime() {
+        // if (!initialized.compareAndSet(0, 1)) return
+        aws_common_library_init(Allocator.Default)
+        aws_io_library_init(Allocator.Default)
+    }
+
     /**
      * Returns the last error on the current thread.
      * @return Last error code recorded in this thread

@@ -10,7 +10,7 @@ import software.amazon.awssdk.kotlin.crt.io.EventLoopGroup
 import software.amazon.awssdk.kotlin.crt.io.HostResolver
 import kotlin.test.Test
 
-class ClientBootstrapTest {
+class ClientBootstrapTest : CrtTest() {
     @Test
     fun createDestroy() = runSuspendTest {
         val elg = EventLoopGroup()
