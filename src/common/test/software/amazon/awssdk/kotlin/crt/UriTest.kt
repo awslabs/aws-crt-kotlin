@@ -5,6 +5,7 @@
 
 package software.amazon.awssdk.kotlin.crt
 
+import software.amazon.awssdk.kotlin.crt.http.Protocol
 import software.amazon.awssdk.kotlin.crt.http.Uri
 import software.amazon.awssdk.kotlin.crt.http.UriBuilder
 import software.amazon.awssdk.kotlin.crt.http.UserInfo
@@ -17,7 +18,7 @@ class UriTest {
     fun basicToString() {
         val expected = "https://test.aws.com/kotlin"
         val uri = Uri(
-            "https",
+            Protocol.HTTPS,
             "test.aws.com",
             path = "/kotlin"
         )
@@ -40,7 +41,7 @@ class UriTest {
         val expected = "https://test.aws.com/kotlin?foo=bar&baz=quux&baz=qux"
 
         val uri = Uri(
-            "https",
+            Protocol.HTTPS,
             "test.aws.com",
             path = "/kotlin",
             parameters = "foo=bar&baz=quux&baz=qux"
@@ -52,17 +53,17 @@ class UriTest {
     fun specificPort() {
         val expected = "https://test.aws.com:8000"
         val uri = Uri(
-            "https",
+            Protocol.HTTPS,
             "test.aws.com",
-            port = 8000
+            specifiedPort = 8000
         )
         assertEquals(expected, uri.toString())
 
         val expected2 = "http://test.aws.com"
         val uri2 = Uri(
-            "http",
+            Protocol.HTTP,
             "test.aws.com",
-            port = 80
+            specifiedPort = 80
         )
         assertEquals(expected2, uri2.toString())
     }
@@ -73,10 +74,10 @@ class UriTest {
             assertEquals(
                 n,
                 Uri(
-                    "https",
+                    Protocol.HTTPS,
                     "test.aws.com",
-                    port = n
-                ).port
+                    specifiedPort = n
+                ).specifiedPort
             )
         }
 
@@ -91,7 +92,7 @@ class UriTest {
     fun userinfoNoPassword() {
         val expected = "https://user@test.aws.com"
         val uri = UriBuilder.build {
-            scheme = "https"
+            scheme = Protocol.HTTPS
             host = "test.aws.com"
             userInfo = UserInfo("user", "")
         }
@@ -102,7 +103,7 @@ class UriTest {
     fun fullUserinfo() {
         val expected = "https://user:password@test.aws.com"
         val uri = UriBuilder.build {
-            scheme = "https"
+            scheme = Protocol.HTTPS
             host = "test.aws.com"
             userInfo = UserInfo("user", "password")
         }
@@ -112,13 +113,13 @@ class UriTest {
     @Test
     fun itBuilds() {
         val builder = UriBuilder()
-        builder.scheme = "http"
+        builder.scheme = Protocol.HTTP
         builder.host = "test.aws.com"
         builder.path = "/kotlin"
         val uri = builder.build()
         val expected = "http://test.aws.com/kotlin"
         assertEquals(expected, uri.toString())
-        assertEquals("http", builder.scheme)
+        assertEquals(Protocol.HTTP, builder.scheme)
         assertEquals("test.aws.com", builder.host)
         assertEquals(null, builder.port)
         assertEquals(null, builder.fragment)
@@ -128,7 +129,7 @@ class UriTest {
     @Test
     fun itBuildsWithNonDefaultPort() {
         val uri = UriBuilder.build {
-            scheme = "http"
+            scheme = Protocol.HTTP
             host = "test.aws.com"
             path = "/kotlin"
             port = 3000
@@ -140,7 +141,7 @@ class UriTest {
     @Test
     fun itBuildsWithParameters() {
         val uri = UriBuilder.build {
-            scheme = "http"
+            scheme = Protocol.HTTP
             host = "test.aws.com"
             path = "/kotlin"
             parameters = "foo=baz"

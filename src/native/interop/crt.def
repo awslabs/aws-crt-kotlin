@@ -2,7 +2,10 @@ package = libcrt
 headers = aws/common/allocator.h aws/common/error.h \
         aws/common/byte_buf.h aws/common/string.h \
         aws/io/io.h aws/io/event_loop.h aws/io/host_resolver.h \
-        aws/io/channel_bootstrap.h aws/io/tls_channel_handler.h
-headerFilter = aws/common/* aws/io/*
+        aws/io/channel_bootstrap.h aws/io/tls_channel_handler.h \
+        aws/io/socket.h \
+        aws/http/http.h aws/http/connection.h aws/http/connection_manager.h \
+        aws/compression/compression.h
+headerFilter = aws/common/* aws/io/* aws/http/* aws/compression/*
 
 linkerOpts.osx = -framework Security

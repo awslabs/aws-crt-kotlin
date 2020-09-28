@@ -90,7 +90,9 @@ kotlin {
 
         val awsLibs = listOf(
             "aws-c-common",
-            "aws-c-io"
+            "aws-c-io",
+            "aws-c-http",
+            "aws-c-compression"
         )
 
         compilations["main"].cinterops {

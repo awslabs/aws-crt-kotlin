@@ -6,6 +6,7 @@
 package software.amazon.awssdk.kotlin.crt.http
 
 import software.amazon.awssdk.kotlin.crt.io.ClientBootstrap
+import software.amazon.awssdk.kotlin.crt.io.SocketOptions
 import software.amazon.awssdk.kotlin.crt.io.TlsContext
 
 /**
@@ -14,8 +15,9 @@ import software.amazon.awssdk.kotlin.crt.io.TlsContext
 public class HttpClientConnectionManagerOptions internal constructor(
     builder: HttpClientConnectionManagerOptionsBuilder
 ) {
-    public val uri: Uri? = builder.uri
-    public val clientBootstrap: ClientBootstrap? = builder.clientBootstrap
+    public val uri: Uri = requireNotNull(builder.uri) { "URI is required" }
+    public val clientBootstrap: ClientBootstrap = requireNotNull(builder.clientBootstrap) { "ClientBootstrap is required" }
+    public val socketOptions: SocketOptions = requireNotNull(builder.socketOptions) { "SocketOptions is required" }
     public val tlsContext: TlsContext? = builder.tlsContext
     public val windowSize: Int = builder.windowSize
     public val bufferSize: Int = builder.bufferSize
@@ -24,6 +26,17 @@ public class HttpClientConnectionManagerOptions internal constructor(
     public val manualWindowManagement: Boolean = builder.manualWindowManagement
     public val monitoringOptions: HttpMonitoringOptions? = builder.monitoringOptions
     public val maxConnectionIdleMs: Long = builder.maxConnectionIdleMs
+
+    init {
+        require(windowSize > 0) { "Window size must be > 0" }
+        require(bufferSize > 0) { "Buffer size must be > 0" }
+        require(maxConnections > 0) { "Max connections must be > 0" }
+        require(uri.scheme.isHttp()) { "URI has an unknown scheme: ${uri.scheme}" }
+
+        if (uri.scheme.requiresTls()) {
+            requireNotNull(tlsContext) { "TlsContext required by URI scheme: ${uri.scheme}" }
+        }
+    }
 
     public companion object {
         public const val DEFAULT_MAX_BUFFER_SIZE: Int = 16 * 1024
@@ -45,6 +58,8 @@ public class HttpClientConnectionManagerOptionsBuilder {
     }
 
     public var clientBootstrap: ClientBootstrap? = null
+
+    public var socketOptions: SocketOptions? = null
 
     public var tlsContext: TlsContext? = null
 

@@ -5,6 +5,8 @@
 
 package software.amazon.awssdk.kotlin.crt
 
+// TODO - should we separate out close() from waiting for close to complete? Having this
+// function suspend means it can only be called from a coroutine
 public interface Closeable {
     /**
      * Resource shutdown may be async

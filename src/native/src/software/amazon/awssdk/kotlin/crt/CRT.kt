@@ -19,6 +19,8 @@ public actual object CRT {
         // if (!initialized.compareAndSet(0, 1)) return
         aws_common_library_init(Allocator.Default)
         aws_io_library_init(Allocator.Default)
+        aws_compression_library_init(Allocator.Default)
+        aws_http_library_init(Allocator.Default)
     }
 
     /**
