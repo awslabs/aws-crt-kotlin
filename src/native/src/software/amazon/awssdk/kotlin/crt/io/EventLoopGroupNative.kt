@@ -17,8 +17,8 @@ import software.amazon.awssdk.kotlin.crt.CrtRuntimeException
 import kotlin.native.concurrent.freeze
 
 private fun onShutdownComplete(userdata: COpaquePointer?) {
-    // initRuntimeIfNeeded()
     if (userdata != null) {
+        initRuntimeIfNeeded()
         val notify = userdata.asStableRef<Channel<Unit>>().get()
         notify.offer(Unit)
         notify.close()

@@ -15,5 +15,15 @@ import software.amazon.awssdk.kotlin.crt.Closeable
  * This class is not thread safe and should not be called from different threads.
  */
 public interface HttpClientConnection : Closeable {
-    // TODO makeRequest()
+
+    /**
+     * Schedules an HttpRequest on the Native EventLoop for this HttpClientConnection.
+     *
+     * @param httpReq The Request to make to the Server.
+     * @param handler The Stream Handler to be called from the Native EventLoop
+     * @throws CrtRuntimeException if stream creation fails
+     * @return The HttpStream that represents this Request/Response Pair. It can be closed at any time during the
+     *          request/response, but must be closed by the user thread making this request when it's done.
+     */
+    public fun makeRequest(httpReq: HttpRequest, handler: HttpStreamResponseHandler): HttpStream
 }

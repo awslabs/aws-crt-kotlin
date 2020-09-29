@@ -42,6 +42,8 @@ private fun onConnectionAcquired(
     }
 }
 
+// TODO - port over tests from crt-java
+
 public actual class HttpClientConnectionManager actual constructor(options: HttpClientConnectionManagerOptions) :
     Closeable, CrtResource<aws_http_connection_manager>() {
     private val manager: CPointer<aws_http_connection_manager>

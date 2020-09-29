@@ -5,10 +5,7 @@
 
 package software.amazon.awssdk.kotlin.crt
 
-import kotlinx.cinterop.CPointer
-import kotlinx.cinterop.CValue
-import kotlinx.cinterop.toKString
-import kotlinx.cinterop.useContents
+import kotlinx.cinterop.*
 import libcrt.*
 
 /**
@@ -66,4 +63,11 @@ public inline fun aws_byte_cursor.initFromCursor(cur: CValue<aws_byte_cursor>) {
         dest.len = len
         dest.ptr = ptr
     }
+}
+
+/**
+ * Interpret this byte cursor as a Kotlin string
+ */
+public inline fun aws_byte_cursor.toKString(): String {
+    return ptr?.readBytes(len.convert())?.decodeToString() ?: ""
 }
