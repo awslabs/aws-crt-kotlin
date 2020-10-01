@@ -10,7 +10,7 @@ import libcrt.aws_byte_cursor
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class StringTests {
+class StringTests : CrtTest() {
     @Test
     fun testRoundTrip() {
         // kotlin -> aws and back

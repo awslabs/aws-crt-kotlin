@@ -10,7 +10,7 @@ import software.amazon.awssdk.kotlin.crt.io.ByteCursorBuffer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ByteCursorBufferTest {
+class ByteCursorBufferTest : CrtTest() {
     @OptIn(ExperimentalUnsignedTypes::class)
     @Test
     fun testCopyTo() {

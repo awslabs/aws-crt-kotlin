@@ -93,10 +93,8 @@ internal class HttpClientConnectionNative(
                 }
             }
 
-            // TODO - native body stream
-            // if (request.body != null) {
-            //     aws_http_message_set_body_stream(nativeReq, bodyStream)
-            // }
+            val bodyStream = request.body?.let { inputStream(it) }
+            aws_http_message_set_body_stream(nativeReq, bodyStream)
         } catch (ex: Exception) {
             aws_http_message_destroy(nativeReq)
             throw ex

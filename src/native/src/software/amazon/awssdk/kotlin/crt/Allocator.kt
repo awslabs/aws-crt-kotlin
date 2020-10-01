@@ -16,7 +16,7 @@ internal object Allocator {
 }
 
 internal class AwsAllocator : NativeFreeablePlacement, CValuesRef<aws_allocator>() {
-    private val allocator: CPointer<aws_allocator>
+    internal val allocator: CPointer<aws_allocator>
 
     init {
         val traceLevel = getenv("aws.crt.memory.tracing")?.toKString()?.toIntOrNull()

@@ -40,12 +40,16 @@ public interface Buffer {
  */
 public interface MutableBuffer : Buffer {
     /**
-     * The number of bytes this buffer can currently hold without re-allocating
+     * The total number of bytes this buffer can currently hold without re-allocating
      */
-    public val capacity: Int
+    public val capacity: Long
+
+    // TODO - consider some cursor abstractions to help deal with write() not writing the entire contents
+    //        or at least add a property to get the capacity - len which is the amount remaining that can be written
 
     /**
-     * Append the entire contents of [src] to the buffer
+     * Append as much of the contents of [src] to the buffer. Returns the amount of data actually written
+     * which may be less than the size of the [ByteArray]
      */
     public fun write(src: ByteArray): Int
 }

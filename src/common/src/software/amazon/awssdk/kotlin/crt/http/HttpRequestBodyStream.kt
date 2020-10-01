@@ -5,6 +5,32 @@
 
 package software.amazon.awssdk.kotlin.crt.http
 
+import software.amazon.awssdk.kotlin.crt.io.MutableBuffer
+
+/**
+ * Interface that CRT knows how to call to request an outgoing request payload body
+ */
 public interface HttpRequestBodyStream {
-    // TODO
+
+    /**
+     * Called from CRT when the Http request has a body.
+     *
+     * Note this function may be called many times
+     *
+     * @param buffer The outgoing buffer to write the payload to.
+     * @return true if the body has been completely written, false otherwise
+     */
+    public fun sendRequestBody(buffer: MutableBuffer): Boolean {
+        return true
+    }
+
+    /**
+     * Called when the processing needs the stream to rewind itself back to the beginning.
+     * If the stream does not support rewinding or the rewind fails, false should be returned
+     *
+     * Payload signing requires a rewindable stream, basic HTTP does not
+     *
+     * @return true if the stream was successfully rewound, false otherwise
+     */
+    public fun resetPosition(): Boolean = false
 }
