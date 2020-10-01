@@ -5,6 +5,8 @@
 
 package software.amazon.awssdk.kotlin.crt.http
 
+import software.amazon.awssdk.kotlin.crt.io.Buffer
+
 // TODO - use HttpHeaderBlock directly?
 // TODO - evaluate nullability of each callback parameter
 
@@ -45,11 +47,10 @@ public interface HttpStreamResponseHandler {
      * Called when new Response Body bytes have been received. Note that this function may be called multiple times over
      * the lifetime of an HttpClientConnection as bytes are received.
      *
-     * Users must read all data from bodyBytesIn before returning. If "bodyBytesIn.remaining() &gt; 0" after this method
-     * returns, then Native will assume there was a processing failure and abort the connection.
+     * Users must read all data from bodyBytesIn before returning.
      *
-     * Do NOT keep a reference to this ByteBuffer past the lifetime of this function call. The CommonRuntime reserves
-     * the right to use DirectByteBuffers pointing to memory that only lives as long as the function call.
+     * Do NOT keep a reference to this [Buffer] past the lifetime of this function call. The common runtime reserves
+     * the right to use memory that only lives as long as the function call.
      *
      * Sliding Window:
      * The Native HttpClientConnection EventLoop will keep sending data until the end of the sliding Window is reached.
@@ -64,9 +65,9 @@ public interface HttpStreamResponseHandler {
      * @return The number of bytes to move the sliding window by. Repeatedly returning zero will eventually cause the
      * sliding window to fill up and data to stop flowing until the user slides the window back open.
      */
-    public fun onResponseBody(stream: HttpStream, bodyBytesIn: ByteArray): Int {
+    public fun onResponseBody(stream: HttpStream, bodyBytesIn: Buffer): Int {
         /* Optional Callback, ignore incoming response body by default unless user wants to capture it. */
-        return bodyBytesIn.size
+        return bodyBytesIn.len
     }
 
     /**

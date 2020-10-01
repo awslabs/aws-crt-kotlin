@@ -25,7 +25,7 @@ public fun CPointer<aws_string>.asAwsByteCursor(): CValue<aws_byte_cursor> {
 }
 
 /**
- * Get a byte cursor from the current aws_string instance
+ * Free the aws_string instance
  */
 public fun CPointer<aws_string>.free() {
     aws_string_destroy(this)
@@ -39,24 +39,27 @@ public fun String.toAwsString(): CPointer<aws_string> {
     return aws_string_new_from_c_str(Allocator.Default, this) ?: throw CrtRuntimeException("aws_string_new_from_c_string($this)")
 }
 
+// NOTE - we can't use aws_byte_cursor_from_c_str() (which takes a Kotlin string). The way Kotlin
+// manages memory through this bridge is incompatible. I'm fairly certain it's because they encode the String to
+// a null-terminated ByteArray, pin it, and pass the address of the starting element. This is a temporary that
+// is no longer valid after the call though.
+
 /**
- * Get a byte cursor from the current Kotlin string
+ * Initialize an aws_byte_cursor from a (pinned) Kotlin [ByteArray].
+ * NOTE: the cursor is only valid while the array is pinned
  */
-public fun String.asAwsByteCursor(): CValue<aws_byte_cursor> {
-    return aws_byte_cursor_from_c_str(this)
+public fun Pinned<ByteArray>.asAwsByteCursor(): CValue<aws_byte_cursor> {
+    val arr = get()
+    val addr = addressOf(0)
+    return cValue<aws_byte_cursor> {
+        len = arr.size.convert()
+        ptr = addr.reinterpret()
+    }
 }
 
 /**
- * tl;dr convenience init for the way Kotlin/Native interop generates bindings.
- *
- * The bindings generated for a struct with a nested byte cursor generate the
- * property as a Kotlin `val` making it un-assignable directly.
+ * Initialize an aws_byte_cursor instance from an existing cursor
  */
-public inline fun aws_byte_cursor.initFromString(str: String) {
-    val cur = str.asAwsByteCursor()
-    this.initFromCursor(cur)
-}
-
 public inline fun aws_byte_cursor.initFromCursor(cur: CValue<aws_byte_cursor>) {
     val dest = this
     cur.useContents {
@@ -70,4 +73,21 @@ public inline fun aws_byte_cursor.initFromCursor(cur: CValue<aws_byte_cursor>) {
  */
 public inline fun aws_byte_cursor.toKString(): String {
     return ptr?.readBytes(len.convert())?.decodeToString() ?: ""
+}
+
+/**
+ * Interpret this byte cursor as a Kotlin string
+ */
+public inline fun CValue<aws_byte_cursor>.toKString(): String = useContents { toKString() }
+
+/**
+ * Run the given [block] with the string encoded as an aws_byte_cursor. Useful for one off calls that take
+ * a byte cursor
+ */
+public inline fun <reified T> withAwsByteCursor(str: String, block: (cursor: CValue<aws_byte_cursor>) -> T): T {
+    val bytes = str.encodeToByteArray()
+    return bytes.usePinned { pinned ->
+        val cursor = pinned.asAwsByteCursor()
+        block(cursor)
+    }
 }

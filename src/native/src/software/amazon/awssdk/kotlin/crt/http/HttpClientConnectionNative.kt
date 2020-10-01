@@ -9,6 +9,8 @@ import kotlinx.cinterop.*
 import libcrt.*
 import platform.posix.size_t
 import software.amazon.awssdk.kotlin.crt.*
+import software.amazon.awssdk.kotlin.crt.io.Buffer
+import software.amazon.awssdk.kotlin.crt.io.ByteCursorBuffer
 
 // TODO - port over tests from crt-java
 
@@ -55,24 +57,38 @@ internal class HttpClientConnectionNative(
 
         try {
             awsAssertOp(
-                aws_http_message_set_request_method(nativeReq, request.method.asAwsByteCursor())
+                withAwsByteCursor(request.method) { method ->
+                    aws_http_message_set_request_method(nativeReq, method)
+                }
             ) { "aws_http_message_set_request_method()" }
 
             awsAssertOp(
-                aws_http_message_set_request_path(nativeReq, request.encodedPath.asAwsByteCursor())
+                withAwsByteCursor(request.encodedPath) { encodedPath ->
+                    aws_http_message_set_request_path(nativeReq, encodedPath)
+                }
             ) { "aws_http_message_set_request_path()" }
 
             request.headers.forEach { key, values ->
-                values.map {
-                    cValue<aws_http_header> {
-                        name.initFromString(key)
-                        value.initFromString(it)
-                    }
-                }.forEach {
-                    awsAssertOp(
-                        aws_http_message_add_header(nativeReq, it)
-                    ) {
-                        "aws_http_message_add_header()"
+                // instead of usual idiomatic map(), forEach()...
+                // have to be a little more careful here as some of these are temporaries and we need
+                // stable memory addresses
+                key.encodeToByteArray().usePinned { keyBytes ->
+                    val keyCursor = keyBytes.asAwsByteCursor()
+                    values.forEach {
+                        it.encodeToByteArray().usePinned { valueBytes ->
+                            val valueCursor = valueBytes.asAwsByteCursor()
+
+                            val header = cValue<aws_http_header> {
+                                name.initFromCursor(keyCursor)
+                                value.initFromCursor(valueCursor)
+                            }
+
+                            awsAssertOp(
+                                aws_http_message_add_header(nativeReq, header)
+                            ) {
+                                "aws_http_message_add_header()"
+                            }
+                        }
                     }
                 }
             }
@@ -122,17 +138,14 @@ private fun onResponseHeaders(
     numHeaders: size_t,
     userdata: COpaquePointer?
 ): Int {
-
     initRuntimeIfNeeded()
-    // TODO - what kind of cleanup do we need in these error cases? What callbacks are we guaranteed to get?
-    // what about if the response handler throws an exception?
-
     val ctx = userdata?.asStableRef<StreamContext>()?.get() ?: return AWS_OP_ERR
     val stream = nativeStream?.let { HttpStreamNative(it) } ?: return AWS_OP_ERR
 
-    val headers: List<HttpHeader>? = if (numHeaders > 0u && headerArray != null) {
-        val kheaders = mutableListOf<HttpHeader>()
-        for (i in 0..numHeaders.toInt()) {
+    val hdrCnt = numHeaders.toInt()
+    val headers: List<HttpHeader>? = if (hdrCnt > 0 && headerArray != null) {
+        val kheaders: MutableList<HttpHeader> = ArrayList(hdrCnt)
+        for (i in 0..hdrCnt) {
             val nativeHdr = headerArray[i]
             val hdr = HttpHeader(nativeHdr.name.toKString(), nativeHdr.value.toKString())
             kheaders.add(hdr)
@@ -142,7 +155,11 @@ private fun onResponseHeaders(
         null
     }
 
-    ctx.handler.onResponseHeaders(stream, stream.responseStatusCode, blockType.value.toInt(), headers)
+    try {
+        ctx.handler.onResponseHeaders(stream, stream.responseStatusCode, blockType.value.toInt(), headers)
+    } catch (ex: Exception) {
+        return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
+    }
     return AWS_OP_SUCCESS
 }
 
@@ -156,11 +173,16 @@ private fun onResponseHeaderBlockDone(
 
     val ctx = userdata?.asStableRef<StreamContext>()?.get() ?: return AWS_OP_ERR
     val stream = nativeStream?.let { HttpStreamNative(it) } ?: return AWS_OP_ERR
-    ctx.handler.onResponseHeadersDone(stream, blockType.value.toInt())
+    try {
+        ctx.handler.onResponseHeadersDone(stream, blockType.value.toInt())
+    } catch (ex: Exception) {
+        return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
+    }
 
     return AWS_OP_SUCCESS
 }
 
+@OptIn(ExperimentalUnsignedTypes::class)
 private fun onIncomingBody(
     nativeStream: CPointer<aws_http_stream>?,
     data: CPointer<aws_byte_cursor>?,
@@ -171,8 +193,21 @@ private fun onIncomingBody(
     val ctx = userdata?.asStableRef<StreamContext>()?.get() ?: return AWS_OP_ERR
     val stream = nativeStream?.let { HttpStreamNative(it) } ?: return AWS_OP_ERR
 
-    // FIXME - bytearray is not the right abstraction here - we should create an interface and wrap it
-    return ctx.handler.onResponseBody(stream, byteArrayOf())
+    try {
+        val body = if (data != null) ByteCursorBuffer(data) else Buffer.Empty
+        val windowIncrement = ctx.handler.onResponseBody(stream, body)
+        if (windowIncrement < 0) {
+            return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
+        }
+
+        if (windowIncrement > 0) {
+            aws_http_stream_update_window(nativeStream, windowIncrement.convert())
+        }
+    } catch (ex: Exception) {
+        return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
+    }
+
+    return AWS_OP_SUCCESS
 }
 
 private fun onStreamComplete(
@@ -185,7 +220,11 @@ private fun onStreamComplete(
     val stream = nativeStream?.let { HttpStreamNative(it) } ?: return
     try {
         ctx.handler.onResponseComplete(stream, errorCode)
+    } catch (ex: Exception) {
+        // close connection if callback throws an exception
+        aws_http_connection_close(aws_http_stream_get_connection(nativeStream))
     } finally {
+        // cleanup stream resources
         val stableRef = ctx.stableRef
         ctx.stableRef = null
         stableRef?.dispose()
