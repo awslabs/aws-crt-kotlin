@@ -56,7 +56,7 @@ public data class Uri(
 
     init {
         if (specifiedPort != DEFAULT_SCHEME_PORT) {
-            require(specifiedPort in 1..65536) { "port must be in between 1 and 65536" }
+            require(specifiedPort in 1..65536) { "port must be in between 1 and 65536; found: $specifiedPort" }
         }
     }
 
@@ -64,6 +64,18 @@ public data class Uri(
      * The actual port to use
      */
     val port: Int = specifiedPort.takeUnless { it == DEFAULT_SCHEME_PORT } ?: scheme.defaultPort
+
+    public companion object {
+        /**
+         * Build a URI
+         */
+        public fun build(block: UriBuilder.() -> Unit): Uri = UriBuilder().apply(block).build()
+
+        /**
+         * Parse a URI from a string into it's component parts
+         */
+        public fun parse(uri: String): Uri = parseUri(uri)
+    }
 
     override fun toString(): String = buildString {
         // FIXME - the userinfo, path, and fragment are raw at this point and need escaped as well probably
@@ -140,9 +152,12 @@ public class UriBuilder {
 /**
  * Test if the protocol requires TLS support
  */
-internal fun Protocol.requiresTls(): Boolean = name == "https" || name == "wss"
+public fun Protocol.requiresTls(): Boolean = name == "https" || name == "wss"
 
 /**
  * Test if the protocol is HTTP(S)
  */
 internal fun Protocol.isHttp(): Boolean = name == "http" || name == "https"
+
+// platform parse function
+internal expect fun parseUri(uri: String): Uri

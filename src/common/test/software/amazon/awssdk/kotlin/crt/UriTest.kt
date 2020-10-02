@@ -149,4 +149,15 @@ class UriTest {
         val expected = "http://test.aws.com/kotlin?foo=baz"
         assertEquals(expected, uri.toString())
     }
+
+    @Test
+    fun itParses() {
+        val uri = "https://test.aws.com:8000/kotlin?foo=baz"
+        val actual = Uri.parse(uri)
+        assertEquals(Protocol.HTTPS, actual.scheme)
+        assertEquals(8000, actual.port)
+        assertEquals("test.aws.com", actual.host)
+        assertEquals("/kotlin", actual.path)
+        assertEquals("foo=baz", actual.parameters)
+    }
 }
