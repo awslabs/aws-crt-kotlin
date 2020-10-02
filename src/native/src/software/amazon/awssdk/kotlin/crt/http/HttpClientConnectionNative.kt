@@ -23,9 +23,8 @@ internal class HttpClientConnectionNative(
 
     override fun makeRequest(httpReq: HttpRequest, handler: HttpStreamResponseHandler): HttpStream {
         val nativeRequest = initRequest(httpReq)
-        val cbData = StreamContext(handler, nativeRequest)
+        val cbData = HttpStreamContext(handler, nativeRequest)
         val stableRef = StableRef.create(cbData)
-        cbData.stableRef = stableRef
 
         val reqOptions = cValue<aws_http_make_request_options> {
             self_size = sizeOf<aws_http_make_request_options>().convert()
@@ -111,7 +110,7 @@ internal class HttpClientConnectionNative(
 /**
  * Userdata passed through the native callbacks for HTTP responses
  */
-private class StreamContext(
+private class HttpStreamContext(
     /**
      * The actual Kotlin handler for each callback
      */
@@ -121,10 +120,7 @@ private class StreamContext(
      * The aws-c-http request instance
      */
     val nativeReq: CPointer<aws_http_message>
-) {
-    // the ref is stashed away after creating the context and is disposed of after the stream on_complete callback runs
-    var stableRef: StableRef<StreamContext>? = null
-}
+)
 
 // See https://kotlinlang.org/docs/reference/native/c_interop.html#callbacks
 
@@ -137,7 +133,7 @@ private fun onResponseHeaders(
     userdata: COpaquePointer?
 ): Int {
     initRuntimeIfNeeded()
-    val ctx = userdata?.asStableRef<StreamContext>()?.get() ?: return AWS_OP_ERR
+    val ctx = userdata?.asStableRef<HttpStreamContext>()?.get() ?: return AWS_OP_ERR
     val stream = nativeStream?.let { HttpStreamNative(it) } ?: return AWS_OP_ERR
 
     val hdrCnt = numHeaders.toInt()
@@ -169,7 +165,7 @@ private fun onResponseHeaderBlockDone(
 ): Int {
     initRuntimeIfNeeded()
 
-    val ctx = userdata?.asStableRef<StreamContext>()?.get() ?: return AWS_OP_ERR
+    val ctx = userdata?.asStableRef<HttpStreamContext>()?.get() ?: return AWS_OP_ERR
     val stream = nativeStream?.let { HttpStreamNative(it) } ?: return AWS_OP_ERR
     try {
         ctx.handler.onResponseHeadersDone(stream, blockType.value.toInt())
@@ -188,7 +184,7 @@ private fun onIncomingBody(
 ): Int {
     initRuntimeIfNeeded()
 
-    val ctx = userdata?.asStableRef<StreamContext>()?.get() ?: return AWS_OP_ERR
+    val ctx = userdata?.asStableRef<HttpStreamContext>()?.get() ?: return AWS_OP_ERR
     val stream = nativeStream?.let { HttpStreamNative(it) } ?: return AWS_OP_ERR
 
     try {
@@ -214,7 +210,8 @@ private fun onStreamComplete(
     userdata: COpaquePointer?
 ) {
     initRuntimeIfNeeded()
-    val ctx = userdata?.asStableRef<StreamContext>()?.get() ?: return
+    val stableRef = userdata?.asStableRef<HttpStreamContext>() ?: return
+    val ctx = stableRef.get()
     val stream = nativeStream?.let { HttpStreamNative(it) } ?: return
     try {
         ctx.handler.onResponseComplete(stream, errorCode)
@@ -223,9 +220,7 @@ private fun onStreamComplete(
         aws_http_connection_close(aws_http_stream_get_connection(nativeStream))
     } finally {
         // cleanup stream resources
-        val stableRef = ctx.stableRef
-        ctx.stableRef = null
-        stableRef?.dispose()
+        stableRef.dispose()
         aws_http_message_destroy(ctx.nativeReq)
     }
 }
