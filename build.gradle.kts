@@ -12,12 +12,14 @@ group = "software.amazon.awssdk.crt"
 version = "1.0-SNAPSHOT"
 description = "Kotlin Multiplatform bindings for AWS SDK Common Runtime"
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-    jcenter()
-    maven ("https://dl.bintray.com/kotlin/kotlin-eap")
-    maven ("https://kotlin.bintray.com/kotlinx")
+allprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+        maven ("https://dl.bintray.com/kotlin/kotlin-eap")
+        maven ("https://kotlin.bintray.com/kotlinx")
+    }
 }
 
 project.ext.set("hostManager", HostManager())
@@ -116,15 +118,15 @@ kotlin {
             }
         }
 
+
+        val linkDirs = awsLibs.map {
+            "-L$buildDir/cmake-build/aws-common-runtime/$it"
+        }
+        // val libs = awsLibs.map { "-l$it" }.toMutableList()
+        val linkOpts = linkDirs.joinToString(" ")
+        println("linker opts: $linkOpts")
+
         compilations["test"].kotlinOptions {
-            val linkDirs = awsLibs.map {
-                "-L$buildDir/cmake-build/aws-common-runtime/$it"
-            }
-            val libs = awsLibs.map { "-l$it" }.toMutableList()
-
-            val linkOpts = (linkDirs + libs).joinToString(" ")
-
-            println("linker opts: $linkOpts")
             freeCompilerArgs = listOf("-linker-options", linkOpts)
         }
     }
@@ -226,7 +228,8 @@ dependencies {
 }
 
 val lintPaths = listOf(
-    "src/**/*.kt"
+    "src/**/*.kt",
+    "elasticurl/**/*.kt"
 )
 
 tasks.register<JavaExec>("ktlint") {

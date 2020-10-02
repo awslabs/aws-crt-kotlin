@@ -7,4 +7,5 @@ headers = aws/common/allocator.h aws/common/error.h \
         aws/compression/compression.h
 headerFilter = aws/common/* aws/io/* aws/http/* aws/compression/*
 
+linkerOpts = -laws-c-common -laws-c-io -laws-c-http -laws-c-compression
 linkerOpts.osx = -framework Security
