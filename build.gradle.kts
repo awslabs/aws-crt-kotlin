@@ -132,7 +132,7 @@ kotlin {
     }
 }
 
-var buildType = "Release"
+var buildType = "Debug"
 if (project.hasProperty("buildType")) {
     buildType = project.property("buildType").toString()
     logger.info("Using custom build type: $buildType")

@@ -8,6 +8,10 @@ plugins {
     application
 }
 
+project.ext.set("hostManager", org.jetbrains.kotlin.konan.target.HostManager())
+apply(from = rootProject.file("gradle/utility.gradle"))
+apply(from = rootProject.file("gradle/native.gradle"))
+
 
 kotlin {
     jvm() {
@@ -22,18 +26,16 @@ kotlin {
         }
     }
 
-    // TODO - when intellij is running we can only build for the variant we have configured - re-use the common native stuffs
-    // linuxX64()
-    macosX64()
-    // mingwX64()
-
     sourceSets {
         commonMain {
             dependencies {
                 val kotlinxCliVersion: String by project
+                val coroutinesVersion: String by project
+
                 implementation(kotlin("stdlib-common"))
                 implementation("org.jetbrains.kotlinx:kotlinx-cli:$kotlinxCliVersion")
                 implementation(project(":"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion-native-mt")
             }
         }
 

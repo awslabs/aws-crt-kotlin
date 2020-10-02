@@ -118,10 +118,10 @@ public actual class HttpClientConnectionManager actual constructor(options: Http
             val managerOpts = cValue<aws_http_connection_manager_options> {
                 bootstrap = options.clientBootstrap.ptr
                 initial_window_size = options.windowSize.convert()
-                tls_connection_options = null
                 host.initFromCursor(endpoint)
                 port = options.uri.port.convert()
 
+                max_connections = options.maxConnections.convert()
                 enable_read_back_pressure = options.manualWindowManagement
                 max_connection_idle_in_milliseconds = options.maxConnectionIdleMs.convert()
 

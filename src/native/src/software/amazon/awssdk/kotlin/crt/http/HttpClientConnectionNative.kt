@@ -11,6 +11,7 @@ import platform.posix.size_t
 import software.amazon.awssdk.kotlin.crt.*
 import software.amazon.awssdk.kotlin.crt.io.Buffer
 import software.amazon.awssdk.kotlin.crt.io.ByteCursorBuffer
+import kotlin.native.concurrent.freeze
 
 // TODO - port over tests from crt-java
 
@@ -23,7 +24,7 @@ internal class HttpClientConnectionNative(
 
     override fun makeRequest(httpReq: HttpRequest, handler: HttpStreamResponseHandler): HttpStream {
         val nativeRequest = initRequest(httpReq)
-        val cbData = HttpStreamContext(handler, nativeRequest)
+        val cbData = HttpStreamContext(handler, nativeRequest).freeze()
         val stableRef = StableRef.create(cbData)
 
         val reqOptions = cValue<aws_http_make_request_options> {
@@ -139,7 +140,7 @@ private fun onResponseHeaders(
     val hdrCnt = numHeaders.toInt()
     val headers: List<HttpHeader>? = if (hdrCnt > 0 && headerArray != null) {
         val kheaders: MutableList<HttpHeader> = ArrayList(hdrCnt)
-        for (i in 0..hdrCnt) {
+        for (i in 0 until hdrCnt) {
             val nativeHdr = headerArray[i]
             val hdr = HttpHeader(nativeHdr.name.toKString(), nativeHdr.value.toKString())
             kheaders.add(hdr)

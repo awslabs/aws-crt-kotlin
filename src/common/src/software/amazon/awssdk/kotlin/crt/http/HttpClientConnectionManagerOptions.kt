@@ -51,7 +51,7 @@ public class HttpClientConnectionManagerOptions internal constructor(
 public class HttpClientConnectionManagerOptionsBuilder {
     internal fun build(): HttpClientConnectionManagerOptions = HttpClientConnectionManagerOptions(this)
 
-    internal var uri: Uri? = null
+    public var uri: Uri? = null
 
     public fun uri(block: UriBuilder.() -> Unit) {
         uri = UriBuilder().apply(block).build()
