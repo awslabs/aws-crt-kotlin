@@ -62,6 +62,10 @@ fun main(args: Array<String>) {
         }
 
         val streamDone = Channel<Unit>()
+
+        // todo - we need something to make this easier
+        var responseBody = byteArrayOf()
+
         val responseHandler = object : HttpStreamResponseHandler {
             override fun onResponseHeaders(
                 stream: HttpStream,
@@ -74,8 +78,22 @@ fun main(args: Array<String>) {
                 nextHeaders?.forEach { println("\t${it.name}: ${it.value}") }
             }
 
+            override fun onResponseBody(stream: HttpStream, bodyBytesIn: Buffer): Int {
+                println("onResponseBody -- recv'd ${bodyBytesIn.len} bytes")
+                val contents = bodyBytesIn.readAll()
+
+                println(contents.decodeToString())
+
+                return contents.size
+            }
+
             override fun onResponseComplete(stream: HttpStream, errorCode: Int) {
                 println("onResponseComplete: errorCode: $errorCode")
+                if (errorCode != 0) {
+                    val errName = CRT.awsErrorName(errorCode)
+                    val errDesc = CRT.awsErrorString(errorCode)
+                    println("error $errName: $errDesc")
+                }
                 streamDone.offer(Unit)
             }
         }
@@ -84,6 +102,9 @@ fun main(args: Array<String>) {
         stream.activate()
 
         streamDone.receive()
+
+        // println("response: ${responseBody.size} bytes:")
+        // println(responseBody.decodeToString())
     }
 }
 

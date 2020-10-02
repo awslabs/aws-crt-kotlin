@@ -199,6 +199,7 @@ private fun onIncomingBody(
             aws_http_stream_update_window(nativeStream, windowIncrement.convert())
         }
     } catch (ex: Exception) {
+        println(ex)
         return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
     }
 
