@@ -5,22 +5,28 @@
 
 package software.amazon.awssdk.kotlin.crt
 
+import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.toKString
 import libcrt.*
+import platform.posix.atexit
 import kotlin.native.concurrent.AtomicInt
+import kotlin.native.concurrent.freeze
 
 public actual object CRT {
+    private val initialized: AtomicInt = AtomicInt(0).freeze()
     init {
         initRuntime()
     }
-    private val initialized: AtomicInt = AtomicInt(0)
 
     public actual fun initRuntime() {
-        // if (!initialized.compareAndSet(0, 1)) return
+        if (!initialized.compareAndSet(0, 1)) return
         aws_common_library_init(Allocator.Default)
         aws_io_library_init(Allocator.Default)
         aws_compression_library_init(Allocator.Default)
         aws_http_library_init(Allocator.Default)
+        Log.initialize()
+
+        atexit(staticCFunction(::finalCleanup))
     }
 
     /**

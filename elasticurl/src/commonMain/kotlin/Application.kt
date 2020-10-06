@@ -106,6 +106,7 @@ fun main(args: Array<String>) {
         // println("response: ${responseBody.size} bytes:")
         // println(responseBody.decodeToString())
     }
+    println("exiting")
 }
 
 private fun headerPair(raw: String): Pair<String, String> {

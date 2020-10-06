@@ -47,7 +47,7 @@ public interface HttpStreamResponseHandler {
      * Called when new Response Body bytes have been received. Note that this function may be called multiple times over
      * the lifetime of an HttpClientConnection as bytes are received.
      *
-     * Users must read all data from bodyBytesIn before returning.
+     * Users must read ALL data from bodyBytesIn before returning.
      *
      * Do NOT keep a reference to this [Buffer] past the lifetime of this function call. The common runtime reserves
      * the right to use memory that only lives as long as the function call.

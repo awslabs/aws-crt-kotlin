@@ -7,7 +7,6 @@ package software.amazon.awssdk.kotlin.crt
 
 import kotlinx.cinterop.*
 import libcrt.*
-import platform.posix.getenv
 
 private const val FRAMES_PER_STACK = 8
 
@@ -19,9 +18,10 @@ internal class AwsAllocator : NativeFreeablePlacement, CValuesRef<aws_allocator>
     internal val allocator: CPointer<aws_allocator>
 
     init {
-        val traceLevel = getenv("aws.crt.memory.tracing")?.toKString()?.toIntOrNull()
+        val traceLevel = CrtDebug.traceLevel
+        println("trace level: $traceLevel")
         var tmp = aws_default_allocator() ?: throw CrtRuntimeException("default allocator init failed")
-        if (traceLevel != null) {
+        if (traceLevel > 0) {
             tmp = aws_mem_tracer_new(tmp, null, traceLevel.convert(), FRAMES_PER_STACK.convert()) ?: throw CrtRuntimeException("aws_mem_tracer_new()")
         }
         allocator = tmp
@@ -41,16 +41,22 @@ internal class AwsAllocator : NativeFreeablePlacement, CValuesRef<aws_allocator>
     }
 }
 
-// FIXME - arena api's are not open enough to do quite what we want...
-// /**
-//  * Runs given [block] providing allocation of memory
-//  * which will be automatically disposed at the end of this scope.
-//  */
-// internal fun awsMemScoped(allocator: AwsAllocator? = null, block: Arena.() -> Unit) {
-//     val arena = Arena(allocator ?: Allocator.Default)
-//     try {
-//         arena.block()
-//     } finally {
-//         arena.clear()
-//     }
-// }
+internal fun finalCleanup() {
+    // IT'S THE FINAL COUNTDOWN..dun-nuh-nuh-na, ok but seriously let's try and tidy up before the world ends
+    aws_http_library_clean_up()
+    aws_compression_library_clean_up()
+    aws_io_library_clean_up()
+    aws_common_library_clean_up()
+
+    if (CrtDebug.traceLevel > 0) {
+        println("dumping memtrace")
+        aws_mem_tracer_dump(Allocator.Default.allocator)
+    }
+
+    // cleanup logging
+    Log.cleanup()
+
+    if (CrtDebug.traceLevel > 0) {
+        aws_mem_tracer_destroy(Allocator.Default.allocator)
+    }
+}

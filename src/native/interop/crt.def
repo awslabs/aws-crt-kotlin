@@ -1,6 +1,6 @@
 package = libcrt
 headers = aws/common/allocator.h aws/common/error.h \
-        aws/common/byte_buf.h aws/common/string.h \
+        aws/common/byte_buf.h aws/common/string.h aws/common/logging.h \
         aws/io/io.h aws/io/event_loop.h aws/io/host_resolver.h aws/io/stream.h \
         aws/io/channel_bootstrap.h aws/io/tls_channel_handler.h aws/io/socket.h \
         aws/io/uri.h \
@@ -10,3 +10,19 @@ headerFilter = aws/common/* aws/io/* aws/http/* aws/compression/*
 
 linkerOpts = -laws-c-common -laws-c-io -laws-c-http -laws-c-compression
 linkerOpts.osx = -framework Security
+
+---
+
+/**
+ * Obtaining static variables is difficult in kn, this gives us a stable variable to wire up that works
+ * with the kn memory model
+ */
+static struct aws_logger s_crt_kotlin_logger;
+
+
+/**
+ * macros not available through generated kn bridge
+ */
+static void s_crt_kotlin_log(enum aws_log_level level, aws_log_subject_t subject, const char *message) {
+    AWS_LOGF(level, subject, "%s", message)
+}

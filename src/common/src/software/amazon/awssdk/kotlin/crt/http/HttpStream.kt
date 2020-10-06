@@ -24,8 +24,8 @@ public interface HttpStream : Closeable {
      * Opens the Sliding Read/Write Window by the number of bytes passed as an argument for this HttpStream.
      *
      * This function should only be called if the user application previously returned less than the length of the input
-     * ByteBuffer from a onResponseBody() call in a HttpStreamResponseHandler, and should be &lt;= to the total number of
-     * un-acked bytes.
+     * Buffer from a onResponseBody() call in a HttpStreamResponseHandler, and should be <= to the total number of
+     * un-packed bytes.
      *
      * @param size How many bytes to increment the sliding window by.
      */
