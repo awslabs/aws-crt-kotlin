@@ -15,17 +15,7 @@ internal object Allocator {
 }
 
 internal class AwsAllocator : NativeFreeablePlacement, CValuesRef<aws_allocator>() {
-    internal val allocator: CPointer<aws_allocator>
-
-    init {
-        val traceLevel = CrtDebug.traceLevel
-        println("trace level: $traceLevel")
-        var tmp = aws_default_allocator() ?: throw CrtRuntimeException("default allocator init failed")
-        if (traceLevel > 0) {
-            tmp = aws_mem_tracer_new(tmp, null, traceLevel.convert(), FRAMES_PER_STACK.convert()) ?: throw CrtRuntimeException("aws_mem_tracer_new()")
-        }
-        allocator = tmp
-    }
+    internal val allocator: CPointer<aws_allocator> = s_crt_kotlin_allocator ?: throw CrtRuntimeException("CRT allocator was not initialized. Have you called CRT.initRuntime()?")
 
     override fun getPointer(scope: AutofreeScope): CPointer<aws_allocator> = allocator
 
@@ -42,21 +32,15 @@ internal class AwsAllocator : NativeFreeablePlacement, CValuesRef<aws_allocator>
 }
 
 internal fun finalCleanup() {
-    // IT'S THE FINAL COUNTDOWN..dun-nuh-nuh-na, ok but seriously let's try and tidy up before the world ends
+    // IT'S THE FINAL COUNTDOWN..dun-nuh-nuh-na, ok but seriously let's try and tidy up before the world ends.
+    // By the time we get to this function the k/n runtime has been _torn down_. Accessing any top-level
+    // variable or object requires re-initializing the runtime (via initRuntime()) but that defeats the purpose,
+    // everything we have left to do is cleanup CRT resources of which k/n knows nothing about.
     aws_http_library_clean_up()
     aws_compression_library_clean_up()
     aws_io_library_clean_up()
     aws_common_library_clean_up()
 
-    if (CrtDebug.traceLevel > 0) {
-        println("dumping memtrace")
-        aws_mem_tracer_dump(Allocator.Default.allocator)
-    }
-
-    // cleanup logging
-    Log.cleanup()
-
-    if (CrtDebug.traceLevel > 0) {
-        aws_mem_tracer_destroy(Allocator.Default.allocator)
-    }
+    // crt.def
+    s_crt_kotlin_clean_up()
 }

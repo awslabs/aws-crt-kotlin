@@ -104,7 +104,9 @@ internal class HttpClientConnectionNative(
     }
 
     override suspend fun close() {
-        TODO("Not yet implemented")
+        // aws_http_connection_close(connection)
+        // aws_http_connection_release(connection)
+        manager.releaseConnection(this)
     }
 }
 

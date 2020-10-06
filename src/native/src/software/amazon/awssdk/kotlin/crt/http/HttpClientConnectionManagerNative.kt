@@ -179,9 +179,9 @@ public actual class HttpClientConnectionManager actual constructor(options: Http
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun close() {
         // TODO - deal with close() being called and clearing out pending acquisitions
+        aws_http_connection_manager_release(manager)
         shutdownComplete.receiveOrNull()
         shutdownCompleteStableRef.dispose()
-        aws_http_connection_manager_release(manager)
     }
 }
 

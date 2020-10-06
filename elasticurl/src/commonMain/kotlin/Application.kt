@@ -5,6 +5,7 @@
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import software.amazon.awssdk.kotlin.crt.CRT
+import software.amazon.awssdk.kotlin.crt.CrtRuntimeException
 import software.amazon.awssdk.kotlin.crt.http.*
 import software.amazon.awssdk.kotlin.crt.io.*
 import kotlin.coroutines.CoroutineContext
@@ -61,52 +62,81 @@ fun main(args: Array<String>) {
             encodedPath = uri.path
         }
 
-        val streamDone = Channel<Unit>()
+        try {
 
-        // todo - we need something to make this easier
-        var responseBody = byteArrayOf()
-
-        val responseHandler = object : HttpStreamResponseHandler {
-            override fun onResponseHeaders(
-                stream: HttpStream,
-                responseStatusCode: Int,
-                blockType: Int,
-                nextHeaders: List<HttpHeader>?
-            ) {
-                println("onResponseHeaders -- status: $responseStatusCode ")
-                println("headers:")
-                nextHeaders?.forEach { println("\t${it.name}: ${it.value}") }
+            conn.roundTrip(request)
+        } catch (ex: Exception) {
+            println("failed to round trip request: ${ex.message}")
+            if (ex is CrtRuntimeException) {
+                println("CrtException: name: ${ex.errorName}; code: ${ex.errorCode}; desc: ${ex.errorDescription}")
             }
+        } finally {
+            // ... fixme
+            println("closing http connection")
+            conn.close()
+            println("closing http connection manager")
+            httpConnManager.close()
 
-            override fun onResponseBody(stream: HttpStream, bodyBytesIn: Buffer): Int {
-                println("onResponseBody -- recv'd ${bodyBytesIn.len} bytes")
-                val contents = bodyBytesIn.readAll()
+            println("closing client bootstrap")
+            clientBootstrap.close()
 
-                println(contents.decodeToString())
+            println("closing event loop group")
+            elg.close()
 
-                return contents.size
-            }
+            println("closing host resolver")
+            hr.close()
+        }
+    }
 
-            override fun onResponseComplete(stream: HttpStream, errorCode: Int) {
-                println("onResponseComplete: errorCode: $errorCode")
-                if (errorCode != 0) {
-                    val errName = CRT.awsErrorName(errorCode)
-                    val errDesc = CRT.awsErrorString(errorCode)
-                    println("error $errName: $errDesc")
-                }
-                streamDone.offer(Unit)
-            }
+    println("exiting")
+}
+
+private suspend fun HttpClientConnection.roundTrip(request: HttpRequest) {
+    val streamDone = Channel<Unit>()
+
+    // todo - we need something to make this easier
+    var responseBody = byteArrayOf()
+
+    val responseHandler = object : HttpStreamResponseHandler {
+        override fun onResponseHeaders(
+            stream: HttpStream,
+            responseStatusCode: Int,
+            blockType: Int,
+            nextHeaders: List<HttpHeader>?
+        ) {
+            println("onResponseHeaders -- status: $responseStatusCode ")
+            println("headers:")
+            nextHeaders?.forEach { println("\t${it.name}: ${it.value}") }
         }
 
-        val stream = conn.makeRequest(request, responseHandler)
-        stream.activate()
+        override fun onResponseBody(stream: HttpStream, bodyBytesIn: Buffer): Int {
+            println("onResponseBody -- recv'd ${bodyBytesIn.len} bytes")
+            val contents = bodyBytesIn.readAll()
 
-        streamDone.receive()
+            println(contents.decodeToString())
 
-        // println("response: ${responseBody.size} bytes:")
-        // println(responseBody.decodeToString())
+            return contents.size
+        }
+
+        override fun onResponseComplete(stream: HttpStream, errorCode: Int) {
+            println("onResponseComplete: errorCode: $errorCode")
+            if (errorCode != 0) {
+                val errName = CRT.awsErrorName(errorCode)
+                val errDesc = CRT.awsErrorString(errorCode)
+                println("error $errName: $errDesc")
+            }
+            streamDone.offer(Unit)
+        }
     }
-    println("exiting")
+
+    val stream = makeRequest(request, responseHandler)
+    try {
+        stream.activate()
+        // wait for completion signal
+        streamDone.receive()
+    } finally {
+        stream.close()
+    }
 }
 
 private fun headerPair(raw: String): Pair<String, String> {

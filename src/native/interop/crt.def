@@ -13,6 +13,44 @@ linkerOpts.osx = -framework Security
 
 ---
 
+// prototypes
+static void s_crt_kotlin_init_allocator(int trace_level);
+static void s_crt_kotlin_clean_up(void);
+static void s_crt_kotlin_logger_cleanup(void);
+static void s_crt_kotlin_log(enum aws_log_level level, aws_log_subject_t subject, const char *message);
+
+// definitions
+static struct aws_allocator *s_crt_kotlin_allocator = NULL;
+int g_memtrace_level = 0;
+
+static void s_crt_kotlin_init_allocator(int trace_level) {
+    if (trace_level > 0) {
+        g_memtrace_level = trace_level;
+        struct aws_allocator *allocator = aws_default_allocator();
+        allocator = aws_mem_tracer_new(allocator, NULL, (enum aws_mem_trace_level)trace_level, 8);
+        s_crt_kotlin_allocator = allocator;
+    } else {
+        s_crt_kotlin_allocator = aws_default_allocator();
+    }
+}
+
+/**
+ * Cleans up allocator and logging. This should be the absolute last thing called after cleaning up all the other
+ * initialized CRT* libs.
+ */
+static void s_crt_kotlin_clean_up(void) {
+    if (g_memtrace_level) {
+        aws_mem_tracer_dump(s_crt_kotlin_allocator);
+    }
+
+    s_crt_kotlin_logger_cleanup();
+
+    if (g_memtrace_level) {
+        aws_mem_tracer_destroy(s_crt_kotlin_allocator);
+    }
+}
+
+
 /**
  * Obtaining static variables is difficult in kn, this gives us a stable variable to wire up that works
  * with the kn memory model
@@ -24,5 +62,15 @@ static struct aws_logger s_crt_kotlin_logger;
  * macros not available through generated kn bridge
  */
 static void s_crt_kotlin_log(enum aws_log_level level, aws_log_subject_t subject, const char *message) {
-    AWS_LOGF(level, subject, "%s", message)
+    AWS_LOGF(level, subject, "%s", message);
+}
+
+/**
+ * Cleanup runs after kn runtime has been torn down, we need to do this outside of kotlin's world
+ */
+static void s_crt_kotlin_logger_cleanup(void) {
+    if (aws_logger_get() == &s_crt_kotlin_logger) {
+        aws_logger_set(NULL);
+        aws_logger_clean_up(&s_crt_kotlin_logger);
+    }
 }

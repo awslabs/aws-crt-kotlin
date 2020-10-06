@@ -9,6 +9,7 @@ import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.toKString
 import libcrt.*
 import platform.posix.atexit
+import kotlin.native.Platform
 import kotlin.native.concurrent.AtomicInt
 import kotlin.native.concurrent.freeze
 
@@ -20,13 +21,20 @@ public actual object CRT {
 
     public actual fun initRuntime() {
         if (!initialized.compareAndSet(0, 1)) return
+
+        // bootstrap our allocator defined in crt.def
+        s_crt_kotlin_init_allocator(CrtDebug.traceLevel)
+
         aws_common_library_init(Allocator.Default)
         aws_io_library_init(Allocator.Default)
         aws_compression_library_init(Allocator.Default)
         aws_http_library_init(Allocator.Default)
-        Log.initialize()
+        Logging.initialize()
 
         atexit(staticCFunction(::finalCleanup))
+
+        // fixme - yes yes I know...for now be quiet
+        Platform.isMemoryLeakCheckerActive = false
     }
 
     /**
