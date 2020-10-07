@@ -77,6 +77,9 @@ fun main(args: Array<String>) {
             println("closing http connection manager")
             httpConnManager.close()
 
+            println("closing tls context")
+            tlsContext.close()
+
             println("closing client bootstrap")
             clientBootstrap.close()
 
