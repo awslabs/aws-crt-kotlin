@@ -6,12 +6,15 @@
 package software.amazon.awssdk.kotlin.crt
 
 import software.amazon.awssdk.kotlin.crt.io.EventLoopGroup
+import software.amazon.awssdk.kotlin.crt.io.HostResolver
 import kotlin.test.Test
 
-class EventLoopGroupTest : CrtTest() {
+class HostResolverTest : CrtTest() {
     @Test
     fun createDestroy() = runSuspendTest {
-        val elg = EventLoopGroup()
-        elg.close()
+        EventLoopGroup().use { elg ->
+            val hr = HostResolver(elg)
+            hr.close()
+        }
     }
 }

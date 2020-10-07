@@ -13,11 +13,6 @@ public actual class HostResolver actual constructor(elg: EventLoopGroup, maxEntr
         TODO("Not yet implemented")
     }
 
-    public actual companion object {
-        public actual val Default: HostResolver
-            get() = TODO("Not yet implemented")
-    }
-
     override suspend fun close() {
         TODO("not implemented")
     }

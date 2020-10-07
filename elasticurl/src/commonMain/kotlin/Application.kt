@@ -80,11 +80,11 @@ fun main(args: Array<String>) {
             println("closing client bootstrap")
             clientBootstrap.close()
 
-            println("closing event loop group")
-            elg.close()
-
             println("closing host resolver")
             hr.close()
+
+            println("closing event loop group")
+            elg.close()
         }
     }
 

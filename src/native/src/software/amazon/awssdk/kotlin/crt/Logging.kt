@@ -19,7 +19,7 @@ internal object Logging {
 
         val options = cValue<aws_logger_standard_options> {
             // fixme - propagate these options through
-            file = platform.posix.stderr
+            file = platform.posix.stdout
             level = AWS_LOG_LEVEL_TRACE.convert()
         }
 

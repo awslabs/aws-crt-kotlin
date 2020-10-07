@@ -15,10 +15,6 @@ import software.amazon.awssdk.kotlin.crt.Closeable
  * @throws [software.amazon.awssdk.kotlin.crt.CrtRuntimeException] If the system is unable to allocate space for a native event loop group
  */
 public actual class EventLoopGroup actual constructor(numThreads: Int) : Closeable {
-    public actual companion object {
-        public actual val Default: EventLoopGroup
-            get() = TODO("Not yet implemented")
-    }
 
     /**
      * Close this ELG

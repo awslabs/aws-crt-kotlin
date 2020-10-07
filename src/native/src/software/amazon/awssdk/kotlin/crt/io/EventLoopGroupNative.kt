@@ -16,15 +16,6 @@ import software.amazon.awssdk.kotlin.crt.CrtResource
 import software.amazon.awssdk.kotlin.crt.CrtRuntimeException
 import kotlin.native.concurrent.freeze
 
-private fun onShutdownComplete(userdata: COpaquePointer?) {
-    if (userdata != null) {
-        initRuntimeIfNeeded()
-        val notify = userdata.asStableRef<Channel<Unit>>().get()
-        notify.offer(Unit)
-        notify.close()
-    }
-}
-
 /**
  * Creates a new event loop group for the I/O subsystem to use to run blocking I/O requests
  * This class wraps the aws_event_loop_group from aws-c-io
@@ -47,12 +38,6 @@ public actual class EventLoopGroup actual constructor(numThreads: Int) : CrtReso
         elg = aws_event_loop_group_new_default(Allocator.Default, numThreads.toUShort(), shutdownOpts) ?: throw CrtRuntimeException("aws_event_loop_group_new_default() failed")
     }
 
-    public actual companion object {
-        public actual val Default: EventLoopGroup by lazy {
-            EventLoopGroup(1)
-        }
-    }
-
     override val ptr: CPointer<aws_event_loop_group>
         get() = elg
 
@@ -64,5 +49,14 @@ public actual class EventLoopGroup actual constructor(numThreads: Int) : CrtReso
         aws_event_loop_group_release(elg)
         shutdownComplete.receiveOrNull()
         stableRef.dispose()
+    }
+}
+
+private fun onShutdownComplete(userdata: COpaquePointer?) {
+    if (userdata != null) {
+        initRuntimeIfNeeded()
+        val notify = userdata.asStableRef<Channel<Unit>>().get()
+        notify.offer(Unit)
+        notify.close()
     }
 }

@@ -14,9 +14,4 @@ import software.amazon.awssdk.kotlin.crt.Closeable
  * @param numThreads The number of threads that the event loop group may run tasks across. Usually 1.
  * @throws [software.amazon.awssdk.kotlin.crt.CrtRuntimeException] If the system is unable to allocate space for a native event loop group
 */
-public expect class EventLoopGroup(numThreads: Int = 1) : Closeable {
-
-    public companion object {
-        public val Default: EventLoopGroup
-    }
-}
+public expect class EventLoopGroup(numThreads: Int = 1) : Closeable
