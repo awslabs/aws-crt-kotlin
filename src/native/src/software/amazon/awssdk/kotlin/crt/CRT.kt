@@ -9,7 +9,6 @@ import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.toKString
 import libcrt.*
 import platform.posix.atexit
-import kotlin.native.Platform
 import kotlin.native.concurrent.AtomicInt
 import kotlin.native.concurrent.freeze
 
@@ -34,7 +33,7 @@ public actual object CRT {
         atexit(staticCFunction(::finalCleanup))
 
         // fixme - yes yes I know...for now be quiet
-        Platform.isMemoryLeakCheckerActive = false
+        // Platform.isMemoryLeakCheckerActive = false
     }
 
     /**

@@ -34,10 +34,17 @@ internal actual fun parseUri(uri: String): Uri {
                 if (awsUri.query_string.len.toInt() > 0) {
                     parameters = awsUri.query_string.toKString()
                 }
-                if (awsUri.authority.len.toInt() > 0) {
-                    // username will hold both username and password if specified
-                    userInfo = UserInfo(awsUri.authority.toKString(), "")
-                }
+
+                // no support for userinfo from authority in aws_uri_parse_init()
+                // val authority = awsUri.authority.toKString()
+                // if (authority.contains('@')) {
+                //     val userNameAndPass = authority.split('@', limit = 2)[0]
+                //     val parts = userNameAndPass.split(':')
+                //     val username = parts[0]
+                //     val password = if (parts.size > 1) parts[1] else ""
+                //     // username will hold both username and password if specified
+                //     userInfo = UserInfo(username, password)
+                // }
 
                 aws_uri_clean_up(awsUri.ptr)
             }

@@ -12,8 +12,9 @@ import software.amazon.awssdk.kotlin.crt.http.UserInfo
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
+import kotlin.test.assertNull
 
-class UriTest {
+class UriTest : CrtTest() {
     @Test
     fun basicToString() {
         val expected = "https://test.aws.com/kotlin"
@@ -159,5 +160,9 @@ class UriTest {
         assertEquals("test.aws.com", actual.host)
         assertEquals("/kotlin", actual.path)
         assertEquals("foo=baz", actual.parameters)
+        assertNull(actual.userInfo)
+
+        // val actual2 = Uri.parse("https://aws.amazon.com")
+        // assertEquals("", actual2.path)
     }
 }

@@ -20,6 +20,7 @@ fun main(args: Array<String>) {
 
     println("url: ${opts.url}")
     val uri = Uri.parse(opts.url)
+    println("parsed uri: $uri")
 
     // TODO - rename type
     val tlsContextBuilder = TlsContextBuilder()
@@ -53,17 +54,20 @@ fun main(args: Array<String>) {
 
     val httpConnManager = HttpClientConnectionManager(httpConnOptions)
 
+    val request = HttpRequest.build {
+        method = opts.httpMethod.name
+        opts.headers?.map(::headerPair)?.forEach { headers.append(it.first, it.second) }
+        encodedPath = uri.path
+
+        // have to manualy add a user-agent and host header
+        headers.append("User-Agent", "elasticurl_kotlin 1.0, Powered by the AWS Common Runtime.")
+        headers.append("Host", uri.host)
+    }
+
     runBlocking {
         val conn = httpConnManager.acquireConnection()
 
-        val request = HttpRequest.build {
-            method = opts.httpMethod.name
-            opts.headers?.map(::headerPair)?.forEach { headers.append(it.first, it.second) }
-            encodedPath = uri.path
-        }
-
         try {
-
             conn.roundTrip(request)
         } catch (ex: Exception) {
             println("failed to round trip request: ${ex.message}")
