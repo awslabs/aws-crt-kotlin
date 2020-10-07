@@ -6,7 +6,7 @@
 package software.amazon.awssdk.kotlin.crt
 
 public actual object CRT {
-    public actual fun initRuntime() {
+    public actual fun initRuntime(block: Config.() -> Unit) {
         TODO("not implemented yet")
     }
 

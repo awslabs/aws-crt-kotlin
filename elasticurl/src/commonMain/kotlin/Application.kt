@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import software.amazon.awssdk.kotlin.crt.CRT
 import software.amazon.awssdk.kotlin.crt.CrtRuntimeException
+import software.amazon.awssdk.kotlin.crt.LogDestination
 import software.amazon.awssdk.kotlin.crt.http.*
 import software.amazon.awssdk.kotlin.crt.io.*
 import kotlin.coroutines.CoroutineContext
@@ -14,9 +15,15 @@ import kotlin.coroutines.EmptyCoroutineContext
 private const val DEFAULT_CONNECT_TIMEOUT_MS = 3000
 
 fun main(args: Array<String>) {
-    CRT.initRuntime()
-
     val opts = CliOpts.from(args)
+
+    CRT.initRuntime() {
+        logLovel = opts.logLevel
+        if (opts.traceFile != null) {
+            logDestination = LogDestination.File
+            logFile = opts.traceFile
+        }
+    }
 
     println("url: ${opts.url}")
     val uri = Uri.parse(opts.url)

@@ -14,23 +14,35 @@ import kotlin.native.concurrent.freeze
 internal object Logging {
     private val initialized: AtomicInt = AtomicInt(0).freeze()
 
-    internal fun initialize() {
+    internal fun initialize(config: Config) {
         if (!initialized.compareAndSet(0, 1)) return
 
-        val options = cValue<aws_logger_standard_options> {
-            // fixme - propagate these options through
-            file = platform.posix.stdout
-            level = AWS_LOG_LEVEL_TRACE.convert()
-        }
+        memScoped {
+            val scope = this
 
-        if (CrtDebug.traceLevel > 0) {
-            awsAssertOp(
-                aws_logger_init_noalloc(s_crt_kotlin_logger.ptr, Allocator.Default.allocator, options)
-            ) { "failed to initialize no-alloc logger" }
-        } else {
-            awsAssertOp(
-                aws_logger_init_standard(s_crt_kotlin_logger.ptr, Allocator.Default.allocator, options)
-            ) { "failed to initialize standard logger" }
+            val options = cValue<aws_logger_standard_options> {
+                when (config.logDestination) {
+                    LogDestination.None -> return
+                    LogDestination.Stdout -> file = platform.posix.stdout
+                    LogDestination.Stderr -> file = platform.posix.stderr
+                    LogDestination.File -> {
+                        val logfile = config.logFile
+                        requireNotNull(logfile) { "log filename must be specified when LogDestination.File is specified" }
+                        filename = logfile.cstr.ptr
+                    }
+                }
+                level = config.logLovel.value.convert()
+            }
+
+            if (CrtDebug.traceLevel > 0) {
+                awsAssertOp(
+                    aws_logger_init_noalloc(s_crt_kotlin_logger.ptr, Allocator.Default.allocator, options)
+                ) { "failed to initialize no-alloc logger" }
+            } else {
+                awsAssertOp(
+                    aws_logger_init_standard(s_crt_kotlin_logger.ptr, Allocator.Default.allocator, options)
+                ) { "failed to initialize standard logger" }
+            }
         }
 
         aws_logger_set(s_crt_kotlin_logger.ptr)

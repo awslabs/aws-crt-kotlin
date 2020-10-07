@@ -17,3 +17,13 @@ public enum class LogLevel(public val value: Int) {
     Debug(5),
     Trace(6);
 }
+
+/**
+ * The destination to log to
+ */
+public enum class LogDestination {
+    None,
+    Stdout,
+    Stderr,
+    File;
+}

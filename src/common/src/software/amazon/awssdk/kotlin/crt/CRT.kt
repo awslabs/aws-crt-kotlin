@@ -9,7 +9,7 @@ public expect object CRT {
     /**
      * Initialize the CRT libraries if needed
      */
-    public fun initRuntime()
+    public fun initRuntime(block: Config.() -> Unit = {})
 
     /**
      * Returns the last error on the current thread.
@@ -38,4 +38,24 @@ public expect object CRT {
      * be a non-zero value. Otherwise, no tracing will be done, and the value will always be 0
      */
     public fun nativeMemory(): Long
+}
+
+/**
+ * Configuration settings related to the common runtime
+ */
+public class Config {
+    /**
+     * The level to log internals at
+     */
+    public var logLovel: LogLevel = LogLevel.None
+
+    /**
+     * The destination to log to
+     */
+    public var logDestination: LogDestination = LogDestination.Stdout
+
+    /**
+     * The filename to write logs to. Required if [LogDestination.File] is specified
+     */
+    public var logFile: String? = null
 }

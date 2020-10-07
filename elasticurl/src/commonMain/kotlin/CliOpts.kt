@@ -4,6 +4,7 @@
  */
 
 import kotlinx.cli.*
+import software.amazon.awssdk.kotlin.crt.LogLevel
 
 private class FileArgtype(val isDirectory: kotlin.Boolean = false) : ArgType<String>(true) {
     override val description: kotlin.String
@@ -13,8 +14,6 @@ private class FileArgtype(val isDirectory: kotlin.Boolean = false) : ArgType<Str
 }
 
 enum class HttpMethod { GET, POST, PUT, HEAD, DELETE }
-
-enum class LogLevel { NONE, ERROR, INFO, DEBUG, TRACE }
 
 class CliOpts {
     companion object {
@@ -39,7 +38,7 @@ class CliOpts {
     val insecure: Boolean by parser.option(ArgType.Boolean, shortName = "k", description = "turn off TLS validation").default(false)
     val outputFile: String? by parser.option(FileArgtype(), fullName = "output", shortName = "o", description = "dumps content-body to FILE instead of stdout")
     val traceFile: String? by parser.option(FileArgtype(), fullName = "trace", shortName = "t", description = "dumps logs to FILE instead of stderr")
-    val logLevel: LogLevel by parser.option(ArgType.Choice<LogLevel>(), fullName = "verbose", shortName = "v", description = "log level to configure").default(LogLevel.NONE)
+    val logLevel: LogLevel by parser.option(ArgType.Choice<LogLevel>(), fullName = "verbose", shortName = "v", description = "log level to configure").default(LogLevel.None)
 
     val requireHttp1: Boolean by parser.option(ArgType.Boolean, fullName = "http1_1", description = "HTTP/1.1 connection required").default(false)
     val requireHttp2: Boolean by parser.option(ArgType.Boolean, fullName = "http2", description = "HTTP/2 connection required").default(false)

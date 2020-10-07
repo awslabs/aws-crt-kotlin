@@ -14,12 +14,11 @@ import kotlin.native.concurrent.freeze
 
 public actual object CRT {
     private val initialized: AtomicInt = AtomicInt(0).freeze()
-    init {
-        initRuntime()
-    }
 
-    public actual fun initRuntime() {
+    public actual fun initRuntime(block: Config.() -> Unit) {
         if (!initialized.compareAndSet(0, 1)) return
+
+        val config = Config().apply(block)
 
         // bootstrap our allocator defined in crt.def
         s_crt_kotlin_init_allocator(CrtDebug.traceLevel)
@@ -28,7 +27,7 @@ public actual object CRT {
         aws_io_library_init(Allocator.Default)
         aws_compression_library_init(Allocator.Default)
         aws_http_library_init(Allocator.Default)
-        Logging.initialize()
+        Logging.initialize(config)
 
         atexit(staticCFunction(::finalCleanup))
 
