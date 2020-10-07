@@ -18,6 +18,8 @@ public interface HttpClientConnection : Closeable {
 
     /**
      * Schedules an HttpRequest on the Native EventLoop for this HttpClientConnection.
+     * The request does not start sending automatically once the stream is created. You must call
+     * [HttpStream.activate] to begin execution of the request.
      *
      * @param httpReq The Request to make to the Server.
      * @param handler The Stream Handler to be called from the Native EventLoop

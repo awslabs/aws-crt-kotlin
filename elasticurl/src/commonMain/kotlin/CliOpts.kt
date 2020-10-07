@@ -6,6 +6,8 @@
 import kotlinx.cli.*
 import software.amazon.awssdk.kotlin.crt.LogLevel
 
+private const val DEFAULT_CONNECT_TIMEOUT_MS = 3000
+
 private class FileArgtype(val isDirectory: kotlin.Boolean = false) : ArgType<String>(true) {
     override val description: kotlin.String
         get() = if (isDirectory) "{ PATH }" else "{ FILE }"
@@ -27,7 +29,7 @@ class CliOpts {
 
     val cert: String? by parser.option(FileArgtype(), description = "path to a PEM encoded certificate to use with mTLS")
     val key: String? by parser.option(FileArgtype(), description = "path to a PEM encoded private key that matches cert")
-    val connectTimeout: Int? by parser.option(ArgType.Int, description = "time in milliseconds to wait for a connection")
+    val connectTimeout: Int by parser.option(ArgType.Int, description = "time in milliseconds to wait for a connection").default(DEFAULT_CONNECT_TIMEOUT_MS)
 
     val headers: List<String>? by parser.option(ArgType.String, fullName = "header", shortName = "H", description = "additional headers to send with the request of the form `key:value`").multiple()
     val data: String? by parser.option(ArgType.String, shortName = "D", description = "data to POST or PUT")

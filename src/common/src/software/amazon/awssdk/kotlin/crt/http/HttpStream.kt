@@ -16,7 +16,8 @@ import software.amazon.awssdk.kotlin.crt.Closeable
 public interface HttpStream : Closeable {
 
     /**
-     * Retrieve the Http response status code
+     * Retrieve the Http response status code. Available ONLY after the first set of response
+     * headers have been received. See [HttpStreamResponseHandler]
      */
     public val responseStatusCode: Int
 
@@ -32,7 +33,7 @@ public interface HttpStream : Closeable {
     public fun incrementWindow(size: Int)
 
     /**
-     * Activate the client stream
+     * Activate the client stream and start processing the request
      */
     public fun activate()
 }

@@ -2,23 +2,19 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0.
  */
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import software.amazon.awssdk.kotlin.crt.CRT
 import software.amazon.awssdk.kotlin.crt.CrtRuntimeException
 import software.amazon.awssdk.kotlin.crt.LogDestination
 import software.amazon.awssdk.kotlin.crt.http.*
 import software.amazon.awssdk.kotlin.crt.io.*
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
-
-private const val DEFAULT_CONNECT_TIMEOUT_MS = 3000
 
 fun main(args: Array<String>) {
     val opts = CliOpts.from(args)
 
-    CRT.initRuntime() {
+    CRT.initRuntime {
         logLovel = opts.logLevel
+        logDestination = LogDestination.Stderr
         if (opts.traceFile != null) {
             logDestination = LogDestination.File
             logFile = opts.traceFile
@@ -46,7 +42,7 @@ fun main(args: Array<String>) {
 
     val tlsContext = TlsContext(tlsContextBuilder.build())
 
-    val socketOpts = SocketOptions(connectTimeoutMs = opts.connectTimeout ?: DEFAULT_CONNECT_TIMEOUT_MS)
+    val socketOpts = SocketOptions(connectTimeoutMs = opts.connectTimeout)
     val elg = EventLoopGroup()
     val hr = HostResolver(elg)
 
@@ -66,9 +62,11 @@ fun main(args: Array<String>) {
         opts.headers?.map(::headerPair)?.forEach { headers.append(it.first, it.second) }
         encodedPath = uri.path
 
-        // have to manualy add a user-agent and host header
-        headers.append("User-Agent", "elasticurl_kotlin 1.0, Powered by the AWS Common Runtime.")
-        headers.append("Host", uri.host)
+        headers {
+            // manually add a user-agent and host header
+            if (!contains("User-Agent")) append("User-Agent", "elasticurl_kotlin 1.0, Powered by the AWS Common Runtime.")
+            if (!contains("Host")) append("Host", uri.host)
+        }
     }
 
     runBlocking {
@@ -82,7 +80,7 @@ fun main(args: Array<String>) {
                 println("CrtException: name: ${ex.errorName}; code: ${ex.errorCode}; desc: ${ex.errorDescription}")
             }
         } finally {
-            // ... fixme
+            // ... fixme - need to define the resource management story
             println("closing http connection")
             conn.close()
             println("closing http connection manager")
@@ -108,9 +106,6 @@ fun main(args: Array<String>) {
 private suspend fun HttpClientConnection.roundTrip(request: HttpRequest) {
     val streamDone = Channel<Unit>()
 
-    // todo - we need something to make this easier
-    var responseBody = byteArrayOf()
-
     val responseHandler = object : HttpStreamResponseHandler {
         override fun onResponseHeaders(
             stream: HttpStream,
@@ -128,6 +123,8 @@ private suspend fun HttpClientConnection.roundTrip(request: HttpRequest) {
             val contents = bodyBytesIn.readAll()
 
             println(contents.decodeToString())
+            // FIXME - so we need a way to combine this with suspend _and_ provide backpressure...
+            // but we have to consume the entire buffer...
 
             return contents.size
         }
@@ -152,14 +149,3 @@ private suspend fun HttpClientConnection.roundTrip(request: HttpRequest) {
         stream.close()
     }
 }
-
-private fun headerPair(raw: String): Pair<String, String> {
-    val parts = raw.split(":", limit = 2)
-    require(parts.size == 2) { "invalid HTTP header specified: $raw " }
-    return parts[0] to parts[1]
-}
-
-/**
- * MPP compatible runBlocking to run suspend functions from common
- */
-internal expect fun <T> runBlocking(context: CoroutineContext = EmptyCoroutineContext, block: suspend CoroutineScope.() -> T): T
