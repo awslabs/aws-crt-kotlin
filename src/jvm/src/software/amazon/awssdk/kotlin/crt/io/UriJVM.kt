@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0.
  */
 
-package software.amazon.awssdk.kotlin.crt.http
+package software.amazon.awssdk.kotlin.crt.io
 
 internal actual fun parseUri(uri: String): Uri {
     TODO("not implemented on JVM yet")

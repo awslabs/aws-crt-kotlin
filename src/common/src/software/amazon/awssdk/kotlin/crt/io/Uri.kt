@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0.
  */
 
-package software.amazon.awssdk.kotlin.crt.http
+package software.amazon.awssdk.kotlin.crt.io
 
 public const val DEFAULT_SCHEME_PORT: Int = -1
 private const val DEFAULT_HTTP_PORT: Int = 80

@@ -3,12 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0.
  */
 
-package software.amazon.awssdk.kotlin.crt
+package software.amazon.awssdk.kotlin.crt.io
 
-import software.amazon.awssdk.kotlin.crt.http.Protocol
-import software.amazon.awssdk.kotlin.crt.http.Uri
-import software.amazon.awssdk.kotlin.crt.http.UriBuilder
-import software.amazon.awssdk.kotlin.crt.http.UserInfo
+import software.amazon.awssdk.kotlin.crt.CrtTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails

@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0.
  */
 
-package software.amazon.awssdk.kotlin.crt
+package software.amazon.awssdk.kotlin.crt.io
 
-import software.amazon.awssdk.kotlin.crt.io.EventLoopGroup
-import software.amazon.awssdk.kotlin.crt.io.HostResolver
+import software.amazon.awssdk.kotlin.crt.CrtTest
+import software.amazon.awssdk.kotlin.crt.runSuspendTest
+import software.amazon.awssdk.kotlin.crt.use
 import kotlin.test.Test
 
 class HostResolverTest : CrtTest() {

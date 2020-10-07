@@ -3,9 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0.
  */
 
-package software.amazon.awssdk.kotlin.crt
+package software.amazon.awssdk.kotlin.crt.io
 
-import software.amazon.awssdk.kotlin.crt.io.TlsContext
+import software.amazon.awssdk.kotlin.crt.CrtTest
+import software.amazon.awssdk.kotlin.crt.runSuspendTest
 import kotlin.test.Test
 
 class TlsContextTest : CrtTest() {

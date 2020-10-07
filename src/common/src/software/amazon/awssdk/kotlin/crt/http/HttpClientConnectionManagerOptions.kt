@@ -5,9 +5,7 @@
 
 package software.amazon.awssdk.kotlin.crt.http
 
-import software.amazon.awssdk.kotlin.crt.io.ClientBootstrap
-import software.amazon.awssdk.kotlin.crt.io.SocketOptions
-import software.amazon.awssdk.kotlin.crt.io.TlsContext
+import software.amazon.awssdk.kotlin.crt.io.*
 
 /**
  * Configuration options for an [HttpPoolConnectionManager] instance

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0.
  */
 
-package software.amazon.awssdk.kotlin.crt.http
+package software.amazon.awssdk.kotlin.crt.io
 
 import kotlinx.cinterop.*
 import libcrt.aws_uri
@@ -28,7 +28,9 @@ internal actual fun parseUri(uri: String): Uri {
                 scheme = Protocol.createOrDefault(awsUri.scheme.toKString())
                 host = awsUri.host_name.toKString()
                 val parsedPort = awsUri.port.toInt()
-                if (parsedPort > 0) { port = parsedPort }
+                if (parsedPort > 0) {
+                    port = parsedPort
+                }
                 path = awsUri.path.toKString()
 
                 if (awsUri.query_string.len.toInt() > 0) {
