@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0.
  */
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.receiveOrNull
 import software.amazon.awssdk.kotlin.crt.CRT
 import software.amazon.awssdk.kotlin.crt.CrtRuntimeException
 import software.amazon.awssdk.kotlin.crt.LogDestination
@@ -10,6 +11,8 @@ import software.amazon.awssdk.kotlin.crt.http.*
 import software.amazon.awssdk.kotlin.crt.io.*
 
 fun main(args: Array<String>) {
+    platformInit()
+
     val opts = CliOpts.from(args)
 
     CRT.initRuntime {

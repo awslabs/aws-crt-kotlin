@@ -30,8 +30,6 @@ public actual object CRT {
         Logging.initialize(config)
 
         atexit(staticCFunction(::finalCleanup))
-
-        // Platform.isMemoryLeakCheckerActive = false
     }
 
     /**

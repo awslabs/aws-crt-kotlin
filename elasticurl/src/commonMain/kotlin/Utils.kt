@@ -16,3 +16,8 @@ internal fun headerPair(raw: String): Pair<String, String> {
  * MPP compatible runBlocking to run suspend functions from common
  */
 internal expect fun <T> runBlocking(context: CoroutineContext = EmptyCoroutineContext, block: suspend CoroutineScope.() -> T): T
+
+/**
+ * Platform specific initialization steps
+ */
+internal expect fun platformInit()
