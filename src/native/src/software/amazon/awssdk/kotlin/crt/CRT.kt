@@ -5,6 +5,7 @@
 
 package software.amazon.awssdk.kotlin.crt
 
+import kotlinx.cinterop.convert
 import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.toKString
 import libcrt.*
@@ -65,6 +66,10 @@ public actual object CRT {
      * be a non-zero value. Otherwise, no tracing will be done, and the value will always be 0
      */
     public actual fun nativeMemory(): Long {
-        TODO("Not yet implemented")
+        return if (CrtDebug.traceLevel > 0) {
+            aws_mem_tracer_bytes(Allocator.Default).convert()
+        } else {
+            0
+        }
     }
 }

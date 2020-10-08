@@ -5,8 +5,6 @@
 
 package software.amazon.awssdk.kotlin.crt.http
 
-// TODO - add builder tests
-
 /**
  * An immutable HTTP request ready to send
  * @property method The HTTP method (verb) to use (e.g. "GET", "POST", etc)

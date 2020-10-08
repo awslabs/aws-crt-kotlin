@@ -78,7 +78,6 @@ public data class Uri(
     }
 
     override fun toString(): String = buildString {
-        // FIXME - the userinfo, path, and fragment are raw at this point and need escaped as well probably
         append(scheme.name)
         append("://")
         userInfo?.let { userinfo ->
