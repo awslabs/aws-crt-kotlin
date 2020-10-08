@@ -21,6 +21,8 @@ kotlin {
             // this allows development with intellij and resolution of cinterop libs to "just work"
             // see native.gradle for how it's used...
             project.ext.ideaPreset = ideaPreset
+            // some things are just easier in groovy still
+            project.ext.ideaPresetName = ideaPreset.name
         }
     }
 }

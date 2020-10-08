@@ -62,9 +62,17 @@ kotlin {
         val linkDirs = awsLibs.map {
             val rootBuildDir = rootProject.buildDir
             "-L$rootBuildDir/cmake-build/aws-common-runtime/$it"
+        }.toMutableList()
+
+        if (rootProject.ext.has("extraLinkDirs")) {
+            val extraLinkDirs = rootProject.ext.get("extraLinkDirs") as List<String>
+            println("[elasticurl] extraLinkDirs: $extraLinkDirs")
+            linkDirs.addAll(extraLinkDirs)
         }
+
         val linkOpts = linkDirs.joinToString(" ")
 
+        println("[elasticurl] linker opts: $linkOpts")
         compilations["main"].kotlinOptions {
             freeCompilerArgs = listOf("-linker-options", linkOpts)
         }

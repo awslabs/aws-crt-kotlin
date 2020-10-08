@@ -3,6 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0.
  */
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetPreset
+import java.util.Properties
 
 plugins {
     kotlin("multiplatform") version "1.4.10"
@@ -32,6 +35,36 @@ apply(from = rootProject.file("gradle/native.gradle"))
 val experimentalAnnotations = listOf("kotlin.RequiresOptIn")
 
 val coroutinesVersion: String by project
+
+fun isLinux(target: KotlinNativeTarget): Boolean = when(target.name) {
+    "linuxX64" -> true
+    "native" -> {
+        // using intellij and only building on current host
+        // the actual preset has the real target name. See utility.gradle
+        val ideaPresetName = project.ext.get("ideaPresetName") as String
+        ideaPresetName == "linuxX64"
+    }
+    else -> false
+}
+
+// get a project propety by name if it exists (including from local.properties)
+inline fun<reified T> getProperty(name: String): T? {
+    if (project.hasProperty(name)) {
+        return project.properties.get(name) as T
+    }
+
+    val localProperties = Properties()
+    val propertiesFile: File = rootProject.file("local.properties")
+    if (propertiesFile.exists()) {
+        propertiesFile.inputStream().use { localProperties.load(it) }
+
+        if (localProperties.containsKey(name)) {
+            return localProperties.get(name) as T
+        }
+    }
+
+    return null
+}
 
 kotlin {
     explicitApi()
@@ -69,8 +102,6 @@ kotlin {
 
     }
 
-    // TODO - setup cmake task
-
     sourceSets.all {
         println("configuring source set $name")
         val srcDir = if (name.endsWith("Main")) "src" else "test"
@@ -87,8 +118,8 @@ kotlin {
 
     // create a single "umbrella" cinterop will all the aws-c-* API's we want to consume
     // see: https://github.com/JetBrains/kotlin-native/issues/2423#issuecomment-466300153
-    targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
-        val target = this
+    targets.withType<KotlinNativeTarget> {
+        val knTarget = this
 
         val awsLibs = listOf(
             "aws-c-common",
@@ -105,7 +136,7 @@ kotlin {
                 "$buildDir/cmake-build/aws-common-runtime/aws-c-common/generated/include"
             )
 
-            println("configuring cinterop for crt: [${target.name}]")
+            println("configuring cinterop for crt: [${knTarget.name}]")
             create("aws-crt"){
                 val includeDirs = awsLibs.map { name ->
                     val headerDir = "$rootDir/aws-common-runtime/$name/include"
@@ -119,10 +150,27 @@ kotlin {
         }
 
 
+        // FIXME - we will likely have to make some plugin to deal with this and make it easy on end users
+        // libs are specified in the interop (crt.def) file. We just need the link dirs so they can be found
         val linkDirs = awsLibs.map {
             "-L$buildDir/cmake-build/aws-common-runtime/$it"
+        }.toMutableList()
+
+        if (isLinux(knTarget)) {
+            // s2n is placed in the "lib" dir
+            val extraLinkDirs = mutableListOf("-L$buildDir/cmake-build/lib")
+
+            // find libcrypto
+            val libcryptoPath: String = getProperty("libcryptoPath") ?: throw GradleException("need to set `libcryptoPath` using either `-PlibcryptoPath=PATH` or in local.properties")
+            println("using libcryptoPath: $libcryptoPath")
+            extraLinkDirs.add("-L$libcryptoPath")
+
+            // FIXME - set these so elasticurl project can re-use them and link
+            project.ext.set("extraLinkDirs", extraLinkDirs)
+
+            linkDirs.addAll(extraLinkDirs)
         }
-        // val libs = awsLibs.map { "-l$it" }.toMutableList()
+
         val linkOpts = linkDirs.joinToString(" ")
         println("linker opts: $linkOpts")
 
@@ -179,6 +227,7 @@ val cmakeConfigure = tasks.register("cmakeConfigure") {
     }
 }
 
+// FIXME - we probably need a cmake configure/build per Kotlin/Native target we are setup to build
 val cmakeBuild = tasks.register("cmakeBuild") {
     dependsOn(cmakeConfigure)
     inputs.property("buildType", buildType)
