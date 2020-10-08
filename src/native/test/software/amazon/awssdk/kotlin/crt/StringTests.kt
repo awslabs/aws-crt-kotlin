@@ -7,6 +7,7 @@ package software.amazon.awssdk.kotlin.crt
 
 import kotlinx.cinterop.*
 import libcrt.aws_byte_cursor
+import software.amazon.awssdk.kotlin.crt.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

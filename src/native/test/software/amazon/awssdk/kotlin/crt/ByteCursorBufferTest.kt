@@ -7,6 +7,7 @@ package software.amazon.awssdk.kotlin.crt
 
 import kotlinx.cinterop.*
 import software.amazon.awssdk.kotlin.crt.io.ByteCursorBuffer
+import software.amazon.awssdk.kotlin.crt.util.asAwsByteCursor
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

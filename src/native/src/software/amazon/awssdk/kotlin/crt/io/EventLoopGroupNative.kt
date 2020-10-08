@@ -7,13 +7,14 @@ package software.amazon.awssdk.kotlin.crt.io
 
 import kotlinx.cinterop.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.receiveOrNull
 import libcrt.*
 import software.amazon.awssdk.kotlin.crt.Allocator
 import software.amazon.awssdk.kotlin.crt.Closeable
 import software.amazon.awssdk.kotlin.crt.CrtResource
 import software.amazon.awssdk.kotlin.crt.CrtRuntimeException
+import software.amazon.awssdk.kotlin.crt.util.ShutdownChannel
+import software.amazon.awssdk.kotlin.crt.util.shutdownChannel
 import kotlin.native.concurrent.freeze
 
 /**
@@ -26,7 +27,7 @@ import kotlin.native.concurrent.freeze
 @OptIn(ExperimentalUnsignedTypes::class)
 public actual class EventLoopGroup actual constructor(numThreads: Int) : CrtResource<aws_event_loop_group>(), Closeable {
     private val elg: CPointer<aws_event_loop_group>
-    private val shutdownComplete = Channel<Unit>(0).freeze()
+    private val shutdownComplete: ShutdownChannel = shutdownChannel().freeze()
     private val stableRef = StableRef.create(shutdownComplete)
 
     init {
@@ -55,7 +56,7 @@ public actual class EventLoopGroup actual constructor(numThreads: Int) : CrtReso
 private fun onShutdownComplete(userdata: COpaquePointer?) {
     if (userdata != null) {
         initRuntimeIfNeeded()
-        val notify = userdata.asStableRef<Channel<Unit>>().get()
+        val notify = userdata.asStableRef<ShutdownChannel>().get()
         notify.offer(Unit)
         notify.close()
     }

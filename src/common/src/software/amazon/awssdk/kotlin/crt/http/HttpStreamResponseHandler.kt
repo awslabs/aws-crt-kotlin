@@ -7,9 +7,6 @@ package software.amazon.awssdk.kotlin.crt.http
 
 import software.amazon.awssdk.kotlin.crt.io.Buffer
 
-// TODO - use HttpHeaderBlock directly?
-// TODO - evaluate nullability of each callback parameter
-
 /**
  * Interface that Native code knows how to call when handling Http Responses
  *
@@ -67,6 +64,8 @@ public interface HttpStreamResponseHandler {
      */
     public fun onResponseBody(stream: HttpStream, bodyBytesIn: Buffer): Int {
         /* Optional Callback, ignore incoming response body by default unless user wants to capture it. */
+        // FIXME - do we want to follow this pattern or just have a single way of incrementing the
+        // window size through `Stream.incrementWindow()`?
         return bodyBytesIn.len
     }
 

@@ -3,10 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0.
  */
 
-package software.amazon.awssdk.kotlin.crt
+package software.amazon.awssdk.kotlin.crt.util
 
 import kotlinx.cinterop.*
 import libcrt.*
+import software.amazon.awssdk.kotlin.crt.Allocator
+import software.amazon.awssdk.kotlin.crt.CrtRuntimeException
 
 /**
  * Decode an aws_string as to a kotlin [String] assuming UTF-8 bytes

@@ -7,7 +7,10 @@ package software.amazon.awssdk.kotlin.crt.http
 
 import software.amazon.awssdk.kotlin.crt.Closeable
 
-public actual class HttpClientConnectionManager actual constructor(options: HttpClientConnectionManagerOptions) : Closeable {
+public actual class HttpClientConnectionManager actual constructor(
+    public actual val options: HttpClientConnectionManagerOptions
+) : Closeable {
+
     /**
      * Request an HttpClientConnection from the pool
      */

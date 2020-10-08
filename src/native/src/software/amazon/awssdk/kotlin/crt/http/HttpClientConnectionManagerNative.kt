@@ -13,42 +13,20 @@ import libcrt.*
 import software.amazon.awssdk.kotlin.crt.*
 import software.amazon.awssdk.kotlin.crt.Allocator
 import software.amazon.awssdk.kotlin.crt.io.SocketOptions
+import software.amazon.awssdk.kotlin.crt.util.*
 import kotlin.native.concurrent.freeze
 
-private typealias ShutdownChannel = Channel<Unit>
 private typealias ConnectionAcquisitionChannel = Channel<HttpConnectionAcquisition>
-
-private fun onShutdownComplete(userdata: COpaquePointer?) {
-    // initRuntimeIfNeeded()
-    if (userdata != null) {
-        val notify = userdata.asStableRef<ShutdownChannel>().get()
-        notify.offer(Unit)
-        notify.close()
-    }
-}
-
 private data class HttpConnectionAcquisition(val conn: CPointer<aws_http_connection>?, val errCode: Int)
-
-private fun onConnectionAcquired(
-    conn: CPointer<aws_http_connection>?,
-    errCode: Int,
-    userdata: COpaquePointer?
-) {
-    if (userdata != null) {
-        val notify = userdata.asStableRef<ConnectionAcquisitionChannel>().get()
-        val acquisition = HttpConnectionAcquisition(conn, errCode)
-        notify.offer(acquisition)
-        notify.close()
-    }
-}
 
 // TODO - port over tests from crt-java
 
-public actual class HttpClientConnectionManager actual constructor(options: HttpClientConnectionManagerOptions) :
-    Closeable, CrtResource<aws_http_connection_manager>() {
-    private val manager: CPointer<aws_http_connection_manager>
+public actual class HttpClientConnectionManager actual constructor(
+    public actual val options: HttpClientConnectionManagerOptions
+) : Closeable, CrtResource<aws_http_connection_manager>() {
 
-    private val shutdownComplete: ShutdownChannel = Channel<Unit>(0).freeze()
+    private val manager: CPointer<aws_http_connection_manager>
+    private val shutdownComplete: ShutdownChannel = shutdownChannel().freeze()
     private val shutdownCompleteStableRef = StableRef.create(shutdownComplete)
 
     init {
@@ -117,7 +95,7 @@ public actual class HttpClientConnectionManager actual constructor(options: Http
 
             val managerOpts = cValue<aws_http_connection_manager_options> {
                 bootstrap = options.clientBootstrap.ptr
-                initial_window_size = options.windowSize.convert()
+                initial_window_size = options.initialWindowSize.convert()
                 host.initFromCursor(endpoint)
                 port = options.uri.port.convert()
 
@@ -192,4 +170,27 @@ private fun aws_socket_options.kinit(opts: SocketOptions) {
     connect_timeout_ms = opts.connectTimeoutMs.convert()
     keep_alive_interval_sec = opts.keepAliveIntervalSecs.convert()
     keep_alive_timeout_sec = opts.keepAliveTimeoutSecs.convert()
+}
+
+private fun onShutdownComplete(userdata: COpaquePointer?) {
+    if (userdata != null) {
+        initRuntimeIfNeeded()
+        val notify = userdata.asStableRef<ShutdownChannel>().get()
+        notify.offer(Unit)
+        notify.close()
+    }
+}
+
+private fun onConnectionAcquired(
+    conn: CPointer<aws_http_connection>?,
+    errCode: Int,
+    userdata: COpaquePointer?
+) {
+    if (userdata != null) {
+        initRuntimeIfNeeded()
+        val notify = userdata.asStableRef<ConnectionAcquisitionChannel>().get()
+        val acquisition = HttpConnectionAcquisition(conn, errCode)
+        notify.offer(acquisition)
+        notify.close()
+    }
 }

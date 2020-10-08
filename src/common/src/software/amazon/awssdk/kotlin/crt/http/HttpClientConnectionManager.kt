@@ -11,9 +11,10 @@ import software.amazon.awssdk.kotlin.crt.Closeable
  * Manages a pool of Http connections
  */
 public expect class HttpClientConnectionManager(options: HttpClientConnectionManagerOptions) : Closeable {
-    // public val maxConnections: Int
-    // public val windowSize: Int
-    // public val uri: Uri
+    /**
+     * The options this manager was configured with
+     */
+    public val options: HttpClientConnectionManagerOptions
 
     /**
      * Request an HttpClientConnection from the pool

@@ -7,7 +7,6 @@ package software.amazon.awssdk.kotlin.crt.io
 
 import kotlinx.cinterop.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.receiveOrNull
 import libcrt.aws_host_resolver
 import libcrt.aws_host_resolver_new_default
@@ -15,6 +14,8 @@ import libcrt.aws_host_resolver_release
 import libcrt.aws_shutdown_callback_options
 import software.amazon.awssdk.kotlin.crt.*
 import software.amazon.awssdk.kotlin.crt.Allocator
+import software.amazon.awssdk.kotlin.crt.util.ShutdownChannel
+import software.amazon.awssdk.kotlin.crt.util.shutdownChannel
 import kotlin.native.concurrent.freeze
 
 public actual class HostResolver actual constructor(
@@ -23,7 +24,7 @@ public actual class HostResolver actual constructor(
 ) : CrtResource<aws_host_resolver>(), Closeable {
 
     private val resolver: CPointer<aws_host_resolver>
-    private val shutdownComplete = Channel<Unit>(0).freeze()
+    private val shutdownComplete: ShutdownChannel = shutdownChannel().freeze()
     private val stableRef = StableRef.create(shutdownComplete)
 
     init {
@@ -53,7 +54,7 @@ public actual class HostResolver actual constructor(
 private fun onShutdownComplete(userdata: COpaquePointer?) {
     if (userdata != null) {
         initRuntimeIfNeeded()
-        val notify = userdata.asStableRef<Channel<Unit>>().get()
+        val notify = userdata.asStableRef<ShutdownChannel>().get()
         notify.offer(Unit)
         notify.close()
     }

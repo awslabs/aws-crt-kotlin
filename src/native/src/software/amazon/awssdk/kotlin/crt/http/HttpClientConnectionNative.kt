@@ -11,6 +11,10 @@ import platform.posix.size_t
 import software.amazon.awssdk.kotlin.crt.*
 import software.amazon.awssdk.kotlin.crt.io.Buffer
 import software.amazon.awssdk.kotlin.crt.io.ByteCursorBuffer
+import software.amazon.awssdk.kotlin.crt.util.asAwsByteCursor
+import software.amazon.awssdk.kotlin.crt.util.initFromCursor
+import software.amazon.awssdk.kotlin.crt.util.toKString
+import software.amazon.awssdk.kotlin.crt.util.withAwsByteCursor
 import kotlin.native.concurrent.freeze
 
 // TODO - port over tests from crt-java

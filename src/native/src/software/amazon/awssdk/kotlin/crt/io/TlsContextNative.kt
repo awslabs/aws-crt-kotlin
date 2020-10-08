@@ -9,6 +9,9 @@ import kotlinx.cinterop.*
 import libcrt.*
 import software.amazon.awssdk.kotlin.crt.*
 import software.amazon.awssdk.kotlin.crt.Allocator
+import software.amazon.awssdk.kotlin.crt.util.asAwsByteCursor
+import software.amazon.awssdk.kotlin.crt.util.free
+import software.amazon.awssdk.kotlin.crt.util.toAwsString
 
 public actual class TlsContext actual constructor(options: TlsContextOptions?) : CrtResource<aws_tls_ctx>(), Closeable {
     private val ctx: CPointer<aws_tls_ctx>

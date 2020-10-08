@@ -22,11 +22,15 @@ public interface HttpStream : Closeable {
     public val responseStatusCode: Int
 
     /**
-     * Opens the Sliding Read/Write Window by the number of bytes passed as an argument for this HttpStream.
+     * Increment the stream's flow-control window to keep data flowing.
      *
-     * This function should only be called if the user application previously returned less than the length of the input
-     * Buffer from a onResponseBody() call in a HttpStreamResponseHandler, and should be <= to the total number of
-     * un-packed bytes.
+     * If the connection was created with [HttpClientConnectionManagerOptions.manualWindowManagement] set true, the
+     * flow-control window of each stream will shrink as body data is received (headers, padding, and other metadata
+     * do not affect the window). The connection's `initialWindowSize` determines the starting size of each stream's
+     * window. If a stream's flow-control window reaches 0, no further data will be received.
+     *
+     * If `manualWindowManagement` is false, this call will have no effect. The connection maintains its
+     * flow-control windows such that no back-pressure is applied and data arrives as fast as possible.
      *
      * @param size How many bytes to increment the sliding window by.
      */

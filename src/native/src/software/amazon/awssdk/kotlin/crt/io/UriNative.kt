@@ -10,9 +10,9 @@ import libcrt.aws_uri
 import libcrt.aws_uri_clean_up
 import libcrt.aws_uri_init_parse
 import software.amazon.awssdk.kotlin.crt.Allocator
-import software.amazon.awssdk.kotlin.crt.asAwsByteCursor
 import software.amazon.awssdk.kotlin.crt.awsAssertOp
-import software.amazon.awssdk.kotlin.crt.toKString
+import software.amazon.awssdk.kotlin.crt.util.asAwsByteCursor
+import software.amazon.awssdk.kotlin.crt.util.toKString
 
 @OptIn(ExperimentalUnsignedTypes::class)
 internal actual fun parseUri(uri: String): Uri {
