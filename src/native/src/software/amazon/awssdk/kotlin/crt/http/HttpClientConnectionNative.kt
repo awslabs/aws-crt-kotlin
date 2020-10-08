@@ -140,8 +140,8 @@ private fun onResponseHeaders(
     userdata: COpaquePointer?
 ): Int {
     initRuntimeIfNeeded()
-    val ctx = userdata?.asStableRef<HttpStreamContext>()?.get() ?: return AWS_OP_ERR
-    val stream = nativeStream?.let { HttpStreamNative(it) } ?: return AWS_OP_ERR
+    val ctx = userdata?.asStableRef<HttpStreamContext>()?.get() ?: return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
+    val stream = nativeStream?.let { HttpStreamNative(it) } ?: return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
 
     val hdrCnt = numHeaders.toInt()
     val headers: List<HttpHeader>? = if (hdrCnt > 0 && headerArray != null) {

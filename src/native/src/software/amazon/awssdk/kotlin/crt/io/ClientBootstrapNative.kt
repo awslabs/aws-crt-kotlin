@@ -55,5 +55,6 @@ public actual class ClientBootstrap actual constructor(
     override suspend fun close() {
         aws_client_bootstrap_release(bootstrap)
         shutdownComplete.receiveOrNull()
+        stableRef.dispose()
     }
 }

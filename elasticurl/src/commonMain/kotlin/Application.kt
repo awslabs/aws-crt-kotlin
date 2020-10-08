@@ -137,6 +137,8 @@ private suspend fun HttpClientConnection.roundTrip(request: HttpRequest) {
                 println("error $errName: $errDesc")
             }
             streamDone.offer(Unit)
+            // has to be explicitly closed or it leaks in K/N
+            streamDone.close()
         }
     }
 
@@ -144,7 +146,7 @@ private suspend fun HttpClientConnection.roundTrip(request: HttpRequest) {
     try {
         stream.activate()
         // wait for completion signal
-        streamDone.receive()
+        streamDone.receiveOrNull()
     } finally {
         stream.close()
     }

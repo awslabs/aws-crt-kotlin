@@ -31,7 +31,6 @@ public actual object CRT {
 
         atexit(staticCFunction(::finalCleanup))
 
-        // fixme - yes yes I know...for now be quiet
         // Platform.isMemoryLeakCheckerActive = false
     }
 

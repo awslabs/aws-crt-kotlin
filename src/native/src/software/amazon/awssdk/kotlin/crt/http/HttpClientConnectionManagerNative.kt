@@ -128,12 +128,10 @@ public actual class HttpClientConnectionManager actual constructor(
         val notify: ConnectionAcquisitionChannel = Channel<HttpConnectionAcquisition>(1).freeze()
         val stableRef = StableRef.create(notify)
         val cb = staticCFunction(::onConnectionAcquired)
-        aws_http_connection_manager_acquire_connection(
-            manager,
-            cb,
-            stableRef.asCPointer()
-        )
+        aws_http_connection_manager_acquire_connection(manager, cb, stableRef.asCPointer())
         val acquisition = notify.receive()
+
+        stableRef.dispose()
         if (acquisition.errCode != AWS_OP_SUCCESS) {
             throw HttpException(acquisition.errCode)
         }
