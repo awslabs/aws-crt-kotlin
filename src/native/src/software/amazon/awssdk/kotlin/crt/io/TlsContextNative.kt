@@ -54,6 +54,9 @@ public actual class TlsContext actual constructor(options: TlsContextOptions?) :
         ctx = aws_tls_client_ctx_new(Allocator.Default, tlsCtxOpts.ptr) ?: throw CrtRuntimeException("aws_tls_client_ctx_new()")
     }
 
+    public actual companion object {
+    }
+
     // aws_tls_ctx_options_init_client_mtls()
     private fun initClientMtls(certificate: String, privateKey: String) {
         val cert = certificate.toAwsString()

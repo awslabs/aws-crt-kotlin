@@ -28,8 +28,7 @@ fun main(args: Array<String>) {
     val uri = Uri.parse(opts.url)
     println("parsed uri: $uri")
 
-    // TODO - rename type
-    val tlsContextBuilder = TlsContextBuilder()
+    val tlsContextBuilder = TlsContextOptionsBuilder()
 
     if (uri.scheme.requiresTls()) {
         // TODO - mutual tls, process cacert and key

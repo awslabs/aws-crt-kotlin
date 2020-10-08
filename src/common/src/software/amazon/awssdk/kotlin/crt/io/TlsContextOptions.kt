@@ -9,7 +9,7 @@ package software.amazon.awssdk.kotlin.crt.io
  * This class wraps the aws_tls_connection_options from aws-c-io to provide
  * access to TLS configuration contexts in the AWS Common Runtime.
  */
-public class TlsContextOptions internal constructor(builder: TlsContextBuilder) {
+public class TlsContextOptions internal constructor(builder: TlsContextOptionsBuilder) {
     public val verifyPeer: Boolean = builder.verifyPeer
     public val minTlsVersion: TlsVersion = builder.minTlsVersion
     public val tlsCipherPreference: TlsCipherPreference = builder.tlsCipherPreference
@@ -27,8 +27,8 @@ public class TlsContextOptions internal constructor(builder: TlsContextBuilder) 
 
     public companion object {
 
-        public fun build(block: TlsContextBuilder.() -> Unit): TlsContextOptions =
-            TlsContextBuilder().apply(block).build()
+        public fun build(block: TlsContextOptionsBuilder.() -> Unit): TlsContextOptions =
+            TlsContextOptionsBuilder().apply(block).build()
 
         /**
          * Helper which creates a default set of TLS options for the current platform
@@ -66,7 +66,7 @@ public class TlsContextOptions internal constructor(builder: TlsContextBuilder) 
 internal expect fun isCipherSupported(cipher: TlsCipherPreference): Boolean
 internal expect fun isAlpnSupported(): Boolean
 
-public class TlsContextBuilder {
+public class TlsContextOptionsBuilder {
 
     public fun build(): TlsContextOptions = TlsContextOptions(this)
 
