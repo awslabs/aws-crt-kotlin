@@ -6,13 +6,14 @@
 package software.amazon.awssdk.kotlin.crt.http
 
 import kotlinx.cinterop.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.receiveOrNull
 import libcrt.*
 import software.amazon.awssdk.kotlin.crt.*
 import software.amazon.awssdk.kotlin.crt.Allocator
 import software.amazon.awssdk.kotlin.crt.io.SocketOptions
+import software.amazon.awssdk.kotlin.crt.io.requiresTls
 import software.amazon.awssdk.kotlin.crt.util.*
 import kotlin.native.concurrent.freeze
 
@@ -37,15 +38,17 @@ public actual class HttpClientConnectionManager actual constructor(
             val endpoint = endpointBytes.asAwsByteCursor()
             defer { endpointBytes.unpin() }
 
-            val tlsConnOpts: aws_tls_connection_options? = options.tlsContext?.let {
+            // ignore tls context for http connections
+            val tlsConnOpts: aws_tls_connection_options? = if (options.uri.scheme.requiresTls()) {
+                val ctx = requireNotNull(options.tlsContext) { "TlsContext is required for https" }
                 val opts = alloc<aws_tls_connection_options>()
-
-                aws_tls_connection_options_init_from_ctx(opts.ptr, it)
+                aws_tls_connection_options_init_from_ctx(opts.ptr, ctx)
                 aws_tls_connection_options_set_server_name(opts.ptr, Allocator.Default, endpoint)
-
                 defer { aws_tls_connection_options_clean_up(opts.ptr) }
 
                 opts
+            } else {
+                null
             }
 
             val monitoringOpts: aws_http_connection_monitoring_options? = options.monitoringOptions?.let {
@@ -126,12 +129,46 @@ public actual class HttpClientConnectionManager actual constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     public actual suspend fun acquireConnection(): HttpClientConnection {
         val notify: ConnectionAcquisitionChannel = Channel<HttpConnectionAcquisition>(1).freeze()
+        // disposed of in callback
         val stableRef = StableRef.create(notify)
         val cb = staticCFunction(::onConnectionAcquired)
-        aws_http_connection_manager_acquire_connection(manager, cb, stableRef.asCPointer())
-        val acquisition = notify.receive()
 
-        stableRef.dispose()
+        aws_http_connection_manager_acquire_connection(manager, cb, stableRef.asCPointer())
+        var nativeConn: CPointer<aws_http_connection>? = null
+        try {
+            val acquisition = awaitConnectionAcquisition(notify)
+            nativeConn = acquisition.conn
+        } catch (ex: CancellationException) {
+            // we have already asked for a conn but the parent coroutine was cancelled,
+            // we actually have to wait for it to come so that it can be released back
+            withContext(NonCancellable) {
+                try {
+                    val acquisition = awaitConnectionAcquisition(notify)
+                    nativeConn = acquisition.conn
+                } catch (ex2: Exception) {
+                    // error in acquisition, we will respect the cancellation and suppress the acquisition error
+                    ex.addSuppressed(ex2)
+                }
+            }
+
+            if (nativeConn != null) {
+                // coroutine was cancelled while waiting for the connection but we were actually successful in
+                // acquiring one so release it back to the pool
+                aws_http_connection_manager_release_connection(manager, nativeConn)
+            }
+            throw ex
+        }
+
+        // connection cannot be null at this point
+        return HttpClientConnectionNative(this, nativeConn!!)
+    }
+
+    /**
+     * Wait for a connection to be received on the [notify] channel
+     * @return The acquired connection or throws an exception on error
+     */
+    private suspend fun awaitConnectionAcquisition(notify: ConnectionAcquisitionChannel): HttpConnectionAcquisition {
+        val acquisition = notify.receive()
         if (acquisition.errCode != AWS_OP_SUCCESS) {
             throw HttpException(acquisition.errCode)
         }
@@ -140,7 +177,7 @@ public actual class HttpClientConnectionManager actual constructor(
             throw CrtRuntimeException("acquireConnection(): http connection cannot be null")
         }
 
-        return HttpClientConnectionNative(this, acquisition.conn)
+        return acquisition
     }
 
     /**
@@ -186,9 +223,11 @@ private fun onConnectionAcquired(
 ) {
     if (userdata != null) {
         initRuntimeIfNeeded()
-        val notify = userdata.asStableRef<ConnectionAcquisitionChannel>().get()
+        val stableRef = userdata.asStableRef<ConnectionAcquisitionChannel>()
+        val notify = stableRef.get()
         val acquisition = HttpConnectionAcquisition(conn, errCode)
         notify.offer(acquisition)
         notify.close()
+        stableRef.dispose()
     }
 }

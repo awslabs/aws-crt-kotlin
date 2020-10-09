@@ -123,10 +123,7 @@ private suspend fun HttpClientConnection.roundTrip(request: HttpRequest) {
         override fun onResponseBody(stream: HttpStream, bodyBytesIn: Buffer): Int {
             println("onResponseBody -- recv'd ${bodyBytesIn.len} bytes")
             val contents = bodyBytesIn.readAll()
-
             println(contents.decodeToString())
-            // FIXME - so we need a way to combine this with suspend _and_ provide backpressure...
-            // but we have to consume the entire buffer...
 
             return contents.size
         }

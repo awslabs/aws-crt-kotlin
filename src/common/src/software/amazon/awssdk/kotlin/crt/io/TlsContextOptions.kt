@@ -52,7 +52,7 @@ public class TlsContextOptions internal constructor(builder: TlsContextOptionsBu
          * @param cipher The TlsCipherPreference to check
          * @return True if the current platform does support this TlsCipherPreference, false otherwise
          */
-        public fun isCipherPreferenceSupported(cipher: TlsCipherPreference): Boolean = isCipherPreferenceSupported(cipher)
+        public fun isCipherPreferenceSupported(cipher: TlsCipherPreference): Boolean = isCipherSupported(cipher)
 
         /**
          * Returns whether or not ALPN is supported on the current platform
@@ -112,7 +112,7 @@ public class TlsContextOptionsBuilder {
      * always be true on clients in the wild. If you set this to true on a server,
      * it will validate every client connection.
      */
-    public var verifyPeer: Boolean = false
+    public var verifyPeer: Boolean = true
 
     // FIXME - port over whatever convenience inits from crt-java we need/want
     // FIXME - add pem utils and tests
