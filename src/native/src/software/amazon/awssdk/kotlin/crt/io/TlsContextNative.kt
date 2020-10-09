@@ -35,23 +35,29 @@ public actual class TlsContext actual constructor(options: TlsContextOptions?) :
                 overrideTrustAuthorityFromPath(kopts.caFile, kopts.caDir)
             }
 
-            // FIXME - deal with apple pkcs only stuffs
+            // FIXME - deal with apple pkcs only stuffs which is going to require splitting the sourceSets and adding e.g. macosMain which depends on native
 
             tlsCtxOpts.minimum_tls_version = kopts.minTlsVersion.value.convert()
             tlsCtxOpts.cipher_pref = kopts.tlsCipherPreference.value.convert()
             tlsCtxOpts.verify_peer = kopts.verifyPeer
 
             if (kopts.alpn.isNotBlank()) {
-                if (aws_tls_ctx_options_set_alpn_list(tlsCtxOpts.ptr, kopts.alpn) != AWS_OP_SUCCESS) {
-                    throw CrtRuntimeException("aws_tls_ctx_options_set_alpn_list()")
-                }
+                awsAssertOp(
+                    aws_tls_ctx_options_set_alpn_list(tlsCtxOpts.ptr, kopts.alpn)
+                ) { "aws_tls_ctx_options_set_alpn_list()" }
             }
         } catch (ex: CrtRuntimeException) {
             Allocator.Default.free(tlsCtxOpts)
             throw ex
         }
 
-        ctx = aws_tls_client_ctx_new(Allocator.Default, tlsCtxOpts.ptr) ?: throw CrtRuntimeException("aws_tls_client_ctx_new()")
+        ctx = awsAssertNotNull(
+            aws_tls_client_ctx_new(Allocator.Default, tlsCtxOpts.ptr)
+        ) {
+            aws_tls_ctx_options_clean_up(tlsCtxOpts.ptr)
+            Allocator.Default.free(tlsCtxOpts)
+            "aws_tls_client_ctx_new()"
+        }
     }
 
     public actual companion object {
@@ -66,16 +72,9 @@ public actual class TlsContext actual constructor(options: TlsContextOptions?) :
             val certCursor = cert.asAwsByteCursor()
             val pkeyCursor = pkey.asAwsByteCursor()
 
-            val ret = aws_tls_ctx_options_init_client_mtls(
-                tlsCtxOpts.ptr,
-                Allocator.Default,
-                certCursor,
-                pkeyCursor
-            )
-
-            if (ret != AWS_OP_SUCCESS) {
-                throw CrtRuntimeException("aws_tls_ctx_options_init_client_mtls()")
-            }
+            awsAssertOp(
+                aws_tls_ctx_options_init_client_mtls(tlsCtxOpts.ptr, Allocator.Default, certCursor, pkeyCursor)
+            ) { "aws_tls_ctx_options_init_client_mtls()" }
         } finally {
             cert.free()
             pkey.free()
@@ -84,15 +83,14 @@ public actual class TlsContext actual constructor(options: TlsContextOptions?) :
 
     // aws_tls_ctx_options_init_client_mtls_from_path()
     private fun initClientMtlsPath(certPath: String, pkeyPath: String) {
-        if (aws_tls_ctx_options_init_client_mtls_from_path(
+        awsAssertOp(
+            aws_tls_ctx_options_init_client_mtls_from_path(
                 tlsCtxOpts.ptr,
                 Allocator.Default,
                 certPath,
                 pkeyPath
-            ) != AWS_OP_SUCCESS
-        ) {
-            throw CrtRuntimeException("aws_tls_ctx_options_init_client_mtls_from_path(): certPath: `$certPath`; keyPath: $pkeyPath")
-        }
+            )
+        ) { "aws_tls_ctx_options_init_client_mtls_from_path(): certPath: `$certPath`; keyPath: $pkeyPath" }
     }
 
     // aws_tls_ctx_options_override_default_trust_store()
@@ -100,9 +98,9 @@ public actual class TlsContext actual constructor(options: TlsContextOptions?) :
         val ca = caRoot.toAwsString()
         try {
             val caCursor = ca.asAwsByteCursor()
-            if (aws_tls_ctx_options_override_default_trust_store(tlsCtxOpts.ptr, caCursor) != AWS_OP_SUCCESS) {
-                throw CrtRuntimeException("aws_tls_ctx_options_override_default_trust_store()")
-            }
+            awsAssertOp(
+                aws_tls_ctx_options_override_default_trust_store(tlsCtxOpts.ptr, caCursor)
+            ) { "aws_tls_ctx_options_override_default_trust_store()" }
         } finally {
             ca.free()
         }
@@ -110,14 +108,13 @@ public actual class TlsContext actual constructor(options: TlsContextOptions?) :
 
     // aws_tls_ctx_options_override_default_trust_store_from_path()
     private fun overrideTrustAuthorityFromPath(caFile: String?, caPath: String?) {
-        if (aws_tls_ctx_options_override_default_trust_store_from_path(
+        awsAssertOp(
+            aws_tls_ctx_options_override_default_trust_store_from_path(
                 tlsCtxOpts.ptr,
                 caFile,
                 caPath
-            ) != AWS_OP_SUCCESS
-        ) {
-            throw CrtRuntimeException("aws_tls_ctx_options_override_default_trust_store_from_path()")
-        }
+            )
+        ) { "aws_tls_ctx_options_override_default_trust_store_from_path()" }
     }
 
     override val ptr: CPointer<aws_tls_ctx> = ctx
