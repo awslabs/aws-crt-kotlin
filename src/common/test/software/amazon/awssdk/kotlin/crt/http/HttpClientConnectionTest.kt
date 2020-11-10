@@ -11,6 +11,8 @@ import software.amazon.awssdk.kotlin.crt.io.*
 import software.amazon.awssdk.kotlin.crt.runSuspendTest
 import software.amazon.awssdk.kotlin.crt.use
 import kotlin.test.*
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
 
 class HttpClientConnectionTest : CrtTest() {
     @Test
@@ -82,6 +84,7 @@ class HttpClientConnectionTest : CrtTest() {
      */
     private suspend fun assertConnect(url: String) {
         try {
+            println("assertConnect for $url")
             connectAllCiphers(url)
         } catch (ex: Exception) {
             fail("[$url]: ${ex.message}")
@@ -124,18 +127,22 @@ class HttpClientConnectionTest : CrtTest() {
      * Connect to the URL with all TLS ciphers supported. Throws an exception if the connection attempt fails for
      * any reason
      */
+    @OptIn(ExperimentalTime::class)
     private suspend fun connectAllCiphers(url: String) {
-        TlsCipherPreference.values()
-            .filter { TlsContextOptions.isCipherPreferenceSupported(it) }
-            .forEach { pref ->
-                TlsContext.build {
-                    tlsCipherPreference = pref
-                }.use { tlsContext ->
-                    withDefaultBootstrap { clientBootstrap ->
-                        connect(url, clientBootstrap, tlsContext)
+        withDefaultBootstrap { clientBootstrap ->
+            TlsCipherPreference.values()
+                .filter { TlsContextOptions.isCipherPreferenceSupported(it) }
+                .forEach { pref ->
+                    TlsContext.build {
+                        tlsCipherPreference = pref
+                    }.use { tlsContext ->
+                        val elapsed = measureTime {
+                            connect(url, clientBootstrap, tlsContext)
+                        }
+                        println("connect took $elapsed: for $url; cipher: $pref")
                     }
                 }
-            }
+        }
     }
 
     /**
