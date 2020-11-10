@@ -59,3 +59,22 @@ private object EmptyBuffer : Buffer {
     override fun copyTo(dest: ByteArray, offset: Int): Int { return 0 }
     override fun readAll(): ByteArray = byteArrayOf()
 }
+
+/**
+ * Create a [Buffer] instance backed by a primitive [ByteArray]
+ */
+public fun byteArrayBuffer(buf: ByteArray): Buffer = ByteArrayBuffer(buf)
+
+/**
+ * Implementation of Buffer that wraps a ByteArray
+ */
+private class ByteArrayBuffer(private val buf: ByteArray) : Buffer {
+    override val len: Int = buf.size
+
+    override fun copyTo(dest: ByteArray, offset: Int): Int {
+        buf.copyInto(dest, offset)
+        return buf.size
+    }
+
+    override fun readAll(): ByteArray = buf
+}

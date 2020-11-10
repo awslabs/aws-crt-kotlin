@@ -27,8 +27,6 @@ allprojects {
 
 project.ext.set("hostManager", HostManager())
 apply(from = rootProject.file("gradle/utility.gradle"))
-
-// FIXME - only working from intellij at the moment...cli invocation of build task fails
 apply(from = rootProject.file("gradle/native.gradle"))
 
 // See: https://kotlinlang.org/docs/reference/opt-in-requirements.html#opting-in-to-using-api
@@ -89,6 +87,14 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 api("org.jetbrains.kotlin:kotlin-stdlib")
+                // FIXME - hack for local development against branch version of aws-crt-java for the moment
+                val crtJavaHome: String = getProperty("crtJavaHome") ?: throw GradleException("need to set `crtJavaHome` using either `-PcrtJavaHome=PATH` or in local.properties")
+                val crtJavaJar = "$crtJavaHome/target/aws-crt-1.0.0-SNAPSHOT.jar"
+                println("crt java jar: $crtJavaJar")
+                implementation(files(crtJavaJar))
+
+                // FIXME - temporary integration with CompletableFuture while we work out a POC on the jvm target
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$coroutinesVersion")
             }
         }
 

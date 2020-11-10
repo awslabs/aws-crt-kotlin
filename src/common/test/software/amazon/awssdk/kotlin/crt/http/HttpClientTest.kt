@@ -5,8 +5,6 @@
 
 package software.amazon.awssdk.kotlin.crt.http
 
-import kotlinx.atomicfu.AtomicInt
-import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.withTimeout
 import software.amazon.awssdk.kotlin.crt.CrtTest
@@ -145,7 +143,7 @@ private class HttpTestRequestBody(private val bytes: ByteArray) : HttpRequestBod
 
 private class HttpTestResponseHandler : HttpStreamResponseHandler {
     private val streamDone = Channel<Int>(1)
-    private val statusCode: AtomicInt = atomic(0)
+    private var statusCode: Int = 0
 
     override fun onResponseHeaders(
         stream: HttpStream,
@@ -155,7 +153,7 @@ private class HttpTestResponseHandler : HttpStreamResponseHandler {
     ) {
         // FIXME - getting the headers or body out of these callbacks in k/n is...difficult
         // k/n concurrency rules causes an immutability exception - we'd have to use something like DetachedObjectGraph to update the values
-        statusCode.compareAndSet(0, responseStatusCode)
+        statusCode = responseStatusCode
     }
 
     override fun onResponseBody(stream: HttpStream, bodyBytesIn: Buffer): Int {
@@ -174,6 +172,6 @@ private class HttpTestResponseHandler : HttpStreamResponseHandler {
         }
 
         val headers = HeadersBuilder()
-        return HttpTestResponse(statusCode.value, headers.build(), null)
+        return HttpTestResponse(statusCode, headers.build(), null)
     }
 }

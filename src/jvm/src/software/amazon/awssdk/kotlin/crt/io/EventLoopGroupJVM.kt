@@ -5,7 +5,9 @@
 
 package software.amazon.awssdk.kotlin.crt.io
 
+import kotlinx.coroutines.future.await
 import software.amazon.awssdk.kotlin.crt.Closeable
+import software.amazon.awssdk.crt.io.EventLoopGroup as EventLoopGroupJni
 
 /**
  * Creates a new event loop group for the I/O subsystem to use to run blocking I/O requests
@@ -15,11 +17,13 @@ import software.amazon.awssdk.kotlin.crt.Closeable
  * @throws [software.amazon.awssdk.kotlin.crt.CrtRuntimeException] If the system is unable to allocate space for a native event loop group
  */
 public actual class EventLoopGroup actual constructor(numThreads: Int) : Closeable {
+    internal val jniElg = EventLoopGroupJni(numThreads)
 
     /**
      * Close this ELG
      */
     override suspend fun close() {
-        TODO("not implemented")
+        jniElg.close()
+        jniElg.shutdownCompleteFuture.await()
     }
 }
