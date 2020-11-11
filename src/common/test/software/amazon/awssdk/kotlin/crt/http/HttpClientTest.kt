@@ -130,7 +130,7 @@ private class HttpTestRequestBody(private val bytes: ByteArray) : HttpRequestBod
 
     override fun sendRequestBody(buffer: MutableBuffer): Boolean {
         // inefficient copy...
-        val outgoing = bytes.sliceArray(currPos..bytes.size)
+        val outgoing = bytes.sliceArray(currPos until bytes.size)
         currPos += buffer.write(outgoing)
         return currPos == bytes.size
     }
@@ -144,6 +144,8 @@ private class HttpTestRequestBody(private val bytes: ByteArray) : HttpRequestBod
 private class HttpTestResponseHandler : HttpStreamResponseHandler {
     private val streamDone = Channel<Int>(1)
     private var statusCode: Int = 0
+    private val headers = HeadersBuilder()
+    private var body: ByteArray? = null
 
     override fun onResponseHeaders(
         stream: HttpStream,
@@ -154,10 +156,22 @@ private class HttpTestResponseHandler : HttpStreamResponseHandler {
         // FIXME - getting the headers or body out of these callbacks in k/n is...difficult
         // k/n concurrency rules causes an immutability exception - we'd have to use something like DetachedObjectGraph to update the values
         statusCode = responseStatusCode
+        nextHeaders?.forEach {
+            headers.append(it.name, it.value)
+        }
     }
 
     override fun onResponseBody(stream: HttpStream, bodyBytesIn: Buffer): Int {
-        return super.onResponseBody(stream, bodyBytesIn)
+        val incoming = bodyBytesIn.readAll()
+
+        // not really concerned with how efficient this is right now...
+        body = if (body == null) {
+            incoming
+        } else {
+            body!! + incoming
+        }
+
+        return incoming.size
     }
 
     override fun onResponseComplete(stream: HttpStream, errorCode: Int) {
@@ -171,7 +185,6 @@ private class HttpTestResponseHandler : HttpStreamResponseHandler {
             throw HttpException(errorCode)
         }
 
-        val headers = HeadersBuilder()
-        return HttpTestResponse(statusCode, headers.build(), null)
+        return HttpTestResponse(statusCode, headers.build(), body)
     }
 }

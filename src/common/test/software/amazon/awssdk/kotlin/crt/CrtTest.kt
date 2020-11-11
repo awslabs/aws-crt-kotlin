@@ -7,6 +7,9 @@ package software.amazon.awssdk.kotlin.crt
 
 open class CrtTest {
     init {
-        CRT.initRuntime()
+        CRT.initRuntime() {
+            logDestination = LogDestination.Stdout
+            logLovel = LogLevel.Debug
+        }
     }
 }
