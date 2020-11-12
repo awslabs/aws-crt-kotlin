@@ -9,10 +9,8 @@ import kotlinx.cinterop.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.receiveOrNull
 import libcrt.*
+import software.amazon.awssdk.kotlin.crt.*
 import software.amazon.awssdk.kotlin.crt.Allocator
-import software.amazon.awssdk.kotlin.crt.Closeable
-import software.amazon.awssdk.kotlin.crt.CrtResource
-import software.amazon.awssdk.kotlin.crt.CrtRuntimeException
 import software.amazon.awssdk.kotlin.crt.util.ShutdownChannel
 import software.amazon.awssdk.kotlin.crt.util.shutdownChannel
 import kotlin.native.concurrent.freeze
@@ -25,7 +23,7 @@ import kotlin.native.concurrent.freeze
  * @throws [software.amazon.awssdk.kotlin.crt.CrtRuntimeException] If the system is unable to allocate space for a native event loop group
  */
 @OptIn(ExperimentalUnsignedTypes::class)
-public actual class EventLoopGroup actual constructor(numThreads: Int) : CrtResource<aws_event_loop_group>(), Closeable {
+public actual class EventLoopGroup actual constructor(numThreads: Int) : CrtResource<aws_event_loop_group>(), Closeable, AsyncShutdown {
     private val elg: CPointer<aws_event_loop_group>
     private val shutdownComplete: ShutdownChannel = shutdownChannel().freeze()
     private val stableRef = StableRef.create(shutdownComplete)
@@ -45,9 +43,12 @@ public actual class EventLoopGroup actual constructor(numThreads: Int) : CrtReso
     /**
      * Close this ELG
      */
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override suspend fun close() {
+    override fun close() {
         aws_event_loop_group_release(elg)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override suspend fun waitForShutdown() {
         shutdownComplete.receiveOrNull()
         stableRef.dispose()
     }

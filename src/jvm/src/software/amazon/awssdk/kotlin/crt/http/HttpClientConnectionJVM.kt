@@ -24,7 +24,7 @@ internal class HttpClientConnectionJVM constructor(internal val jniConn: HttpCli
         return HttpStreamJVM(jniStream)
     }
 
-    override suspend fun close() {
+    override fun close() {
         jniConn.close()
     }
 }

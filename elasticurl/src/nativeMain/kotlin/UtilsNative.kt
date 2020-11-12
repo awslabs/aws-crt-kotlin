@@ -15,3 +15,5 @@ internal actual fun platformInit() {
     // macos is complaining, linux is not...
     Platform.isMemoryLeakCheckerActive = false
 }
+
+internal actual fun createFileSink(filename: String): Sink = TODO("file sink not implemented for native yet")

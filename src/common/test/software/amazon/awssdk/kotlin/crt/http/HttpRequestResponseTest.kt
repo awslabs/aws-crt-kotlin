@@ -11,9 +11,6 @@ import software.amazon.awssdk.kotlin.crt.util.encodeToHex
 import kotlin.test.*
 
 class HttpRequestResponseTest : HttpClientTest() {
-    // TODO - port over upload/download tests from crt-java and add async/parallel tests for coroutines...we are
-    // currently limited by K/N concurrency model
-
     private val TEST_DOC_LINE =
         "This is a sample to prove that http downloads and uploads work. It doesn't really matter what's in here, we mainly just need to verify the downloads and uploads work."
     private val TEST_DOC_SHA256 = "c7fdb5314b9742467b16bd5ea2f8012190b5e2c44a005f7984f89aab58219534"

@@ -18,5 +18,5 @@ internal class HttpStreamJVM(private val jniStream: HttpStreamJni) : HttpStream 
 
     override fun activate() = jniStream.activate()
 
-    override suspend fun close() = jniStream.close()
+    override fun close() = jniStream.close()
 }

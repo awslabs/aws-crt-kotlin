@@ -35,7 +35,7 @@ internal class HttpStreamNative(private val stream: CPointer<aws_http_stream>) :
         }
     }
 
-    override suspend fun close() {
+    override fun close() {
         aws_http_stream_release(stream)
     }
 }

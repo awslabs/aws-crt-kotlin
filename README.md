@@ -49,9 +49,18 @@ The `elasticurl` project contains an MPP (JVM and Native only) executable that p
 java -jar ./elasticurl/libs/elasticurl-jvm.jar [OPTIONS] URL
 ```
 
+NOTE: You can also use the convenience script `./scripts/elasticurlJvm.sh [OPTIONS] URL`
+
 To enable memory tracing specify the environment variable `CRTDEBUG=trace=N` and provide the CLI option `-v trace`
 
 e.g.
 ```
 CRTDEBUG=trace=2 ./elasticurl/bin/macosX64/elasticurl.kexe -v trace https://aws.amazon.com
 ```
+
+
+**Integration Test**
+
+Run the simple elasticurl integration test script
+
+`./scripts/elasticurl-test.sh`

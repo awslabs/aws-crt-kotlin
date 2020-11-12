@@ -119,7 +119,7 @@ public actual class TlsContext actual constructor(options: TlsContextOptions?) :
 
     override val ptr: CPointer<aws_tls_ctx> = ctx
 
-    override suspend fun close() {
+    override fun close() {
         aws_tls_ctx_release(ctx)
         aws_tls_ctx_options_clean_up(tlsCtxOpts.ptr)
         Allocator.Default.free(tlsCtxOpts)

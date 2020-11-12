@@ -21,7 +21,7 @@ import kotlin.native.concurrent.freeze
 public actual class HostResolver actual constructor(
     elg: EventLoopGroup,
     maxEntries: Int
-) : CrtResource<aws_host_resolver>(), Closeable {
+) : CrtResource<aws_host_resolver>(), Closeable, AsyncShutdown {
 
     private val resolver: CPointer<aws_host_resolver>
     private val shutdownComplete: ShutdownChannel = shutdownChannel().freeze()
@@ -43,9 +43,12 @@ public actual class HostResolver actual constructor(
     override val ptr: CPointer<aws_host_resolver>
         get() = resolver
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override suspend fun close() {
+    override fun close() {
         aws_host_resolver_release(resolver)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override suspend fun waitForShutdown() {
         shutdownComplete.receiveOrNull()
         stableRef.dispose()
     }

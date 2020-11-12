@@ -6,14 +6,18 @@
 package software.amazon.awssdk.kotlin.crt.io
 
 import kotlinx.coroutines.future.await
+import software.amazon.awssdk.kotlin.crt.AsyncShutdown
 import software.amazon.awssdk.kotlin.crt.Closeable
 import software.amazon.awssdk.crt.io.ClientBootstrap as ClientBootstrapJni
 
-public actual class ClientBootstrap actual constructor(elg: EventLoopGroup, hr: HostResolver) : Closeable {
+public actual class ClientBootstrap actual constructor(elg: EventLoopGroup, hr: HostResolver) : Closeable, AsyncShutdown {
     internal val jniBootstrap = ClientBootstrapJni(elg.jniElg, hr.jniHr)
 
-    override suspend fun close() {
+    override fun close() {
         jniBootstrap.close()
+    }
+
+    override suspend fun waitForShutdown() {
         jniBootstrap.shutdownCompleteFuture.await()
     }
 }

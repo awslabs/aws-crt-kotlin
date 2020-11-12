@@ -31,6 +31,10 @@ abstract class HttpClientTest : CrtTest() {
             clientBootstrap.close()
             hr.close()
             elg.close()
+
+            clientBootstrap.waitForShutdown()
+            hr.waitForShutdown()
+            elg.waitForShutdown()
         }
     }
 
@@ -53,13 +57,15 @@ abstract class HttpClientTest : CrtTest() {
             this.tlsContext = tlsContext
             this.socketOptions = socketOptions ?: SocketOptions()
         }
-        HttpClientConnectionManager(httpConnOpts).use { pool ->
+        val connMgr = HttpClientConnectionManager(httpConnOpts)
+        connMgr.use { pool ->
             withTimeout(connTimeoutMs.toLong()) {
                 pool.acquireConnection().use {
                     block(it)
                 }
             }
         }
+        connMgr.waitForShutdown()
     }
 
     /**

@@ -20,11 +20,9 @@ import kotlin.native.concurrent.freeze
 private typealias ConnectionAcquisitionChannel = Channel<HttpConnectionAcquisition>
 private data class HttpConnectionAcquisition(val conn: CPointer<aws_http_connection>?, val errCode: Int)
 
-// TODO - port over tests from crt-java
-
 public actual class HttpClientConnectionManager actual constructor(
     public actual val options: HttpClientConnectionManagerOptions
-) : Closeable, CrtResource<aws_http_connection_manager>() {
+) : Closeable, AsyncShutdown, CrtResource<aws_http_connection_manager>() {
 
     private val manager: CPointer<aws_http_connection_manager>
     private val shutdownComplete: ShutdownChannel = shutdownChannel().freeze()
@@ -189,10 +187,13 @@ public actual class HttpClientConnectionManager actual constructor(
         aws_http_connection_manager_release_connection(manager, nativeConn)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override suspend fun close() {
+    override fun close() {
         // TODO - deal with close() being called and clearing out pending acquisitions
         aws_http_connection_manager_release(manager)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override suspend fun waitForShutdown() {
         shutdownComplete.receiveOrNull()
         shutdownCompleteStableRef.dispose()
     }

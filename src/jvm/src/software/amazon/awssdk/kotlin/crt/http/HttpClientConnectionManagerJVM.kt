@@ -6,6 +6,7 @@
 package software.amazon.awssdk.kotlin.crt.http
 
 import kotlinx.coroutines.future.await
+import software.amazon.awssdk.kotlin.crt.AsyncShutdown
 import software.amazon.awssdk.kotlin.crt.Closeable
 import software.amazon.awssdk.kotlin.crt.io.SocketDomain
 import software.amazon.awssdk.kotlin.crt.io.SocketOptions
@@ -19,7 +20,7 @@ import software.amazon.awssdk.crt.io.SocketOptions as SocketOptionsJni
 
 public actual class HttpClientConnectionManager actual constructor(
     public actual val options: HttpClientConnectionManagerOptions
-) : Closeable {
+) : Closeable, AsyncShutdown {
 
     private val jniManager = HttpClientConnectionManagerJni.create(options.into())
 
@@ -41,8 +42,11 @@ public actual class HttpClientConnectionManager actual constructor(
         jniManager.releaseConnection(ktConn.jniConn)
     }
 
-    override suspend fun close() {
+    override fun close() {
         jniManager.close()
+    }
+
+    override suspend fun waitForShutdown() {
         jniManager.shutdownCompleteFuture.await()
     }
 }

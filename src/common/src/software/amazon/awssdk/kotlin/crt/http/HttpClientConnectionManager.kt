@@ -5,12 +5,13 @@
 
 package software.amazon.awssdk.kotlin.crt.http
 
+import software.amazon.awssdk.kotlin.crt.AsyncShutdown
 import software.amazon.awssdk.kotlin.crt.Closeable
 
 /**
  * Manages a pool of Http connections
  */
-public expect class HttpClientConnectionManager(options: HttpClientConnectionManagerOptions) : Closeable {
+public expect class HttpClientConnectionManager(options: HttpClientConnectionManagerOptions) : Closeable, AsyncShutdown {
     /**
      * The options this manager was configured with
      */

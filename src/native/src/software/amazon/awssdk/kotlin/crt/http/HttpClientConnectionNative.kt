@@ -17,8 +17,6 @@ import software.amazon.awssdk.kotlin.crt.util.toKString
 import software.amazon.awssdk.kotlin.crt.util.withAwsByteCursor
 import kotlin.native.concurrent.freeze
 
-// TODO - port over tests from crt-java
-
 internal class HttpClientConnectionNative(
     private val manager: HttpClientConnectionManager,
     private val connection: CPointer<aws_http_connection>
@@ -107,7 +105,7 @@ internal class HttpClientConnectionNative(
         return nativeReq
     }
 
-    override suspend fun close() {
+    override fun close() {
         // aws_http_connection_close(connection)
         // aws_http_connection_release(connection)
         manager.releaseConnection(this)

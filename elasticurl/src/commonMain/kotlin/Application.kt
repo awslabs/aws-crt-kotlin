@@ -27,6 +27,9 @@ fun main(args: Array<String>) {
     println("url: ${opts.url}")
     val uri = Uri.parse(opts.url)
     println("parsed uri: $uri")
+    println("headers: ${opts.headers}")
+
+    val sink = if (opts.outputFile != null) createFileSink(opts.outputFile!!) else StdoutSink()
 
     val tlsContextBuilder = TlsContextOptionsBuilder()
 
@@ -75,7 +78,7 @@ fun main(args: Array<String>) {
         val conn = httpConnManager.acquireConnection()
 
         try {
-            conn.roundTrip(request)
+            conn.roundTrip(request, sink)
         } catch (ex: Exception) {
             println("failed to round trip request: ${ex.message}")
             if (ex is CrtRuntimeException) {
@@ -87,25 +90,31 @@ fun main(args: Array<String>) {
             conn.close()
             println("closing http connection manager")
             httpConnManager.close()
+            httpConnManager.waitForShutdown()
 
             println("closing tls context")
             tlsContext.close()
 
             println("closing client bootstrap")
             clientBootstrap.close()
+            clientBootstrap.waitForShutdown()
 
             println("closing host resolver")
             hr.close()
+            hr.waitForShutdown()
 
             println("closing event loop group")
             elg.close()
+            elg.waitForShutdown()
+
+            sink.close()
         }
     }
 
     println("exiting")
 }
 
-private suspend fun HttpClientConnection.roundTrip(request: HttpRequest) {
+private suspend fun HttpClientConnection.roundTrip(request: HttpRequest, sink: Sink) {
     val streamDone = Channel<Unit>()
 
     val responseHandler = object : HttpStreamResponseHandler {
@@ -123,7 +132,8 @@ private suspend fun HttpClientConnection.roundTrip(request: HttpRequest) {
         override fun onResponseBody(stream: HttpStream, bodyBytesIn: Buffer): Int {
             println("onResponseBody -- recv'd ${bodyBytesIn.len} bytes")
             val contents = bodyBytesIn.readAll()
-            println(contents.decodeToString())
+            // println(contents.decodeToString())
+            sink.write(contents)
 
             return contents.size
         }

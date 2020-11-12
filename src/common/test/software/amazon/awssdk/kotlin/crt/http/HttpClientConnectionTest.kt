@@ -37,9 +37,6 @@ class HttpClientConnectionTest : CrtTest() {
                 println("acquiring connection")
                 val conn = connPool.acquireConnection()
                 println("conn acquired")
-
-                // FIXME pool's `close()` impl won't exit until all connections are released...this is one of the
-                // reasons we should separate close and waiting for async shutdown
                 conn.close()
             }
         } finally {

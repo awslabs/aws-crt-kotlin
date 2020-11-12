@@ -5,16 +5,14 @@
 
 package software.amazon.awssdk.kotlin.crt
 
-// TODO - should we separate out close() from waiting for close to complete? Having this
-// function suspend means it can only be called from a coroutine
 public interface Closeable {
     /**
-     * Resource shutdown may be async
+     * Close this resource
      */
-    public suspend fun close()
+    public fun close()
 }
 
-public suspend inline fun <C : Closeable, R> C.use(block: (C) -> R): R {
+public inline fun <C : Closeable, R> C.use(block: (C) -> R): R {
     var closed = false
 
     return try {

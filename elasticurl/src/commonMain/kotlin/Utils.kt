@@ -21,3 +21,23 @@ internal expect fun <T> runBlocking(context: CoroutineContext = EmptyCoroutineCo
  * Platform specific initialization steps
  */
 internal expect fun platformInit()
+
+/**
+ * Output sink
+ */
+interface Sink {
+    fun write(data: ByteArray)
+    fun close()
+}
+
+internal expect fun createFileSink(filename: String): Sink
+
+/**
+ * Sink that just echoes the data to stdout
+ */
+internal class StdoutSink : Sink {
+    override fun write(data: ByteArray) {
+        println(data.decodeToString())
+    }
+    override fun close() {}
+}
