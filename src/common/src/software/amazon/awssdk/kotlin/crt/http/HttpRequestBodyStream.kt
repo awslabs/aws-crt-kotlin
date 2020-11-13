@@ -11,6 +11,9 @@ import software.amazon.awssdk.kotlin.crt.io.MutableBuffer
  * Interface that CRT knows how to call to request an outgoing request payload body
  */
 public interface HttpRequestBodyStream {
+    public companion object {
+        public fun fromByteArray(buffer: ByteArray): HttpRequestBodyStream = ByteArrayBodyStream(buffer)
+    }
 
     /**
      * Called from CRT when the Http request has a body.
@@ -33,4 +36,20 @@ public interface HttpRequestBodyStream {
      * @return true if the stream was successfully rewound, false otherwise
      */
     public fun resetPosition(): Boolean = false
+}
+
+private class ByteArrayBodyStream(val bytes: ByteArray) : HttpRequestBodyStream {
+    private var currPos: Int = 0
+
+    override fun sendRequestBody(buffer: MutableBuffer): Boolean {
+        // TODO - inefficient copy...
+        val outgoing = bytes.sliceArray(currPos until bytes.size)
+        currPos += buffer.write(outgoing)
+        return currPos == bytes.size
+    }
+
+    override fun resetPosition(): Boolean {
+        currPos = 0
+        return true
+    }
 }
