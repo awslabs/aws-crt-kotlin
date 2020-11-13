@@ -38,6 +38,6 @@ public fun StaticCredentialsProvider.Companion.fromCredentials(
     credentials: Credentials
 ): StaticCredentialsProvider = build {
     accessKeyId = credentials.accessKeyId
-    secretAccessKey = credentials.accessKeyId
+    secretAccessKey = credentials.secretAccessKey
     sessionToken = credentials.sessionToken
 }

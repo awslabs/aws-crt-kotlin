@@ -18,3 +18,5 @@ public interface CredentialsProvider : Closeable, AsyncShutdown {
      */
     public suspend fun getCredentials(): Credentials
 }
+
+// TODO - expose other crt providers available (some are reachable through default chain): sts, imds/ec2, ecs, environment, profile, process. Not all are available from crt-java yet

@@ -86,7 +86,8 @@ private fun SocketOptions.into(): SocketOptionsJni {
 
     return jniOpts
 }
-private fun HttpProxyOptions.into(): HttpProxyOptionsJni {
+
+internal fun HttpProxyOptions.into(): HttpProxyOptionsJni {
     val jniOpts = HttpProxyOptionsJni()
     jniOpts.host = host
     if (port != null) jniOpts.port = port!!
