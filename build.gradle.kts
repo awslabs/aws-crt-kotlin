@@ -9,10 +9,12 @@ import java.util.Properties
 
 plugins {
     kotlin("multiplatform") version "1.4.10"
+    `maven`
+    `maven-publish`
 }
 
 group = "software.amazon.awssdk.crt"
-version = "1.0-SNAPSHOT"
+version = "0.1.0-SNAPSHOT"
 description = "Kotlin Multiplatform bindings for AWS SDK Common Runtime"
 
 allprojects {
@@ -88,10 +90,12 @@ kotlin {
             dependencies {
                 api("org.jetbrains.kotlin:kotlin-stdlib")
                 // FIXME - hack for local development against branch version of aws-crt-java for the moment
-                val crtJavaHome: String = getProperty("crtJavaHome") ?: throw GradleException("need to set `crtJavaHome` using either `-PcrtJavaHome=PATH` or in local.properties")
-                val crtJavaJar = "$crtJavaHome/target/aws-crt-1.0.0-SNAPSHOT.jar"
-                println("crt java jar: $crtJavaJar")
-                implementation(files(crtJavaJar))
+                // val crtJavaHome: String = getProperty("crtJavaHome") ?: throw GradleException("need to set `crtJavaHome` using either `-PcrtJavaHome=PATH` or in local.properties")
+                // val crtJavaJar = "$crtJavaHome/target/aws-crt-1.0.0-SNAPSHOT.jar"
+                // println("crt java jar: $crtJavaJar")
+                // implementation(files(crtJavaJar))
+                val crtJavaVersion: String by project
+                implementation("software.amazon.awssdk.crt:aws-crt:$crtJavaVersion")
 
                 // FIXME - temporary integration with CompletableFuture while we work out a POC on the jvm target
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$coroutinesVersion")
