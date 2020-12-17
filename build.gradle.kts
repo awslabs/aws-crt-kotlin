@@ -46,7 +46,7 @@ fun isLinux(target: KotlinNativeTarget): Boolean = when(target.name) {
     else -> false
 }
 
-// get a project propety by name if it exists (including from local.properties)
+// get a project property by name if it exists (including from local.properties)
 inline fun<reified T> getProperty(name: String): T? {
     if (project.hasProperty(name)) {
         return project.properties.get(name) as T
@@ -88,11 +88,6 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 api("org.jetbrains.kotlin:kotlin-stdlib")
-                // FIXME - hack for local development against branch version of aws-crt-java for the moment
-                // val crtJavaHome: String = getProperty("crtJavaHome") ?: throw GradleException("need to set `crtJavaHome` using either `-PcrtJavaHome=PATH` or in local.properties")
-                // val crtJavaJar = "$crtJavaHome/target/aws-crt-1.0.0-SNAPSHOT.jar"
-                // println("crt java jar: $crtJavaJar")
-                // implementation(files(crtJavaJar))
                 val crtJavaVersion: String by project
                 implementation("software.amazon.awssdk.crt:aws-crt:$crtJavaVersion")
 
