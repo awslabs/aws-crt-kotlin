@@ -8,10 +8,7 @@ package software.amazon.awssdk.kotlin.crt.io
 import kotlinx.cinterop.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.receiveOrNull
-import libcrt.aws_host_resolver
-import libcrt.aws_host_resolver_new_default
-import libcrt.aws_host_resolver_release
-import libcrt.aws_shutdown_callback_options
+import libcrt.*
 import software.amazon.awssdk.kotlin.crt.*
 import software.amazon.awssdk.kotlin.crt.Allocator
 import software.amazon.awssdk.kotlin.crt.util.ShutdownChannel
@@ -28,14 +25,22 @@ public actual class HostResolver actual constructor(
     private val stableRef = StableRef.create(shutdownComplete)
 
     init {
-        val shutdownOpts = cValue<aws_shutdown_callback_options> {
-            shutdown_callback_fn = staticCFunction(::onShutdownComplete)
-            shutdown_callback_user_data = stableRef.asCPointer()
-        }
+        resolver = memScoped {
+            val shutdownOpts = cValue<aws_shutdown_callback_options> {
+                shutdown_callback_fn = staticCFunction(::onShutdownComplete)
+                shutdown_callback_user_data = stableRef.asCPointer()
+            }
 
-        resolver = awsAssertNotNull(
-            aws_host_resolver_new_default(Allocator.Default, maxEntries.convert(), elg, shutdownOpts)
-        ) { "aws_host_resolver_new_default()" }
+            val resolverOpts = cValue<aws_host_resolver_default_options> {
+                el_group = elg.ptr
+                shutdown_options = shutdownOpts.ptr
+                max_entries = maxEntries.convert()
+            }
+
+            awsAssertNotNull(
+                aws_host_resolver_new_default(Allocator.Default, resolverOpts)
+            ) { "aws_host_resolver_new_default()" }
+        }
     }
 
     public actual constructor(elg: EventLoopGroup) : this(elg, DEFAULT_MAX_ENTRIES)

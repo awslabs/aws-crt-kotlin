@@ -55,6 +55,7 @@ kotlin {
 
         val awsLibs = listOf(
             "aws-c-common",
+            "aws-c-cal",
             "aws-c-io",
             "aws-c-http",
             "aws-c-compression"
