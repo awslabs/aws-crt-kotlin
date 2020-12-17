@@ -4,7 +4,6 @@
  */
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetPreset
 import java.util.Properties
 
 plugins {
@@ -144,13 +143,13 @@ kotlin {
 
             // cmake configured files need included
             val generatedIncludeDirs = listOf(
-                "$buildDir/cmake-build/aws-common-runtime/aws-c-common/generated/include"
+                "$buildDir/cmake-build/crt/aws-c-common/generated/include"
             )
 
             println("configuring cinterop for crt: [${knTarget.name}]")
             create("aws-crt"){
                 val includeDirs = awsLibs.map { name ->
-                    val headerDir = "$rootDir/aws-common-runtime/$name/include"
+                    val headerDir = "$rootDir/crt/$name/include"
                     println("header dir: $headerDir")
                     headerDir
                 }
@@ -164,7 +163,7 @@ kotlin {
         // FIXME - we will likely have to make some plugin to deal with this and make it easy on end users
         // libs are specified in the interop (crt.def) file. We just need the link dirs so they can be found
         val linkDirs = awsLibs.map {
-            "-L$buildDir/cmake-build/aws-common-runtime/$it"
+            "-L$buildDir/cmake-build/crt/$it"
         }.toMutableList()
 
         if (isLinux(knTarget)) {
@@ -247,7 +246,7 @@ val cmakeBuild = tasks.register("cmakeBuild") {
 //    inputs.files(fileTree("${rootDir}/src/native").matching {
 //        include(listOf("**/*.c", "**/*.h"))
 //    })
-    inputs.files(fileTree("${rootDir}/aws-common-runtime").matching {
+    inputs.files(fileTree("${rootDir}/crt").matching {
         include(listOf("**/CMakeLists.txt", "**/*.c", "**/*.h"))
     })
 //    outputs.files(fileTree("${buildDir}/cmake-build/lib/${targetOs}/${targetArch}"))

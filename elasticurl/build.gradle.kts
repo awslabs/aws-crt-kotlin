@@ -62,7 +62,7 @@ kotlin {
         )
         val linkDirs = awsLibs.map {
             val rootBuildDir = rootProject.buildDir
-            "-L$rootBuildDir/cmake-build/aws-common-runtime/$it"
+            "-L$rootBuildDir/cmake-build/crt/$it"
         }.toMutableList()
 
         if (rootProject.ext.has("extraLinkDirs")) {
