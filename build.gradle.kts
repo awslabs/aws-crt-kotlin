@@ -28,12 +28,13 @@ allprojects {
 
 project.ext.set("hostManager", HostManager())
 apply(from = rootProject.file("gradle/utility.gradle"))
-apply(from = rootProject.file("gradle/native.gradle"))
+
+// FIXME - disabling K/N until the memory model is updated
+// See: https://blog.jetbrains.com/kotlin/2020/07/kotlin-native-memory-management-roadmap/
+// apply(from = rootProject.file("gradle/native.gradle"))
 
 // See: https://kotlinlang.org/docs/reference/opt-in-requirements.html#opting-in-to-using-api
 val experimentalAnnotations = listOf("kotlin.RequiresOptIn")
-
-val coroutinesVersion: String by project
 
 fun isLinux(target: KotlinNativeTarget): Boolean = when(target.name) {
     "linuxX64" -> true
@@ -70,6 +71,9 @@ kotlin {
 
     jvm()
 
+    val kotlinVersion: String by project
+    val coroutinesVersion: String by project
+
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -98,7 +102,11 @@ kotlin {
 
         val jvmTest by getting {
             dependencies {
-                api("org.jetbrains.kotlin:kotlin-test-junit")
+                val junitVersion: String by project
+                api("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
+                api("org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion")
+                implementation("org.junit.jupiter:junit-jupiter:$junitVersion")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-debug:$coroutinesVersion")
             }
         }
 
@@ -272,6 +280,17 @@ tasks.filter { it.name.startsWith("cinterop") }.forEach {
 val nativeTestTasks = listOf("nativeTest", "linuxX64Test", "macosX64Test", "mingwX64Test")
 nativeTestTasks.forEach {
     tasks.findByName(it)?.dependsOn(cmakeBuild)
+}
+
+// have to configure JVM test task to use junit platform when using junit5
+val jvmTest: Test by tasks
+jvmTest.apply {
+    testLogging {
+        events("passed", "skipped", "failed")
+        showStandardStreams = true
+    }
+
+    useJUnitPlatform()
 }
 
 val ktlint by configurations.creating

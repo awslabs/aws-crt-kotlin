@@ -10,7 +10,7 @@ plugins {
 
 project.ext.set("hostManager", org.jetbrains.kotlin.konan.target.HostManager())
 apply(from = rootProject.file("gradle/utility.gradle"))
-apply(from = rootProject.file("gradle/native.gradle"))
+// apply(from = rootProject.file("gradle/native.gradle"))
 
 
 kotlin {
