@@ -18,8 +18,6 @@ internal object Logging {
         if (!initialized.compareAndSet(0, 1)) return
 
         memScoped {
-            val scope = this
-
             val options = cValue<aws_logger_standard_options> {
                 when (config.logDestination) {
                     LogDestination.None -> return

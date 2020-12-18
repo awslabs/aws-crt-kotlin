@@ -1,6 +1,6 @@
 package = libcrt
 headers = aws/common/allocator.h aws/common/error.h \
-        aws/common/byte_buf.h aws/common/string.h aws/common/logging.h \
+        aws/common/byte_buf.h aws/common/string.h aws/common/logging.h aws/common/date_time.h \
         aws/io/io.h aws/io/event_loop.h aws/io/host_resolver.h aws/io/stream.h \
         aws/io/channel_bootstrap.h aws/io/tls_channel_handler.h aws/io/socket.h \
         aws/io/uri.h \
