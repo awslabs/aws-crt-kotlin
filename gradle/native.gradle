@@ -1,0 +1,67 @@
+
+kotlin {
+    targets {
+        if (project.ext.ideaActive) {
+            // tl;dr - this is hack so that local development works and we only have 1 "native" sourceSet
+            //
+            // when developing locally with intellij we pretend that the only native
+            // target is the one the user is developing for and that the "nativeMain" sourceSet
+            // is the source directory for only that target. In reality it's a shared source set
+            // used by all native targets but setting it up that way is not currently supported
+            // see: https://youtrack.jetbrains.com/issue/KT-36086
+            fromPreset(project.ext.ideaPreset, 'native')
+            println("[hack] enabled only for preset: ${project.ext.ideaPreset.name}")
+        } else {
+            fromPreset(project.ext.ideaPreset, project.ext.ideaPresetName)
+
+            // FIXME - we are reusing our hack temporarily, what we actually want
+            // is to deal with cross-compilation and build for all platforms supported
+            // but for now we are going to only compile for the host we are running on
+            // to simplify the initial development workflow...
+
+//            fromPreset(presets.linuxX64, 'linuxX64')
+//            fromPreset(presets.macosX64, 'macosX64')
+//            fromPreset(presets.mingwX64, 'mingwX64')
+
+//            def crossCompileTargets = [linuxX64, macosX64, mingwX64]
+//            def host = getHostName()
+//            switch (host) {
+//                case 'linux':
+//                    crossCompileTargets.remove(linuxX64)
+//                    break
+//                case 'windows':
+//                    crossCompileTargets.remove(mingwX64)
+//                    break
+//                case 'macos':
+//                    crossCompileTargets.remove(macosX64)
+//                    break
+//            }
+//            disableCompilation(crossCompileTargets)
+//            configure([mingwX64Test]) {
+//                environment "PATH": "C:\\msys64\\mingw64\\bin;C:\\Tools\\msys64\\mingw64\\bin"
+//            }
+        }
+    }
+
+    sourceSets {
+        nativeMain.dependencies {
+//            implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:$coroutinesVersion"
+//            implementation "org.jetbrains.kotlinx:atomicfu:$atomicfuVersion"
+        }
+
+        nativeTest
+        nativeMain { dependsOn commonMain }
+
+        if (!project.ext.ideaActive) {
+            configure([iosArm32Main, iosArm64Main, iosX64Main, macosX64Main, linuxX64Main, mingwX64Main]) {
+                dependsOn nativeMain
+            }
+
+            configure([iosArm32Test, iosArm64Test, iosX64Test, macosX64Test, linuxX64Test, mingwX64Test]) {
+                dependsOn nativeTest
+            }
+        }
+    }
+}
+
+project.ext.set("hasNative", true)

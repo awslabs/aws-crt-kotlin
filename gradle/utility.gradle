@@ -1,0 +1,27 @@
+project.ext.ideaActive = System.getProperty('idea.active') == 'true'
+
+kotlin {
+    targets {
+        def manager = project.ext.hostManager
+        def linuxEnabled = manager.isEnabled(presets.linuxX64.konanTarget)
+        def macosEnabled = manager.isEnabled(presets.macosX64.konanTarget)
+        def winEnabled = manager.isEnabled(presets.mingwX64.konanTarget)
+
+        project.ext.isLinuxHost = linuxEnabled
+        project.ext.isMacosHost = macosEnabled
+        project.ext.isWinHost = winEnabled
+        println("idea active: ${project.ext.ideaActive}")
+
+        def ideaPreset = presets.linuxX64
+        if (macosEnabled) ideaPreset = presets.macosX64
+        if (winEnabled) ideaPreset = presets.mingwX64
+
+        // figure out which platform user is developing on and set the native target to that
+        // this allows development with intellij and resolution of cinterop libs to "just work"
+        // see native.gradle for how it's used...
+        project.ext.ideaPreset = ideaPreset
+        // some things are just easier in groovy still
+        project.ext.ideaPresetName = ideaPreset.name
+    }
+}
+

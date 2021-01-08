@@ -8,6 +8,10 @@ plugins {
     application
 }
 
+project.ext.set("hostManager", org.jetbrains.kotlin.konan.target.HostManager())
+apply(from = rootProject.file("gradle/utility.gradle"))
+apply(from = rootProject.file("gradle/native.gradle"))
+
 
 kotlin {
     jvm() {
@@ -41,6 +45,40 @@ kotlin {
             }
         }
     }
+
+    targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
+        binaries {
+            executable("elasticurl", listOf(DEBUG)) {
+                // entryPoint = "software.amazon.awssdk.kotlin.crt.elasticurl.ApplicationKt"
+            }
+        }
+
+        val awsLibs = listOf(
+            "aws-c-common",
+            "aws-c-cal",
+            "aws-c-io",
+            "aws-c-http",
+            "aws-c-compression"
+        )
+        val linkDirs = awsLibs.map {
+            val rootBuildDir = rootProject.buildDir
+            "-L$rootBuildDir/cmake-build/crt/$it"
+        }.toMutableList()
+
+        if (rootProject.ext.has("extraLinkDirs")) {
+            val extraLinkDirs = rootProject.ext.get("extraLinkDirs") as List<String>
+            println("[elasticurl] extraLinkDirs: $extraLinkDirs")
+            linkDirs.addAll(extraLinkDirs)
+        }
+
+        val linkOpts = linkDirs.joinToString(" ")
+
+        println("[elasticurl] linker opts: $linkOpts")
+        compilations["main"].kotlinOptions {
+            freeCompilerArgs = listOf("-linker-options", linkOpts)
+        }
+    }
+
 }
 
 application {
