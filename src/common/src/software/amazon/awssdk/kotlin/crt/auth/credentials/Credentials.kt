@@ -1,0 +1,15 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0.
+ */
+
+package software.amazon.awssdk.kotlin.crt.auth.credentials
+
+/**
+ * Represents a set of AWS credentials
+ */
+public data class Credentials(val accessKeyId: String, val secretAccessKey: String, val sessionToken: String?) {
+
+    public constructor(accessKeyId: ByteArray, secretAccessKey: ByteArray, sessionToken: ByteArray?) :
+        this(accessKeyId.decodeToString(), secretAccessKey.decodeToString(), sessionToken?.decodeToString())
+}
