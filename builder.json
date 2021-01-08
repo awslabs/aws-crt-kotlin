@@ -14,6 +14,9 @@
     "build_env": {
         "JAVA_HOME": "{java_home}"
     },
+    "test_env": {
+        "JAVA_HOME": "{java_home}"
+    },
     "hosts": {
         "ubuntu": {
             "packages": [
