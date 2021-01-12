@@ -1,0 +1,45 @@
+{
+    "name": "aws-crt-kotlin",
+    "packages": [],
+    "build_steps": [
+        "./gradlew -x test -x allTests build"
+    ],
+    "test_steps": [
+        "./gradlew test allTests"
+    ],
+    "imports": [
+        "JDK8"
+    ],
+    "build_dir": "target/cmake-build",
+    "build_env": {
+        "JAVA_HOME": "{java_home}"
+    },
+    "test_env": {
+        "JAVA_HOME": "{java_home}"
+    },
+    "hosts": {
+        "ubuntu": {
+            "packages": [
+                "openjdk-8-jdk-headless"
+            ]
+        },
+        "debian": {
+            "packages": [
+                "openjdk-8-jdk-headless"
+            ]
+        }
+    },
+    "targets": {
+        "linux": {
+            "imports": [
+                "s2n"
+            ],
+            "!build_steps": [
+                "./gradlew -x test -x jvmTest build -Dlibcrypto.path={libcrypto_path}"
+            ],
+            "!test_steps": [
+                "./gradlew test allTests -Dlibcrypto.path={libcrypto_path}"
+            ]
+        }
+    }
+}
