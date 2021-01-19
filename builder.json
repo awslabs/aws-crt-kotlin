@@ -2,7 +2,7 @@
     "name": "aws-crt-kotlin",
     "packages": [],
     "build_steps": [
-        "./gradlew -x test -x allTests build"
+        "./gradlew -x test -x allTests -x jvmTest build"
     ],
     "test_steps": [
         "./gradlew test allTests"
@@ -35,7 +35,7 @@
                 "s2n"
             ],
             "!build_steps": [
-                "./gradlew -x test -x jvmTest build -Dlibcrypto.path={libcrypto_path}"
+                "./gradlew -x test -x allTests -x jvmTest build -Dlibcrypto.path={libcrypto_path}"
             ],
             "!test_steps": [
                 "./gradlew test allTests -Dlibcrypto.path={libcrypto_path}"
