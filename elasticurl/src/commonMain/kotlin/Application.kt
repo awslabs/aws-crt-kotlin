@@ -4,11 +4,11 @@
  */
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.receiveOrNull
-import software.amazon.awssdk.kotlin.crt.CRT
-import software.amazon.awssdk.kotlin.crt.CrtRuntimeException
-import software.amazon.awssdk.kotlin.crt.LogDestination
-import software.amazon.awssdk.kotlin.crt.http.*
-import software.amazon.awssdk.kotlin.crt.io.*
+import aws.sdk.kotlin.runtime.crt.CRT
+import aws.sdk.kotlin.runtime.crt.CrtRuntimeException
+import aws.sdk.kotlin.runtime.crt.LogDestination
+import aws.sdk.kotlin.runtime.crt.http.*
+import aws.sdk.kotlin.runtime.crt.io.*
 
 fun main(args: Array<String>) {
     platformInit()

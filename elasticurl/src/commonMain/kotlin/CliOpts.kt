@@ -4,7 +4,7 @@
  */
 
 import kotlinx.cli.*
-import software.amazon.awssdk.kotlin.crt.LogLevel
+import aws.sdk.kotlin.runtime.crt.LogLevel
 
 private const val DEFAULT_CONNECT_TIMEOUT_MS = 3000
 

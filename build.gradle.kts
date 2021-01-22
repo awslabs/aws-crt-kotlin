@@ -12,7 +12,7 @@ plugins {
     `maven-publish`
 }
 
-group = "software.amazon.awssdk.crt"
+group = "aws.sdk.kotlin.runtime.crt"
 version = "0.1.0-SNAPSHOT"
 description = "Kotlin Multiplatform bindings for AWS SDK Common Runtime"
 
