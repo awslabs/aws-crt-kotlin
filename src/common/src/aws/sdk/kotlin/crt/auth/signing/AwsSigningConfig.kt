@@ -5,6 +5,8 @@
 
 package aws.sdk.kotlin.crt.auth.signing
 
+
+import aws.sdk.kotlin.crt.Platform
 import aws.sdk.kotlin.crt.auth.credentials.Credentials
 import aws.sdk.kotlin.crt.auth.credentials.CredentialsProvider
 
@@ -64,7 +66,7 @@ public class AwsSigningConfig(builder: Builder) {
     /**
      * Raw date (epoch milliseconds) to use during the signing process.
      */
-    public val date: Long = builder.date ?: aws.sdk.kotlin.crt.Platform.epochMilliNow()
+    public val date: Long = builder.date ?: Platform.epochMilliNow()
 
     /**
      * Optional function to control which headers are a part of the canonical request.

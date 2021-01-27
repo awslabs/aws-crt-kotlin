@@ -12,7 +12,7 @@ public actual object Digest {
     /**
      * Calculate the SHA-256 hash of the input [buffer]
      */
-    public actual fun sha256(buffer: kotlin.ByteArray): kotlin.ByteArray {
+    public actual fun sha256(buffer: ByteArray): ByteArray {
         val digest = MessageDigest.getInstance("SHA-256")
         digest.update(buffer)
         return digest.digest()

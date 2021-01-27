@@ -11,13 +11,13 @@ import software.amazon.awssdk.crt.CRT as crtJni
 
 public actual object CRT {
     private val initialized: AtomicInt = AtomicInt(0)
-    public actual fun initRuntime(block: aws.sdk.kotlin.crt.Config.() -> Unit) {
+    public actual fun initRuntime(block: Config.() -> Unit) {
         if (!initialized.compareAndSet(0, 1)) return
 
         System.setProperty("aws.crt.memory.tracing", "${CrtDebug.traceLevel}")
         // load the JNI library
         crtJni()
-        val config = aws.sdk.kotlin.crt.Config().apply(block)
+        val config = Config().apply(block)
         val logLevel = Log.LogLevel.valueOf(config.logLovel.name)
         when (config.logDestination) {
             LogDestination.None -> return

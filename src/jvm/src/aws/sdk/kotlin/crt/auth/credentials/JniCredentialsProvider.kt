@@ -13,7 +13,7 @@ import software.amazon.awssdk.crt.auth.credentials.CredentialsProvider as Creden
 /**
  * Base class for proxying JNI credentials providers
  */
-public abstract class JniCredentialsProvider : CredentialsProvider, Closeable, aws.sdk.kotlin.crt.AsyncShutdown {
+public abstract class JniCredentialsProvider : CredentialsProvider, Closeable, AsyncShutdown {
     internal abstract val jniCredentials: CredentialsProviderJni
 
     override suspend fun getCredentials(): Credentials {
