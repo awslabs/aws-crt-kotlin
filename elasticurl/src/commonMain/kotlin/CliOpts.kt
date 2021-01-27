@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0.
  */
 
-import kotlinx.cli.*
 import aws.sdk.kotlin.crt.LogLevel
+import kotlinx.cli.*
 
 private const val DEFAULT_CONNECT_TIMEOUT_MS = 3000
 

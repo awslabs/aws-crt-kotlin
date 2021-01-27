@@ -5,13 +5,13 @@
 
 package aws.sdk.kotlin.crt.auth.signing
 
-import kotlinx.coroutines.future.await
-import software.amazon.awssdk.crt.auth.credentials.Credentials
 import aws.sdk.kotlin.crt.asyncCrtJniCall
 import aws.sdk.kotlin.crt.auth.credentials.JniCredentialsProvider
 import aws.sdk.kotlin.crt.http.HttpRequest
 import aws.sdk.kotlin.crt.http.from
 import aws.sdk.kotlin.crt.http.into
+import kotlinx.coroutines.future.await
+import software.amazon.awssdk.crt.auth.credentials.Credentials
 import java.util.function.Predicate
 import software.amazon.awssdk.crt.auth.signing.AwsSigner as AwsSignerJni
 import software.amazon.awssdk.crt.auth.signing.AwsSigningConfig as AwsSigningConfigJni

@@ -11,7 +11,8 @@ import aws.sdk.kotlin.crt.Closeable
 /**
  * Manages a pool of Http connections
  */
-public expect class HttpClientConnectionManager(options: HttpClientConnectionManagerOptions) : Closeable,
+public expect class HttpClientConnectionManager(options: HttpClientConnectionManagerOptions) :
+    Closeable,
     AsyncShutdown {
     /**
      * The options this manager was configured with

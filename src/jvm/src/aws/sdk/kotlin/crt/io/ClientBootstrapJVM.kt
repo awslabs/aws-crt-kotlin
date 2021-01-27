@@ -5,12 +5,13 @@
 
 package aws.sdk.kotlin.crt.io
 
-import kotlinx.coroutines.future.await
 import aws.sdk.kotlin.crt.AsyncShutdown
 import aws.sdk.kotlin.crt.Closeable
+import kotlinx.coroutines.future.await
 import software.amazon.awssdk.crt.io.ClientBootstrap as ClientBootstrapJni
 
-public actual class ClientBootstrap actual constructor(elg: EventLoopGroup, hr: HostResolver) : Closeable,
+public actual class ClientBootstrap actual constructor(elg: EventLoopGroup, hr: HostResolver) :
+    Closeable,
     AsyncShutdown {
     internal val jniBootstrap = ClientBootstrapJni(elg.jniElg, hr.jniHr)
 

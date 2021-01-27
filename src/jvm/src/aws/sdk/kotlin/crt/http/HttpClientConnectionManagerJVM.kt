@@ -5,12 +5,12 @@
 
 package aws.sdk.kotlin.crt.http
 
-import kotlinx.coroutines.future.await
 import aws.sdk.kotlin.crt.AsyncShutdown
 import aws.sdk.kotlin.crt.Closeable
 import aws.sdk.kotlin.crt.io.SocketDomain
 import aws.sdk.kotlin.crt.io.SocketOptions
 import aws.sdk.kotlin.crt.io.SocketType
+import kotlinx.coroutines.future.await
 import java.net.URI
 import software.amazon.awssdk.crt.http.HttpClientConnectionManager as HttpClientConnectionManagerJni
 import software.amazon.awssdk.crt.http.HttpClientConnectionManagerOptions as HttpClientConnectionManagerOptionsJni

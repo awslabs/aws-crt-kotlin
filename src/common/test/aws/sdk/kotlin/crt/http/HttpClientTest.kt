@@ -5,11 +5,11 @@
 
 package aws.sdk.kotlin.crt.http
 
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.withTimeout
 import aws.sdk.kotlin.crt.CrtTest
 import aws.sdk.kotlin.crt.io.*
 import aws.sdk.kotlin.crt.use
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.withTimeout
 import kotlin.test.assertNotNull
 
 const val DEFAULT_CONNECT_TIMEOUT_MS: Int = 30_000

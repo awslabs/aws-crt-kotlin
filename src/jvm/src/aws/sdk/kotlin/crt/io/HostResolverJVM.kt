@@ -9,7 +9,8 @@ import aws.sdk.kotlin.crt.AsyncShutdown
 import aws.sdk.kotlin.crt.Closeable
 import software.amazon.awssdk.crt.io.HostResolver as HostResolverJni
 
-public actual class HostResolver actual constructor(elg: EventLoopGroup, maxEntries: Int) : Closeable,
+public actual class HostResolver actual constructor(elg: EventLoopGroup, maxEntries: Int) :
+    Closeable,
     AsyncShutdown {
     internal val jniHr = HostResolverJni(elg.jniElg, maxEntries)
 

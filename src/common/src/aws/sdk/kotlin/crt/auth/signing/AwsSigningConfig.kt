@@ -5,7 +5,6 @@
 
 package aws.sdk.kotlin.crt.auth.signing
 
-
 import aws.sdk.kotlin.crt.Platform
 import aws.sdk.kotlin.crt.auth.credentials.Credentials
 import aws.sdk.kotlin.crt.auth.credentials.CredentialsProvider

@@ -5,9 +5,9 @@
 
 package aws.sdk.kotlin.crt.io
 
-import kotlinx.coroutines.future.await
 import aws.sdk.kotlin.crt.AsyncShutdown
 import aws.sdk.kotlin.crt.Closeable
+import kotlinx.coroutines.future.await
 import software.amazon.awssdk.crt.io.EventLoopGroup as EventLoopGroupJni
 
 /**

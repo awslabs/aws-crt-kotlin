@@ -5,8 +5,8 @@
 
 package aws.sdk.kotlin.crt.auth.credentials
 
-import kotlinx.coroutines.future.await
 import aws.sdk.kotlin.crt.AsyncShutdown
+import kotlinx.coroutines.future.await
 import java.io.Closeable
 import software.amazon.awssdk.crt.auth.credentials.CredentialsProvider as CredentialsProviderJni
 
