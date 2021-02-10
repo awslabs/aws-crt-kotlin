@@ -1,14 +1,17 @@
 {
     "name": "aws-crt-kotlin",
     "packages": [],
+    "variables": {
+        "gradlew": "{project_source_dir}/gradlew -p {project_source_dir}"
+    },
     "build_steps": [
-        "./gradlew -x test -x allTests -x jvmTest build"
+        "{gradlew} -x test -x allTests -x jvmTest build"
     ],
     "post_build_steps": [
-        "./gradlew publishToMavenLocal"
+        "{gradlew} publishToMavenLocal"
     ],
     "test_steps": [
-        "./gradlew test allTests"
+        "{gradlew} test allTests"
     ],
     "imports": [
         "JDK8"
@@ -38,10 +41,10 @@
                 "s2n"
             ],
             "!build_steps": [
-                "./gradlew -x test -x allTests -x jvmTest build -Dlibcrypto.path={libcrypto_path}"
+                "{gradlew} -x test -x allTests -x jvmTest build -Dlibcrypto.path={libcrypto_path}"
             ],
             "!test_steps": [
-                "./gradlew test allTests -Dlibcrypto.path={libcrypto_path}"
+                "{gradlew} test allTests -Dlibcrypto.path={libcrypto_path}"
             ]
         }
     }
