@@ -7,9 +7,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import java.util.Properties
 
 plugins {
-    kotlin("multiplatform") version "1.4.21"
-    `maven`
-    `maven-publish`
+    kotlin("multiplatform") version "1.4.31"
 }
 
 group = "aws.sdk.kotlin.crt"
@@ -100,6 +98,8 @@ jvmTest.apply {
 
     useJUnitPlatform()
 }
+
+apply(from = rootProject.file("gradle/publish.gradle"))
 
 val ktlint by configurations.creating
 val ktlintVersion: String by project
