@@ -10,8 +10,9 @@ plugins {
     kotlin("multiplatform") version "1.4.31"
 }
 
+val sdkVersion: String by project
 group = "aws.sdk.kotlin.crt"
-version = "0.1.0-SNAPSHOT"
+version = sdkVersion
 description = "Kotlin Multiplatform bindings for AWS SDK Common Runtime"
 
 allprojects {
