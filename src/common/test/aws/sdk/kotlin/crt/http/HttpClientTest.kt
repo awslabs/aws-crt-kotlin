@@ -92,12 +92,10 @@ abstract class HttpClientTest : CrtTest() {
                     }
 
                     val stream = conn.makeRequest(request, responseHandler)
-                    try {
-                        stream.activate()
-                        response = responseHandler.waitForResponse()
-                    } finally {
-                        stream.close()
-                    }
+                    // NOTE: do not close the stream outside of the on_complete callback
+                    // see: https://github.com/awslabs/aws-crt-java/issues/262
+                    stream.activate()
+                    response = responseHandler.waitForResponse()
                 }
             }
         }
@@ -181,6 +179,7 @@ private class HttpTestResponseHandler : HttpStreamResponseHandler {
     }
 
     override fun onResponseComplete(stream: HttpStream, errorCode: Int) {
+        stream.close()
         streamDone.offer(errorCode)
         streamDone.close()
     }
