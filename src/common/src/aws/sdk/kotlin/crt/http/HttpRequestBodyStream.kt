@@ -42,9 +42,7 @@ private class ByteArrayBodyStream(val bytes: ByteArray) : HttpRequestBodyStream 
     private var currPos: Int = 0
 
     override fun sendRequestBody(buffer: MutableBuffer): Boolean {
-        // TODO - inefficient copy...
-        val outgoing = bytes.sliceArray(currPos until bytes.size)
-        currPos += buffer.write(outgoing)
+        currPos += buffer.write(bytes, currPos)
         return currPos == bytes.size
     }
 

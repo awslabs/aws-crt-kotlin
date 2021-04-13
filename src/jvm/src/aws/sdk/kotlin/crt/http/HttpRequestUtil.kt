@@ -85,9 +85,10 @@ private class ByteBufferMutableBuffer(val buf: ByteBuffer) : MutableBuffer {
     override val len: Int
         get() = buf.position()
 
-    override fun write(src: ByteArray): Int {
-        buf.put(src)
-        return src.size
+    override fun write(src: ByteArray, offset: Int, length: Int): Int {
+        val wc = minOf(length, buf.remaining())
+        buf.put(src, offset, wc)
+        return wc
     }
 
     override fun copyTo(dest: ByteArray, offset: Int): Int {
