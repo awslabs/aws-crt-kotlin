@@ -5,7 +5,7 @@
         "gradlew": "{source_dir}/gradlew -p {source_dir}"
     },
     "build_steps": [
-        "{gradlew} -x test -x allTests -x jvmTest build"
+        "{gradlew} assemble"
     ],
     "post_build_steps": [
         "{gradlew} publishToMavenLocal"
@@ -38,7 +38,7 @@
                 "s2n"
             ],
             "!build_steps": [
-                "{gradlew} -x test -x allTests -x jvmTest build -Dlibcrypto.path={libcrypto_path}"
+                "{gradlew} assemble -Dlibcrypto.path={libcrypto_path}"
             ],
             "!test_steps": [
                 "{gradlew} test allTests -Dlibcrypto.path={libcrypto_path}"
