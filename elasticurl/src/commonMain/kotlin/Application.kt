@@ -144,8 +144,8 @@ private suspend fun HttpClientConnection.roundTrip(request: HttpRequest, sink: S
         override fun onResponseComplete(stream: HttpStream, errorCode: Int) {
             println("onResponseComplete: errorCode: $errorCode")
             if (errorCode != 0) {
-                val errName = CRT.awsErrorName(errorCode)
-                val errDesc = CRT.awsErrorString(errorCode)
+                val errName = CRT.errorName(errorCode)
+                val errDesc = CRT.errorString(errorCode)
                 println("error $errName: $errDesc")
             }
             streamDone.offer(Unit)

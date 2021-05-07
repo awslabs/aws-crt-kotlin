@@ -6,11 +6,11 @@
 package aws.sdk.kotlin.crt
 
 public open class CrtRuntimeException(message: String?) : RuntimeException(message) {
-    public open val errorCode: Int = CRT.awsLastError()
+    public open val errorCode: Int = CRT.lastError()
 
     public val errorName: String?
-        get() = CRT.awsErrorName(errorCode)
+        get() = CRT.errorName(errorCode)
 
     public val errorDescription: String?
-        get() = CRT.awsErrorString(errorCode)
+        get() = CRT.errorString(errorCode)
 }

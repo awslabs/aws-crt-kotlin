@@ -7,7 +7,7 @@ package aws.sdk.kotlin.crt
 
 public interface AsyncShutdown {
     /**
-     * Suspend until the resource has completed it's asynchronous shutdown
+     * Suspend until the resource has completed its asynchronous shutdown
      */
     public suspend fun waitForShutdown()
 }

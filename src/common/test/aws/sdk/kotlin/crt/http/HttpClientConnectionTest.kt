@@ -70,7 +70,7 @@ class HttpClientConnectionTest : CrtTest() {
         assertConnect("https://kms-fips.us-west-2.amazonaws.com:443")
 
         // bad ssl
-        assertConnect("https://rsa2048.badssl.com/")
+        // assertConnect("https://rsa2048.badssl.com/")
         assertConnect("http://http.badssl.com/")
         assertConnectFails("https://expired.badssl.com/", "TLS (SSL) negotiation failed")
         assertConnectFails("https://self-signed.badssl.com/", "TLS (SSL) negotiation failed")

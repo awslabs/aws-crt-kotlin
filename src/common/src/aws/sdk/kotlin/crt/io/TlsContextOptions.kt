@@ -114,8 +114,6 @@ public class TlsContextOptionsBuilder {
      */
     public var verifyPeer: Boolean = true
 
-    // FIXME - port over whatever convenience inits from crt-java we need/want
-    // FIXME - add pem utils and tests
     public var certificate: String? = null
     public var privateKey: String? = null
     public var certificatePath: String? = null

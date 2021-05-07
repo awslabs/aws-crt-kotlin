@@ -35,14 +35,14 @@ public actual object CRT {
      * Returns the last error on the current thread.
      * @return Last error code recorded in this thread
      */
-    public actual fun awsLastError(): Int = crtJni.awsLastError()
+    public actual fun lastError(): Int = crtJni.awsLastError()
 
     /**
      * Given an integer error code from an internal operation
      * @param errorCode An error code returned from an exception or other native function call
      * @return A user-friendly description of the error
      */
-    public actual fun awsErrorString(errorCode: Int): String? = crtJni.awsErrorString(errorCode)
+    public actual fun errorString(errorCode: Int): String? = crtJni.awsErrorString(errorCode)
 
     /**
      * Given an integer error code from an internal operation
@@ -51,7 +51,7 @@ public actual object CRT {
      * function call
      * @return A string identifier for the error
      */
-    public actual fun awsErrorName(errorCode: Int): String? = crtJni.awsErrorName(errorCode)
+    public actual fun errorName(errorCode: Int): String? = crtJni.awsErrorName(errorCode)
 
     /**
      * @return The number of bytes allocated in native resources. If aws.crt.memory.tracing is 1 or 2, this will

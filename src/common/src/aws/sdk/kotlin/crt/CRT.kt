@@ -15,14 +15,14 @@ public expect object CRT {
      * Returns the last error on the current thread.
      * @return Last error code recorded in this thread
      */
-    public fun awsLastError(): Int
+    public fun lastError(): Int
 
     /**
      * Given an integer error code from an internal operation
      * @param errorCode An error code returned from an exception or other native function call
      * @return A user-friendly description of the error
      */
-    public fun awsErrorString(errorCode: Int): String?
+    public fun errorString(errorCode: Int): String?
 
     /**
      * Given an integer error code from an internal operation
@@ -31,7 +31,7 @@ public expect object CRT {
      * function call
      * @return A string identifier for the error
      */
-    public fun awsErrorName(errorCode: Int): String?
+    public fun errorName(errorCode: Int): String?
 
     /**
      * @return The number of bytes allocated in native resources. If aws.crt.memory.tracing is 1 or 2, this will
