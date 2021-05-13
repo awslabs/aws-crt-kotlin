@@ -67,7 +67,10 @@ private fun TlsContextOptions.into(): TlsContextOptionsJni {
     jniOpts.withMinimumTlsVersion(kopts.minTlsVersion.into())
         .withCipherPreference(kopts.tlsCipherPreference.into())
         .withVerifyPeer(kopts.verifyPeer)
-        .withAlpnList(kopts.alpn)
+
+    if (kopts.alpn.isNotEmpty()) {
+        jniOpts.withAlpnList(kopts.alpn)
+    }
 
     return jniOpts
 }
