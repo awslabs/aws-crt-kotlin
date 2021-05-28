@@ -36,13 +36,13 @@ public class ProfileCredentialsProviderBuilder {
      * The name of the config file to use. If none is specified, the default is `".aws/config"` on Linux/Mac and
      * `"%USERPROFILE%\.aws\config"` on Windows.
      */
-    public var configFileNameOverride: String? = null
+    public var configFileName: String? = null
 
     /**
      * The name of the credentials file to use. If none is specified, the default is `".aws/credentials"` on Linux/Mac
      * and `"%USERPROFILE%\.aws\credentials"` on Windows.
      */
-    public var credentialsFileNameOverride: String? = null
+    public var credentialsFileName: String? = null
 
     public fun build(): ProfileCredentialsProvider = ProfileCredentialsProvider(this)
 }

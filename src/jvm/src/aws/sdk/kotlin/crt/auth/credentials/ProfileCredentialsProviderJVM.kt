@@ -14,11 +14,12 @@ internal actual constructor(builder: ProfileCredentialsProviderBuilder) :
     public actual companion object {}
 
     override val jniCredentials: CredentialsProviderJni =
-        ProfileCredentialsProviderJni.ProfileCredentialsProviderBuilder().apply {
-            withClientBootstrap(builder.clientBootstrap?.jniBootstrap)
-            withTlsContext(builder.tlsContext?.jniCtx)
-            withProfileName(builder.profileName)
-            withConfigFileNameOverride(builder.configFileNameOverride)
-            withCredentialsFileNameOverride(builder.credentialsFileNameOverride)
-        }.build()
+        ProfileCredentialsProviderJni
+            .builder()
+            .withClientBootstrap(builder.clientBootstrap?.jniBootstrap)
+            .withTlsContext(builder.tlsContext?.jniCtx)
+            .withProfileName(builder.profileName)
+            .withConfigFileNameOverride(builder.configFileName)
+            .withCredentialsFileNameOverride(builder.credentialsFileName)
+            .build()
 }
