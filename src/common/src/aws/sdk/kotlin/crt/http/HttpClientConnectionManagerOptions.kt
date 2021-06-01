@@ -59,7 +59,7 @@ public class HttpClientConnectionManagerOptions internal constructor(
 }
 
 public class HttpClientConnectionManagerOptionsBuilder {
-    internal fun build(): HttpClientConnectionManagerOptions = HttpClientConnectionManagerOptions(this)
+    public fun build(): HttpClientConnectionManagerOptions = HttpClientConnectionManagerOptions(this)
 
     public var uri: Uri? = null
 
