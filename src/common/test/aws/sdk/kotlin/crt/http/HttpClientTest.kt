@@ -87,7 +87,8 @@ abstract class HttpClientTest : CrtTest() {
                         headers.append("Host", uri.host)
                         if (bodyBytes != null) {
                             headers.append("Content-Length", bodyBytes.size.toString())
-                            this.body = HttpTestRequestBody(bodyBytes)
+                            println("expecting ${bodyBytes.size}")
+                            this.body = HttpRequestBodyStream.fromByteArray(bodyBytes)
                         }
                     }
 
@@ -126,22 +127,6 @@ data class HttpTestResponse(val statusCode: Int, val headers: Headers, val body:
         result = 31 * result + headers.hashCode()
         result = 31 * result + (body?.contentHashCode() ?: 0)
         return result
-    }
-}
-
-private class HttpTestRequestBody(private val bytes: ByteArray) : HttpRequestBodyStream {
-    private var currPos: Int = 0
-
-    override fun sendRequestBody(buffer: MutableBuffer): Boolean {
-        // inefficient copy...
-        val outgoing = bytes.sliceArray(currPos until bytes.size)
-        currPos += buffer.write(outgoing)
-        return currPos == bytes.size
-    }
-
-    override fun resetPosition(): Boolean {
-        currPos = 0
-        return true
     }
 }
 
