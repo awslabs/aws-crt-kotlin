@@ -21,7 +21,7 @@ public actual class MutableBuffer(public val buffer: ByteBuffer) {
      */
     public actual fun write(src: ByteArray, offset: Int, length: Int): Int {
         val wc = minOf(writeRemaining, length)
-        buffer.put(src, offset, length)
+        buffer.put(src, offset, wc)
         return wc
     }
 
