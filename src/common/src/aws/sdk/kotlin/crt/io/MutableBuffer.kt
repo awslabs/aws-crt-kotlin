@@ -18,4 +18,11 @@ public expect class MutableBuffer {
      * The number of bytes written is returned which may be less than [length]
      */
     public fun write(src: ByteArray, offset: Int = 0, length: Int = src.size - offset): Int
+
+    public companion object {
+        /**
+         * Create a buffer instance backed by [byteArray]
+         */
+        public fun of(byteArray: ByteArray): MutableBuffer
+    }
 }

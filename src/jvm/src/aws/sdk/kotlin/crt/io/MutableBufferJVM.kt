@@ -24,4 +24,8 @@ public actual class MutableBuffer(public val buffer: ByteBuffer) {
         buffer.put(src, offset, length)
         return wc
     }
+
+    public actual companion object {
+        public actual fun of(byteArray: ByteArray): MutableBuffer = MutableBuffer(ByteBuffer.wrap(byteArray))
+    }
 }
