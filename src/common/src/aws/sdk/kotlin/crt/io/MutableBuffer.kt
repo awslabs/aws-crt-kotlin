@@ -21,8 +21,8 @@ public expect class MutableBuffer {
 
     public companion object {
         /**
-         * Create a buffer instance backed by [byteArray]
+         * Create a buffer instance backed by [src]
          */
-        public fun of(byteArray: ByteArray): MutableBuffer
+        public fun of(src: ByteArray): MutableBuffer
     }
 }

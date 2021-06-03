@@ -87,7 +87,6 @@ abstract class HttpClientTest : CrtTest() {
                         headers.append("Host", uri.host)
                         if (bodyBytes != null) {
                             headers.append("Content-Length", bodyBytes.size.toString())
-                            println("expecting ${bodyBytes.size}")
                             this.body = HttpRequestBodyStream.fromByteArray(bodyBytes)
                         }
                     }

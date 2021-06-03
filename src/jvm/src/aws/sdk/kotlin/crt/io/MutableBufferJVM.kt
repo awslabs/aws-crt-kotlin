@@ -26,6 +26,6 @@ public actual class MutableBuffer(public val buffer: ByteBuffer) {
     }
 
     public actual companion object {
-        public actual fun of(byteArray: ByteArray): MutableBuffer = MutableBuffer(ByteBuffer.wrap(byteArray))
+        public actual fun of(src: ByteArray): MutableBuffer = MutableBuffer(ByteBuffer.wrap(src))
     }
 }
