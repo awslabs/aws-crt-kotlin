@@ -9,7 +9,6 @@ import aws.sdk.kotlin.crt.http.*
 import aws.sdk.kotlin.crt.io.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.receiveOrNull
 
 @ExperimentalCoroutinesApi
 fun main(args: Array<String>) {
@@ -148,7 +147,7 @@ private suspend fun HttpClientConnection.roundTrip(request: HttpRequest, sink: S
                 val errDesc = CRT.errorString(errorCode)
                 println("error $errName: $errDesc")
             }
-            streamDone.offer(Unit)
+            streamDone.trySend(Unit)
             // has to be explicitly closed or it leaks in K/N
             streamDone.close()
         }
@@ -158,7 +157,7 @@ private suspend fun HttpClientConnection.roundTrip(request: HttpRequest, sink: S
     try {
         stream.activate()
         // wait for completion signal
-        streamDone.receiveOrNull()
+        streamDone.receiveCatching()
     } finally {
         stream.close()
     }

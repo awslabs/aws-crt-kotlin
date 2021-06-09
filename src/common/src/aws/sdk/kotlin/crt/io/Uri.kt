@@ -25,7 +25,7 @@ public data class Protocol(val name: String, val defaultPort: Int) {
 
         public val byName: Map<String, Protocol> = listOf(HTTP, HTTPS, WS, WSS).associateBy { it.name }
 
-        public fun createOrDefault(name: String): Protocol = name.toLowerCase().let {
+        public fun createOrDefault(name: String): Protocol = name.lowercase().let {
             byName[it] ?: Protocol(it, DEFAULT_SCHEME_PORT)
         }
     }
