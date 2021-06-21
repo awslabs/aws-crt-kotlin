@@ -12,7 +12,10 @@ import aws.sdk.kotlin.crt.io.MutableBuffer
  */
 public interface HttpRequestBodyStream {
     public companion object {
-        public fun fromByteArray(buffer: ByteArray): HttpRequestBodyStream = ByteArrayBodyStream(buffer)
+        /**
+         * Create a new [HttpRequestBodyStream] using the underlying [ByteArray] as the stream contents to send
+         */
+        public fun fromByteArray(src: ByteArray): HttpRequestBodyStream = ByteArrayBodyStream(src)
     }
 
     /**
@@ -38,12 +41,12 @@ public interface HttpRequestBodyStream {
     public fun resetPosition(): Boolean = false
 }
 
-private class ByteArrayBodyStream(val bytes: ByteArray) : HttpRequestBodyStream {
+private class ByteArrayBodyStream(val src: ByteArray) : HttpRequestBodyStream {
     private var currPos: Int = 0
 
     override fun sendRequestBody(buffer: MutableBuffer): Boolean {
-        currPos += buffer.write(bytes, currPos)
-        return currPos == bytes.size
+        currPos += buffer.write(src, currPos)
+        return currPos == src.size
     }
 
     override fun resetPosition(): Boolean {

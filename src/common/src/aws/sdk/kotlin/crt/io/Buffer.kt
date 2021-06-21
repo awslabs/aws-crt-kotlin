@@ -35,22 +35,6 @@ public interface Buffer {
     public fun readAll(): ByteArray
 }
 
-/**
- * Represents a mutable byte buffer than can be written to
- */
-public interface MutableBuffer : Buffer {
-    /**
-     * The total number of bytes this buffer can currently hold without re-allocating
-     */
-    public val capacity: Long
-
-    /**
-     * Append as much of the contents of [src] to the buffer starting at [offset] and writing up to [length] bytes.
-     * Returns the amount of data actually written which may be less than [length].
-     */
-    public fun write(src: ByteArray, offset: Int = 0, length: Int = src.size - offset): Int
-}
-
 private object EmptyBuffer : Buffer {
     override val len: Int = 0
     override fun copyTo(dest: ByteArray, offset: Int): Int { return 0 }

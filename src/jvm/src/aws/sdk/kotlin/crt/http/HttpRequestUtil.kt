@@ -67,40 +67,11 @@ internal fun HttpStreamResponseHandler.asJniStreamResponseHandler(): software.am
 internal class JniRequestBodyStream(val ktStream: HttpRequestBodyStream) : HttpRequestBodyStreamJni {
     override fun sendRequestBody(bodyBytesOut: ByteBuffer?): Boolean {
         if (bodyBytesOut == null) return true
-        return ktStream.sendRequestBody(ByteBufferMutableBuffer(bodyBytesOut))
+        return ktStream.sendRequestBody(MutableBuffer(bodyBytesOut))
     }
 
     override fun resetPosition(): Boolean {
         return ktStream.resetPosition()
-    }
-}
-
-/**
- * Wrap a [ByteBuffer] instance as a [MutableBuffer]
- */
-private class ByteBufferMutableBuffer(val buf: ByteBuffer) : MutableBuffer {
-    override val capacity: Long
-        get() = buf.capacity().toLong()
-
-    override val len: Int
-        get() = buf.position()
-
-    override fun write(src: ByteArray, offset: Int, length: Int): Int {
-        val wc = minOf(length, buf.remaining())
-        buf.put(src, offset, wc)
-        return wc
-    }
-
-    override fun copyTo(dest: ByteArray, offset: Int): Int {
-        val size = minOf(dest.size, len)
-        buf.get(dest, offset, size)
-        return size
-    }
-
-    override fun readAll(): ByteArray {
-        val bytes = ByteArray(buf.position())
-        buf.get(bytes)
-        return bytes
     }
 }
 
