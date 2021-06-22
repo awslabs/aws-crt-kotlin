@@ -28,4 +28,12 @@ public interface HttpClientConnection : Closeable {
      *          request/response, but must be closed by the user thread making this request when it's done.
      */
     public fun makeRequest(httpReq: HttpRequest, handler: HttpStreamResponseHandler): HttpStream
+
+    /**
+     * Forcefully close the connection
+     *
+     * NOTE: connections are vended via [HttpClientConnectionManager], [close] will just return the connection to the pool
+     * and potentially be re-used.
+     */
+    public fun shutdown()
 }
