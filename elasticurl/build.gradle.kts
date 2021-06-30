@@ -19,6 +19,8 @@ kotlin {
                 }
                 from(configurations.getByName("runtimeClasspath").map { if (it.isDirectory) it else zipTree(it) })
             }
+
+            duplicatesStrategy = DuplicatesStrategy.WARN
         }
     }
 
@@ -46,3 +48,4 @@ kotlin {
 application {
     mainClassName = "ApplicationKt"
 }
+
