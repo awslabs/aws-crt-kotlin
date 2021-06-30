@@ -3,14 +3,16 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
+
+    // configure default plugin versions
+    plugins {
+        val kotlinVersion: String by settings
+        id("org.jetbrains.kotlin.jvm") version kotlinVersion
+        id("org.jetbrains.kotlin.multiplatform") version kotlinVersion
+    }
 }
 
 rootProject.name = "aws-crt-kotlin"
 
 include(":elasticurl")
 
-// for local development against crt-java checkout into same parent directory and use composite builds
-// if (file("../aws-crt-java").exists()) {
-//     println("including aws-crt-java as composite build")
-//     includeBuild("../aws-crt-java")
-// }

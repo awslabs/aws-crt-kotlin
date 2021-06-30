@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import java.util.Properties
 
 plugins {
-    kotlin("multiplatform") version "1.5.20"
+    kotlin("multiplatform")
 }
 
 val sdkVersion: String by project
