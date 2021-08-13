@@ -8,6 +8,7 @@ import java.util.Properties
 
 plugins {
     kotlin("multiplatform")
+    id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
 }
 
 val sdkVersion: String by project
@@ -95,6 +96,21 @@ jvmTest.apply {
     }
 
     useJUnitPlatform()
+}
+
+if (project.hasProperty("sonatypeUsername") && project.hasProperty("sonatypePassword")) {
+    apply(plugin = "io.github.gradle-nexus.publish-plugin")
+
+    nexusPublishing {
+        repositories {
+            create("awsNexus") {
+                nexusUrl.set(uri("https://aws.oss.sonatype.org/service/local/"))
+                snapshotRepositoryUrl.set(uri("https://aws.oss.sonatype.org/content/repositories/snapshots/"))
+                username.set(project.property("sonatypeUsername") as String)
+                password.set(project.property("sonatypePassword") as String)
+            }
+        }
+    }
 }
 
 apply(from = rootProject.file("gradle/publish.gradle"))
