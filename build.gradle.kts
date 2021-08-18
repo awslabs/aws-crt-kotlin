@@ -124,6 +124,12 @@ kotlin {
                     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$coroutinesVersion")
                 }
             }
+
+            // disable compilation of android test source set. It is the same as the jvmTest sourceSet/tests. This
+            // sourceSet only exists to create a new variant that is the same in every way except the runtime
+            // dependency on aws-crt-android. To test this we would need to run it on device/emulator.
+            tasks.getByName("androidTest").enabled = false
+            tasks.getByName("compileTestKotlinAndroid").enabled = false
         }
     }
 
