@@ -10,7 +10,7 @@ plugins {
 
 
 kotlin {
-    jvm() {
+    jvm {
         withJava()
         val jvmJar by tasks.getting(org.gradle.jvm.tasks.Jar::class) {
             doFirst {
@@ -21,6 +21,10 @@ kotlin {
             }
 
             duplicatesStrategy = DuplicatesStrategy.WARN
+        }
+        attributes {
+            attribute(org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.Companion.attribute, org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm)
+            attribute(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE, objects.named(TargetJvmEnvironment.STANDARD_JVM))
         }
     }
 
