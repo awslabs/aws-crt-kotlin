@@ -35,7 +35,7 @@ kotlin {
 
     jvm {
         attributes {
-            attribute(
+            attribute<org.gradle.api.attributes.java.TargetJvmEnvironment>(
                 TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
                 objects.named(TargetJvmEnvironment.STANDARD_JVM)
             )
