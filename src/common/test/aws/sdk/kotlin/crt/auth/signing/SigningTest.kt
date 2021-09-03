@@ -31,7 +31,7 @@ class SigningTest : CrtTest() {
         val bodyLen = bodyBytes?.size ?: 0
 
         headers {
-            append("Host", uri.host)
+            append("Host", uri.hostAndPort)
             append("Content-Length", bodyLen.toString())
         }
 

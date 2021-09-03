@@ -65,6 +65,37 @@ public data class Uri(
      */
     val port: Int = specifiedPort.takeUnless { it == DEFAULT_SCHEME_PORT } ?: scheme.defaultPort
 
+    /**
+     * The authority of the URI (as defined by
+     * [RFC 3986 § 3.2](https://datatracker.ietf.org/doc/html/rfc3986#section-3.2)), i.e., the userinfo, host, and port
+     * portion.
+     */
+    val authority: String
+        get() = buildString {
+            userInfo?.let { userinfo ->
+                if (userinfo.username.isNotBlank()) {
+                    append(userinfo.username)
+                    if (userinfo.password.isNotBlank()) {
+                        append(":${userinfo.password}")
+                    }
+                    append("@")
+                }
+            }
+
+            append(hostAndPort)
+        }
+
+    /**
+     * The host and port of the URI (e.g., "server.com:1234").
+     */
+    val hostAndPort: String
+        get() = buildString {
+            append(host)
+            if (specifiedPort != DEFAULT_SCHEME_PORT && specifiedPort != scheme.defaultPort) {
+                append(":$specifiedPort")
+            }
+        }
+
     public companion object {
         /**
          * Build a URI
@@ -80,20 +111,7 @@ public data class Uri(
     override fun toString(): String = buildString {
         append(scheme.name)
         append("://")
-        userInfo?.let { userinfo ->
-            if (userinfo.username.isNotBlank()) {
-                append(userinfo.username)
-                if (userinfo.password.isNotBlank()) {
-                    append(":${userinfo.password}")
-                }
-                append("@")
-            }
-        }
-
-        append(host)
-        if (specifiedPort != DEFAULT_SCHEME_PORT && specifiedPort != scheme.defaultPort) {
-            append(":$specifiedPort")
-        }
+        append(authority)
 
         if (path.isNotBlank()) {
             append("/")
