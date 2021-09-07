@@ -109,6 +109,43 @@ class UriTest : CrtTest() {
     }
 
     @Test
+    fun authority() {
+        val tests = listOf(
+            "user:password@test.aws.com:1234" to UriBuilder.build {
+                userInfo = UserInfo("user", "password")
+                host = "test.aws.com"
+                port = 1234
+            },
+            "test.aws.com:1234" to UriBuilder.build {
+                host = "test.aws.com"
+                port = 1234
+            },
+            "user:password@test.aws.com" to UriBuilder.build {
+                userInfo = UserInfo("user", "password")
+                host = "test.aws.com"
+            },
+            "test.aws.com" to UriBuilder.build {
+                host = "test.aws.com"
+            },
+        )
+        tests.forEach { (expected, uri) -> assertEquals(expected, uri.authority) }
+    }
+
+    @Test
+    fun hostAndPort() {
+        val tests = listOf(
+            "test.aws.com:1234" to UriBuilder.build {
+                host = "test.aws.com"
+                port = 1234
+            },
+            "test.aws.com" to UriBuilder.build {
+                host = "test.aws.com"
+            },
+        )
+        tests.forEach { (expected, uri) -> assertEquals(expected, uri.hostAndPort) }
+    }
+
+    @Test
     fun itBuilds() {
         val builder = UriBuilder()
         builder.scheme = Protocol.HTTP
