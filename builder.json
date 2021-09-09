@@ -4,6 +4,13 @@
     "variables": {
         "gradlew": "{source_dir}/gradlew -p {source_dir}"
     },
+    "imports": [
+        "JDK8"
+    ],
+    "build_dir": "target/cmake-build",
+    "env": {
+        "JAVA_HOME": "{java_home}"
+    },
     "build_steps": [
         "{gradlew} assemble"
     ],
@@ -13,25 +20,6 @@
     "test_steps": [
         "{gradlew} test allTests"
     ],
-    "imports": [
-        "JDK8"
-    ],
-    "build_dir": "target/cmake-build",
-    "env": {
-        "JAVA_HOME": "{java_home}"
-    },
-    "hosts": {
-        "ubuntu": {
-            "packages": [
-                "openjdk-8-jdk-headless"
-            ]
-        },
-        "debian": {
-            "packages": [
-                "openjdk-8-jdk-headless"
-            ]
-        }
-    },
     "targets": {
         "linux": {
             "imports": [
