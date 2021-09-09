@@ -84,7 +84,7 @@ abstract class HttpClientTest : CrtTest() {
                     val request = HttpRequest.build {
                         method = verb
                         encodedPath = uri.path
-                        headers.append("Host", uri.host)
+                        headers.append("Host", uri.hostAndPort)
                         if (bodyBytes != null) {
                             headers.append("Content-Length", bodyBytes.size.toString())
                             this.body = HttpRequestBodyStream.fromByteArray(bodyBytes)

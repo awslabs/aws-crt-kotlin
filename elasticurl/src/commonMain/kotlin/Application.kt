@@ -71,7 +71,7 @@ fun main(args: Array<String>) {
         headers {
             // manually add a user-agent and host header
             if (!contains("User-Agent")) append("User-Agent", "elasticurl_kotlin 1.0, Powered by the AWS Common Runtime.")
-            if (!contains("Host")) append("Host", uri.host)
+            if (!contains("Host")) append("Host", uri.hostAndPort)
         }
     }
 
