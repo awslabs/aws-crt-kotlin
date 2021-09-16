@@ -24,7 +24,7 @@ public data class AwsSigningResult(
      *
      * @return the signature value from the signing process
      */
-    val signature: ByteArray?
+    val signature: ByteArray
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -34,17 +34,14 @@ public data class AwsSigningResult(
         other as AwsSigningResult
 
         if (signedRequest != other.signedRequest) return false
-        if (signature != null) {
-            if (other.signature == null) return false
-            if (!signature.contentEquals(other.signature)) return false
-        } else if (other.signature != null) return false
+        if (!signature.contentEquals(other.signature)) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = signedRequest?.hashCode() ?: 0
-        result = 31 * result + (signature?.contentHashCode() ?: 0)
+        result = 31 * result + signature.contentHashCode()
         return result
     }
 }
