@@ -19,15 +19,35 @@ import software.amazon.awssdk.crt.auth.signing.AwsSigningConfig.AwsSignatureType
 import software.amazon.awssdk.crt.auth.signing.AwsSigningConfig.AwsSignedBodyHeaderType as AwsSignedBodyHeaderTypeJni
 import software.amazon.awssdk.crt.auth.signing.AwsSigningConfig.AwsSigningAlgorithm as AwsSigningAlgorithmJni
 
+/**
+ * Static class for a variety of AWS signing APIs.
+ */
 public actual object AwsSigner {
-    public actual suspend fun signRequest(request: HttpRequest, config: AwsSigningConfig): HttpRequest {
+
+    /**
+     * Signs an http request according to the supplied signing configuration
+     * @param request http request to sign
+     * @param config signing configuration
+     * @return signed request
+     */
+    public actual suspend fun signRequest(request: HttpRequest, config: AwsSigningConfig): HttpRequest =
+        checkNotNull(sign(request, config).signedRequest) { "AwsSigningResult request must not be null" }
+
+    /**
+     * Signs an http request according to the supplied signing configuration
+     * @param request http request to sign
+     * @param config signing configuration
+     * @return signing result, which provides access to all signing-related result properties
+     */
+    public actual suspend fun sign(request: HttpRequest, config: AwsSigningConfig): AwsSigningResult {
         // FIXME - this would be a good area where talking directly to JNI would be convenient so we don't have to
         // do [KotlinHttpReq -> CrtJava -> Native] and back
         val jniReq = request.into()
         return asyncCrtJniCall {
-            val reqFuture = AwsSignerJni.signRequest(jniReq, config.into())
-            val signedJniReq = reqFuture.await()
-            HttpRequest.from(signedJniReq)
+            val reqFuture = AwsSignerJni.sign(jniReq, config.into())
+            val jniResult = reqFuture.await()
+            val signedRequest = HttpRequest.from(jniResult.signedRequest)
+            AwsSigningResult(signedRequest, jniResult.signature)
         }
     }
 }
