@@ -135,7 +135,8 @@ class SigningTest : CrtTest() {
                 signedRequest.headers.contains(
                     "Authorization",
                     "AWS4-HMAC-SHA256 Credential=AKIDEXAMPLE/20150830/us-east-1/service/aws4_request, SignedHeaders=host;x-amz-date, Signature=28038455d6de14eafc1f9222cf5aa6f1a96197d7deb8263271d420d138af7f11"
-                )
+                ),
+                "sigv4 authorization not equal: " + signedRequest.headers["Authorization"]
             )
         }
     }
@@ -163,6 +164,33 @@ class SigningTest : CrtTest() {
                 AwsSigner.signRequest(request, signingConfig)
             }
             assertEquals("AWS_AUTH_SIGNING_ILLEGAL_REQUEST_HEADER", ex.errorName)
+        }
+    }
+
+    @Test
+    fun testSigningSigV4Asymmetric() = runSuspendTest {
+        StaticCredentialsProvider.build {
+            accessKeyId = TEST_ACCESS_KEY_ID
+            secretAccessKey = TEST_SECRET_ACCESS_KEY
+        }.use { provider ->
+            val request = createSigV4TestSuiteRequest()
+            val signingConfig = AwsSigningConfig.build {
+                algorithm = AwsSigningAlgorithm.SIGV4_ASYMMETRIC
+                signatureType = AwsSignatureType.HTTP_REQUEST_VIA_HEADERS
+                region = "us-east-1"
+                service = "service"
+                date = TEST_DATE_EPOCH_MILLI
+                credentialsProvider = provider
+                useDoubleUriEncode = true
+                normalizeUriPath = true
+                signedBodyValue = AwsSignedBodyValue.EMPTY_SHA256
+                expirationInSeconds = 60
+            }
+
+            val signedRequest = AwsSigner.signRequest(request, signingConfig)
+            assertTrue(signedRequest.headers.contains("X-Amz-Date", "20150830T123600Z"), "${signedRequest.headers}")
+            val prefix = "AWS4-ECDSA-P256-SHA256 Credential=AKIDEXAMPLE/20150830/service/aws4_request, SignedHeaders=host;x-amz-date;x-amz-region-set, Signature="
+            assertTrue(signedRequest.headers["Authorization"]!!.contains(prefix), signedRequest.headers["Authorization"])
         }
     }
 }

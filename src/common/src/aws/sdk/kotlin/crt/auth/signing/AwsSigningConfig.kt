@@ -10,7 +10,8 @@ import aws.sdk.kotlin.crt.auth.credentials.Credentials
 import aws.sdk.kotlin.crt.auth.credentials.CredentialsProvider
 
 public enum class AwsSigningAlgorithm(public val value: Int) {
-    SIGV4(0);
+    SIGV4(0),
+    SIGV4_ASYMMETRIC(1);
 }
 
 public enum class AwsSignatureType(public val value: Int) {

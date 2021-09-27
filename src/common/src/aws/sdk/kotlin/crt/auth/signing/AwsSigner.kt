@@ -9,4 +9,6 @@ import aws.sdk.kotlin.crt.http.HttpRequest
 
 public expect object AwsSigner {
     public suspend fun signRequest(request: HttpRequest, config: AwsSigningConfig): HttpRequest
+
+    public suspend fun sign(request: HttpRequest, config: AwsSigningConfig): AwsSigningResult
 }

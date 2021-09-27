@@ -100,7 +100,6 @@ kotlin {
         val jvmTest by getting {
             dependencies {
                 val junitVersion: String by project
-                api("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
                 api("org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion")
                 implementation("org.junit.jupiter:junit-jupiter:$junitVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-debug:$coroutinesVersion")
