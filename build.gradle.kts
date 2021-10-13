@@ -16,10 +16,34 @@ group = "aws.sdk.kotlin.crt"
 version = sdkVersion
 description = "Kotlin Multiplatform bindings for AWS SDK Common Runtime"
 
+val localProperties: Map<String, Any> by lazy {
+    val props = Properties()
+
+    listOf(
+        File(rootProject.projectDir, "local.properties"), // Project-specific local properties
+        File(rootProject.projectDir.parent, "local.properties"), // Workspace-specific local properties
+        File(System.getProperty("user.home"), ".sdkdev/local.properties"), // User-specific local properties
+    )
+        .filter(File::exists)
+        .map(File::inputStream)
+        .forEach(props::load)
+
+    props.mapKeys { (k, _) -> k.toString() }
+}
+
+fun Project.prop(name: String): Any? =
+    this.properties[name] ?: localProperties[name]
+
 allprojects {
     repositories {
         mavenLocal()
         mavenCentral()
+    }
+
+    if (project.prop("kotlinWarningsAsErrors")?.toString()?.toBoolean() == true) {
+        tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+            kotlinOptions.allWarningsAsErrors = true
+        }
     }
 }
 
