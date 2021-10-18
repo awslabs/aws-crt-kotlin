@@ -61,9 +61,9 @@ private fun HttpClientConnectionManagerOptions.into(): HttpClientConnectionManag
         .withMaxConnections(maxConnections)
         .withMaxConnectionIdleInMilliseconds(maxConnectionIdleMs)
 
-    if (tlsContext != null) jniOpts.withTlsContext(tlsContext!!.jniCtx)
-    if (proxyOptions != null) jniOpts.withProxyOptions(proxyOptions!!.into())
-    if (monitoringOptions != null) jniOpts.withMonitoringOptions(monitoringOptions!!.into())
+    if (tlsContext != null) jniOpts.withTlsContext(tlsContext.jniCtx)
+    if (proxyOptions != null) jniOpts.withProxyOptions(proxyOptions.into())
+    if (monitoringOptions != null) jniOpts.withMonitoringOptions(monitoringOptions.into())
 
     return jniOpts
 }
@@ -90,7 +90,7 @@ private fun SocketOptions.into(): SocketOptionsJni {
 internal fun HttpProxyOptions.into(): HttpProxyOptionsJni {
     val jniOpts = HttpProxyOptionsJni()
     jniOpts.host = host
-    if (port != null) jniOpts.port = port!!
+    if (port != null) jniOpts.port = port
 
     jniOpts.authorizationUsername = authUsername
     jniOpts.authorizationPassword = authPassword

@@ -164,7 +164,7 @@ private class HttpTestResponseHandler : HttpStreamResponseHandler {
 
     override fun onResponseComplete(stream: HttpStream, errorCode: Int) {
         stream.close()
-        streamDone.offer(errorCode)
+        check(streamDone.trySend(errorCode).isSuccess)
         streamDone.close()
     }
 

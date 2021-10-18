@@ -29,7 +29,7 @@ class CredentialsProviderTest : CrtTest() {
         val hr = HostResolver(elg)
         val bootstrap = ClientBootstrap(elg, hr)
         try {
-            val provider = DefaultChainCredentialsProvider.build {
+            DefaultChainCredentialsProvider.build {
                 clientBootstrap = bootstrap
             }
         } finally {
