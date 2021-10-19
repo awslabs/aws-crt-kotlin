@@ -9,14 +9,15 @@ import aws.sdk.kotlin.crt.io.ClientBootstrap
 import aws.sdk.kotlin.crt.io.TlsContext
 
 /**
- * A credentials provider that uses profile files.
+ * Sts with web identity credentials provider sources a set of temporary security credentials for users who have been
+ * authenticated in a mobile or web application with a web identity provider.
  */
-public expect class ProfileCredentialsProvider
-internal constructor(builder: ProfileCredentialsProviderBuilder) : CredentialsProvider {
+public expect class StsWebIdentityCredentialsProvider
+internal constructor(builder: StsWebIdentityCredentialsProviderBuilder) : CredentialsProvider {
     public companion object
 }
 
-public class ProfileCredentialsProviderBuilder {
+public class StsWebIdentityCredentialsProviderBuilder {
     /**
      * Connection bootstrap to use for any network connections made while sourcing credentials.
      */
@@ -27,28 +28,11 @@ public class ProfileCredentialsProviderBuilder {
      */
     public var tlsContext: TlsContext? = null
 
-    /**
-     * The name of the profile to use (or `"default"` if none is specified).
-     */
-    public var profileName: String? = null
-
-    /**
-     * The name of the config file to use. If none is specified, the default is `".aws/config"` on Linux/Mac and
-     * `"%USERPROFILE%\.aws\config"` on Windows.
-     */
-    public var configFileName: String? = null
-
-    /**
-     * The name of the credentials file to use. If none is specified, the default is `".aws/credentials"` on Linux/Mac
-     * and `"%USERPROFILE%\.aws\credentials"` on Windows.
-     */
-    public var credentialsFileName: String? = null
-
-    public fun build(): ProfileCredentialsProvider = ProfileCredentialsProvider(this)
+    public fun build(): StsWebIdentityCredentialsProvider = StsWebIdentityCredentialsProvider(this)
 }
 
 /**
  * Construct a new credentials provider using a builder.
  */
-public fun ProfileCredentialsProvider.Companion.build(block: ProfileCredentialsProviderBuilder.() -> Unit):
-    ProfileCredentialsProvider = ProfileCredentialsProviderBuilder().apply(block).build()
+public fun StsWebIdentityCredentialsProvider.Companion.build(block: StsWebIdentityCredentialsProviderBuilder.() -> Unit):
+    StsWebIdentityCredentialsProvider = StsWebIdentityCredentialsProviderBuilder().apply(block).build()

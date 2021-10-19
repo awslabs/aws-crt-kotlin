@@ -6,20 +6,17 @@
 package aws.sdk.kotlin.crt.auth.credentials
 
 import software.amazon.awssdk.crt.auth.credentials.CredentialsProvider as CredentialsProviderJni
-import software.amazon.awssdk.crt.auth.credentials.ProfileCredentialsProvider as ProfileCredentialsProviderJni
+import software.amazon.awssdk.crt.auth.credentials.StsWebIdentityCredentialsProvider as StsWebIdentityCredentialsProviderJni
 
-public actual class ProfileCredentialsProvider
-internal actual constructor(builder: ProfileCredentialsProviderBuilder) :
+public actual class StsWebIdentityCredentialsProvider
+internal actual constructor(builder: StsWebIdentityCredentialsProviderBuilder) :
     CredentialsProvider, JniCredentialsProvider() {
     public actual companion object {}
 
     override val jniCredentials: CredentialsProviderJni =
-        ProfileCredentialsProviderJni
+        StsWebIdentityCredentialsProviderJni
             .builder()
             .withClientBootstrap(builder.clientBootstrap?.jniBootstrap)
             .withTlsContext(builder.tlsContext?.jniCtx)
-            .withProfileName(builder.profileName)
-            .withConfigFileNameOverride(builder.configFileName)
-            .withCredentialsFileNameOverride(builder.credentialsFileName)
             .build()
 }
