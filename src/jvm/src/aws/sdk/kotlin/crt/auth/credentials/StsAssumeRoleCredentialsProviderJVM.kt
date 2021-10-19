@@ -21,7 +21,7 @@ private const val DEFAULT_DURATION_SECONDS = 3600
 public actual class StsAssumeRoleCredentialsProvider
 internal actual constructor(builder: StsAssumeRoleCredentialsProviderBuilder) :
     CredentialsProvider, JniCredentialsProvider() {
-    public actual companion object { }
+    public actual companion object {}
 
     override val jniCredentials: CredentialsProviderJni =
         StsCredentialsProviderJni
@@ -35,6 +35,7 @@ internal actual constructor(builder: StsAssumeRoleCredentialsProviderBuilder) :
             .build()
 }
 
+// Convert the SDK version of CredentialsProvider type to the CRT version
 internal fun adapt(credentialsProvider: CredentialsProvider?): CredentialsProviderJni? {
     return if (credentialsProvider == null) {
         null
@@ -45,14 +46,13 @@ internal fun adapt(credentialsProvider: CredentialsProvider?): CredentialsProvid
 
 private fun toCrtCredentialsProvider(sdkCredentialsProvider: CredentialsProvider): CredentialsProviderJni {
     return object : CredentialsProviderJni() {
-        override fun getCredentials(): CompletableFuture<CredentialsJni> {
-            return runBlocking {
-                val deferred = async(start = CoroutineStart.UNDISPATCHED) {
-                    toCrtCredentials(sdkCredentialsProvider.getCredentials())
-                }
 
-                deferred.asCompletableFuture()
+        override fun getCredentials(): CompletableFuture<CredentialsJni> = runBlocking {
+            val deferred = async(start = CoroutineStart.UNDISPATCHED) {
+                toCrtCredentials(sdkCredentialsProvider.getCredentials())
             }
+
+            deferred.asCompletableFuture()
         }
     }
 }
