@@ -1,0 +1,57 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0.
+ */
+
+package aws.sdk.kotlin.crt.auth.credentials
+
+import aws.sdk.kotlin.crt.io.ClientBootstrap
+import aws.sdk.kotlin.crt.io.TlsContext
+
+/**
+ * Provides credentials from STS by assuming a role
+ */
+public expect class StsCredentialsProvider
+internal constructor(builder: StsCredentialsProviderBuilder) : CredentialsProvider {
+    public companion object
+}
+
+public class StsCredentialsProviderBuilder {
+    /**
+     * Connection bootstrap to use for any network connections made while sourcing credentials.
+     */
+    public var clientBootstrap: ClientBootstrap? = null
+
+    /**
+     * The tls context to use for any secure network connections made while sourcing credentials.
+     */
+    public var tlsContext: TlsContext? = null
+
+    /**
+     * The underlying Credentials Provider to use for source credentials.
+     */
+    public var credentialsProvider: CredentialsProvider? = null
+
+    /**
+     * The target role's ARN.
+     */
+    public var roleArn: String? = null
+
+    /**
+     * The name to associate with the session
+     */
+    public var sessionName: String? = null
+
+    /**
+     * The number of seconds from authentication that the session is valid for
+     */
+    public var durationSeconds: Int? = null
+
+    public fun build(): StsCredentialsProvider = StsCredentialsProvider(this)
+}
+
+/**
+ * Construct a new credentials provider using a builder.
+ */
+public fun StsCredentialsProvider.Companion.build(block: StsCredentialsProviderBuilder.() -> Unit):
+    StsCredentialsProvider = StsCredentialsProviderBuilder().apply(block).build()
