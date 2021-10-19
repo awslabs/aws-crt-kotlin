@@ -11,12 +11,12 @@ import aws.sdk.kotlin.crt.io.TlsContext
 /**
  * Provides credentials from STS by assuming a role
  */
-public expect class StsCredentialsProvider
-internal constructor(builder: StsCredentialsProviderBuilder) : CredentialsProvider {
+public expect class StsAssumeRoleCredentialsProvider
+internal constructor(builder: StsAssumeRoleCredentialsProviderBuilder) : CredentialsProvider {
     public companion object
 }
 
-public class StsCredentialsProviderBuilder {
+public class StsAssumeRoleCredentialsProviderBuilder {
     /**
      * Connection bootstrap to use for any network connections made while sourcing credentials.
      */
@@ -47,11 +47,11 @@ public class StsCredentialsProviderBuilder {
      */
     public var durationSeconds: Int? = null
 
-    public fun build(): StsCredentialsProvider = StsCredentialsProvider(this)
+    public fun build(): StsAssumeRoleCredentialsProvider = StsAssumeRoleCredentialsProvider(this)
 }
 
 /**
  * Construct a new credentials provider using a builder.
  */
-public fun StsCredentialsProvider.Companion.build(block: StsCredentialsProviderBuilder.() -> Unit):
-    StsCredentialsProvider = StsCredentialsProviderBuilder().apply(block).build()
+public fun StsAssumeRoleCredentialsProvider.Companion.build(block: StsAssumeRoleCredentialsProviderBuilder.() -> Unit):
+    StsAssumeRoleCredentialsProvider = StsAssumeRoleCredentialsProviderBuilder().apply(block).build()
