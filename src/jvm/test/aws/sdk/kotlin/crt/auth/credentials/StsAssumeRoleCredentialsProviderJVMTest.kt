@@ -5,7 +5,7 @@
 package aws.sdk.kotlin.crt.auth.credentials
 
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertContentEquals
 import kotlin.test.assertNotNull
 
 private val ACCESS_KEY = "ACCESS_KEY".encodeToByteArray()
@@ -30,9 +30,8 @@ class StsAssumeRoleCredentialsProviderJVMTest {
 
         val adaptedCreds = adapted.credentials.get()
 
-        // https://discuss.kotlinlang.org/t/bytearray-comparison/1689/12
-        assertEquals(adaptedCreds.accessKeyId.toList(), ACCESS_KEY.toList())
-        assertEquals(adaptedCreds.secretAccessKey.toList(), SECRET_ACCESS_KEY.toList())
-        assertEquals(adaptedCreds.sessionToken.toList(), SESSION_TOKEN.toList())
+        assertContentEquals(adaptedCreds.accessKeyId, ACCESS_KEY)
+        assertContentEquals(adaptedCreds.secretAccessKey, SECRET_ACCESS_KEY)
+        assertContentEquals(adaptedCreds.sessionToken, SESSION_TOKEN)
     }
 }
