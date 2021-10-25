@@ -38,7 +38,7 @@ Set the path to `libcrypto.a` either as a command line argument to gradle `-Plib
 
 ## Elasticurl App
 
-The `elasticurl` project contains an MPP (JVM and Native only) executable that provides a simple testing application for exercising the CRT bindings. 
+The `elasticurl` project contains an MPP (JVM and Native only) executable that provides a simple testing application for exercising the CRT bindings.
 
 **Native**
 
