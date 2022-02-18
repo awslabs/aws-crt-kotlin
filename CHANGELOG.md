@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.5.3] - 02/17/2022
+
+### Miscellaneous
+* bump aws-crt-java and coroutines to latest [#45](https://github.com/awslabs/aws-crt-kotlin/pull/45)
+
 ## [0.5.2] - 01/06/2022
 
 ### New features
