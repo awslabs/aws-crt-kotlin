@@ -11,4 +11,6 @@ public expect object AwsSigner {
     public suspend fun signRequest(request: HttpRequest, config: AwsSigningConfig): HttpRequest
 
     public suspend fun sign(request: HttpRequest, config: AwsSigningConfig): AwsSigningResult
+
+    public suspend fun signChunk(chunkBody: ByteArray, prevSignature: ByteArray, config: AwsSigningConfig): AwsSigningResult
 }

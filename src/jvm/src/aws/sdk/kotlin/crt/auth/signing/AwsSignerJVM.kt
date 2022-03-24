@@ -7,7 +7,7 @@ package aws.sdk.kotlin.crt.auth.signing
 
 import aws.sdk.kotlin.crt.asyncCrtJniCall
 import aws.sdk.kotlin.crt.auth.credentials.JniCredentialsProvider
-import aws.sdk.kotlin.crt.http.HttpRequest
+import aws.sdk.kotlin.crt.http.*
 import aws.sdk.kotlin.crt.http.from
 import aws.sdk.kotlin.crt.http.into
 import kotlinx.coroutines.future.await
@@ -48,6 +48,24 @@ public actual object AwsSigner {
             val jniResult = reqFuture.await()
             val signedRequest = HttpRequest.from(jniResult.signedRequest)
             AwsSigningResult(signedRequest, jniResult.signature)
+        }
+    }
+
+    /**
+     * Signs a body chunk according to the supplied signing configuration
+     * @param chunkBody the chunk payload to sign
+     * @param prevSignature the signature of the previous component of the request (either the initial request itself
+     * for the first chunk or the previous chunk otherwise)
+     * @param config signing configuration
+     * @return signing result, which provides access to all signing-related result properties
+     */
+    public actual suspend fun signChunk(chunkBody: ByteArray, prevSignature: ByteArray, config: AwsSigningConfig): AwsSigningResult {
+        val ktStream = HttpRequestBodyStream.fromByteArray(chunkBody)
+        val bodyStream = JniRequestBodyStream(ktStream)
+        return asyncCrtJniCall {
+            val signFuture = AwsSignerJni.sign(bodyStream, prevSignature, config.into())
+            val jniResult = signFuture.await()
+            AwsSigningResult(null, jniResult.signature)
         }
     }
 }
