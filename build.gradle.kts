@@ -48,7 +48,7 @@ allprojects {
 }
 
 // See: https://kotlinlang.org/docs/reference/opt-in-requirements.html#opting-in-to-using-api
-val experimentalAnnotations = listOf("kotlin.RequiresOptIn")
+val optinAnnotations= listOf("kotlin.RequiresOptIn")
 
 val ideaActive = System.getProperty("idea.active") == "true"
 extra["ideaActive"] = ideaActive
@@ -166,7 +166,7 @@ kotlin {
 
         kotlin.srcDir("src/$platform/$srcDir")
         resources.srcDir("src/$platform/${resourcesPrefix}resources")
-        experimentalAnnotations.forEach { languageSettings.useExperimentalAnnotation(it) }
+        optinAnnotations.forEach { languageSettings.optIn(it) }
     }
 }
 
