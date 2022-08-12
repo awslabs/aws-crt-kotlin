@@ -1,0 +1,8 @@
+{
+    "id": "9a1c6c45-3d0e-484f-892f-ce06fc867c9d",
+    "type": "bugfix",
+    "description": "Remove incorrect `.` at end of license identifier header in source files.",
+    "issues": [
+        "awslabs/aws-crt-kotlin#601"
+    ]
+}

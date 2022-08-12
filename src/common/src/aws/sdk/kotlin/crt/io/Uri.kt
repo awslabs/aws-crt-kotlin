@@ -1,6 +1,6 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package aws.sdk.kotlin.crt.io
@@ -51,7 +51,7 @@ public data class Uri(
     val parameters: String? = null,
     val fragment: String? = null,
     val userInfo: UserInfo? = null,
-    val forceQuery: Boolean = false
+    val forceQuery: Boolean = false,
 ) {
 
     init {
@@ -162,7 +162,7 @@ public class UriBuilder {
         parameters,
         fragment,
         userInfo,
-        forceQuery
+        forceQuery,
     )
 }
 

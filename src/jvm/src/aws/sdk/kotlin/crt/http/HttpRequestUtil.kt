@@ -1,6 +1,6 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package aws.sdk.kotlin.crt.http
@@ -35,7 +35,7 @@ internal fun HttpStreamResponseHandler.asJniStreamResponseHandler(): software.am
             stream: software.amazon.awssdk.crt.http.HttpStream,
             statusCode: Int,
             blockType: Int,
-            headers: Array<out software.amazon.awssdk.crt.http.HttpHeader>?
+            headers: Array<out software.amazon.awssdk.crt.http.HttpHeader>?,
         ) {
             val ktHeaders = headers?.map { HttpHeader(it.name, it.value) }
             val ktStream = HttpStreamJVM(stream)

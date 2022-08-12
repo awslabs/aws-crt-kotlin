@@ -1,10 +1,11 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package aws.sdk.kotlin.crt.io
 
+/* ktlint-disable enum-entry-name-case */
 public enum class TlsVersion(public val value: Int) {
     /**
      * SSL v3. This should almost never be used.
@@ -12,6 +13,7 @@ public enum class TlsVersion(public val value: Int) {
     SSLv3(0),
 
     TLSv1(1),
+
     /**
      * TLS 1.1
      */

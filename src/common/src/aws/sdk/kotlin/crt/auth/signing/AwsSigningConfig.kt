@@ -1,6 +1,6 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package aws.sdk.kotlin.crt.auth.signing
@@ -58,6 +58,7 @@ public class AwsSigningConfig(builder: Builder) {
      * The region to sign against
      */
     public val region: String = requireNotNull(builder.region) { "signing config must specify a region" }
+
     /**
      * name of service to sign a request for
      */
@@ -95,10 +96,12 @@ public class AwsSigningConfig(builder: Builder) {
      * request in order to pass a signature check.
      */
     public val useDoubleUriEncode: Boolean = builder.useDoubleUriEncode
+
     /**
      * Controls whether or not the uri paths should be normalized when building the canonical request
      */
     public val normalizeUriPath: Boolean = builder.normalizeUriPath
+
     /**
      * Should the "X-Amz-Security-Token" query param be omitted?
      * Normally, this parameter is added during signing if the credentials have a session token.

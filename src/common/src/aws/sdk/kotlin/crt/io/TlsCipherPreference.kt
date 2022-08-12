@@ -1,6 +1,6 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package aws.sdk.kotlin.crt.io
@@ -11,6 +11,7 @@ package aws.sdk.kotlin.crt.io
  * At present, the ability to configure arbitrary orderings of TLS Ciphers is not allowed, and only a curated list of
  * vetted TlsCipherPreference's are exposed.
  */
+/* ktlint-disable enum-entry-name-case */
 public enum class TlsCipherPreference(public val value: Int) {
     /**
      * Use whatever the System Default Preference is. This is usually the best option, as it will be automatically

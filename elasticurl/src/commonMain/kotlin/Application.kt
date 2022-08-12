@@ -1,6 +1,6 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0.
+ * SPDX-License-Identifier: Apache-2.0
  */
 import aws.sdk.kotlin.crt.CRT
 import aws.sdk.kotlin.crt.CrtRuntimeException
@@ -124,7 +124,7 @@ private suspend fun HttpClientConnection.roundTrip(request: HttpRequest, sink: S
             stream: HttpStream,
             responseStatusCode: Int,
             blockType: Int,
-            nextHeaders: List<HttpHeader>?
+            nextHeaders: List<HttpHeader>?,
         ) {
             println("onResponseHeaders -- status: $responseStatusCode ")
             println("headers:")

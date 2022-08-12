@@ -1,6 +1,6 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package aws.sdk.kotlin.crt.auth.credentials
@@ -35,7 +35,7 @@ public fun StaticCredentialsProvider.Companion.build(block: StaticCredentialsPro
  * Create provider from a set of credentials
  */
 public fun StaticCredentialsProvider.Companion.fromCredentials(
-    credentials: Credentials
+    credentials: Credentials,
 ): StaticCredentialsProvider = build {
     accessKeyId = credentials.accessKeyId
     secretAccessKey = credentials.secretAccessKey

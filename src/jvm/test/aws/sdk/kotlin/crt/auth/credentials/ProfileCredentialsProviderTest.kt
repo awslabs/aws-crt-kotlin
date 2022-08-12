@@ -1,6 +1,6 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package aws.sdk.kotlin.crt.auth.credentials
@@ -25,7 +25,7 @@ class ProfileCredentialsProviderTest {
                 [default]
                 aws_access_key_id = $ID
                 aws_secret_access_key = $KEY
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         try {

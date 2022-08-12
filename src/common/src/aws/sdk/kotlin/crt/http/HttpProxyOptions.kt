@@ -1,6 +1,6 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package aws.sdk.kotlin.crt.http
@@ -31,5 +31,5 @@ public data class HttpProxyOptions(
     val authUsername: String? = null,
     val authPassword: String? = null,
     val tlsContext: TlsContext? = null,
-    val authType: HttpProxyAuthorizationType = HttpProxyAuthorizationType.None
+    val authType: HttpProxyAuthorizationType = HttpProxyAuthorizationType.None,
 )

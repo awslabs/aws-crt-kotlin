@@ -1,6 +1,6 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package aws.sdk.kotlin.crt.auth.signing
@@ -82,7 +82,7 @@ private fun AwsSigningConfig.into(): AwsSigningConfigJni {
             credentials = Credentials(
                 it.accessKeyId.toByteArray(),
                 it.secretAccessKey.toByteArray(),
-                it.sessionToken?.toByteArray()
+                it.sessionToken?.toByteArray(),
             )
         }
 
