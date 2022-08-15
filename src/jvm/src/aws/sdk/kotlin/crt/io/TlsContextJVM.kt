@@ -29,19 +29,19 @@ internal actual fun isAlpnSupported(): Boolean = TlsContextOptionsJni.isAlpnSupp
 
 private fun TlsCipherPreference.into(): TlsCipherPreferenceJni = when (this) {
     TlsCipherPreference.SYSTEM_DEFAULT -> TlsCipherPreferenceJni.TLS_CIPHER_SYSTEM_DEFAULT
-    TlsCipherPreference.KMS_PQ_TLSv1_0_2019_06 -> TlsCipherPreferenceJni.TLS_CIPHER_KMS_PQ_TLSv1_0_2019_06
-    TlsCipherPreference.KMS_PQ_SIKE_TLSv1_0_2019_11 -> TlsCipherPreferenceJni.TLS_CIPHER_PREF_KMS_PQ_SIKE_TLSv1_0_2019_11
-    TlsCipherPreference.KMS_PQ_TLSv1_0_2020_02 -> TlsCipherPreferenceJni.TLS_CIPHER_PREF_KMS_PQ_TLSv1_0_2020_02
-    TlsCipherPreference.KMS_PQ_SIKE_TLSv1_0_2020_02 -> TlsCipherPreferenceJni.TLS_CIPHER_PREF_KMS_PQ_SIKE_TLSv1_0_2020_02
-    TlsCipherPreference.KMS_PQ_TLSv1_0_2020_07 -> TlsCipherPreferenceJni.TLS_CIPHER_PREF_KMS_PQ_TLSv1_0_2020_07
+    TlsCipherPreference.KMS_PQ_TLS_V1_0_2019_06 -> TlsCipherPreferenceJni.TLS_CIPHER_KMS_PQ_TLSv1_0_2019_06
+    TlsCipherPreference.KMS_PQ_SIKE_TLS_V1_0_2019_11 -> TlsCipherPreferenceJni.TLS_CIPHER_PREF_KMS_PQ_SIKE_TLSv1_0_2019_11
+    TlsCipherPreference.KMS_PQ_TLS_V1_0_2020_02 -> TlsCipherPreferenceJni.TLS_CIPHER_PREF_KMS_PQ_TLSv1_0_2020_02
+    TlsCipherPreference.KMS_PQ_SIKE_TLS_V1_0_2020_02 -> TlsCipherPreferenceJni.TLS_CIPHER_PREF_KMS_PQ_SIKE_TLSv1_0_2020_02
+    TlsCipherPreference.KMS_PQ_TLS_V1_0_2020_07 -> TlsCipherPreferenceJni.TLS_CIPHER_PREF_KMS_PQ_TLSv1_0_2020_07
 }
 
 private fun TlsVersion.into(): TlsVersionJni = when (this) {
     TlsVersion.SSLv3 -> TlsVersionJni.SSLv3
     TlsVersion.TLSv1 -> TlsVersionJni.TLSv1
-    TlsVersion.TLSv1_1 -> TlsVersionJni.TLSv1_1
-    TlsVersion.TLSv1_2 -> TlsVersionJni.TLSv1_2
-    TlsVersion.TLSv1_3 -> TlsVersionJni.TLSv1_3
+    TlsVersion.TLS_V1_1 -> TlsVersionJni.TLSv1_1
+    TlsVersion.TLS_V1_2 -> TlsVersionJni.TLSv1_2
+    TlsVersion.TLS_V1_3 -> TlsVersionJni.TLSv1_3
     TlsVersion.SYS_DEFAULT -> TlsVersionJni.TLS_VER_SYS_DEFAULTS
 }
 
