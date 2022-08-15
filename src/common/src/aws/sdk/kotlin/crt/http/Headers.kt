@@ -1,6 +1,6 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package aws.sdk.kotlin.crt.http
@@ -12,7 +12,7 @@ import aws.sdk.kotlin.crt.util.CaseInsensitiveMap
  */
 public data class HttpHeader(
     val name: String,
-    val value: String
+    val value: String,
 )
 
 /**
@@ -143,14 +143,15 @@ public class HeadersBuilder {
     }
 
     private fun ensureListForKey(name: String, size: Int): MutableList<String> {
-        if (built)
+        if (built) {
             throw IllegalStateException("Cannot modify a builder when final structure has already been built")
+        }
         return values[name] ?: ArrayList<String>(size).also { values[name] = it }
     }
 }
 
 private class HeadersImpl(
-    initialValues: Map<String, List<String>> = emptyMap()
+    initialValues: Map<String, List<String>> = emptyMap(),
 ) : Headers {
     private val values: Map<String, List<String>> =
         CaseInsensitiveMap<List<String>>().apply { putAll(initialValues) }

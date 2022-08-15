@@ -1,6 +1,6 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package aws.sdk.kotlin.crt.http
@@ -104,7 +104,7 @@ class HttpClientConnectionTest : CrtTest() {
         url: String,
         clientBootstrap: ClientBootstrap,
         tlsContext: TlsContext,
-        connTimeoutMs: Int = 30_000
+        connTimeoutMs: Int = 30_000,
     ) {
         val uri = Uri.parse(url)
         val httpConnOpts = HttpClientConnectionManagerOptions.build {

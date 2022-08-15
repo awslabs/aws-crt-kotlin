@@ -1,6 +1,6 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package aws.sdk.kotlin.crt.http
@@ -11,7 +11,7 @@ import aws.sdk.kotlin.crt.io.*
  * Configuration options for an [HttpClientConnectionManager] instance
  */
 public class HttpClientConnectionManagerOptions internal constructor(
-    builder: HttpClientConnectionManagerOptionsBuilder
+    builder: HttpClientConnectionManagerOptionsBuilder,
 ) {
     public val uri: Uri = requireNotNull(builder.uri) { "URI is required" }
     public val clientBootstrap: ClientBootstrap = requireNotNull(builder.clientBootstrap) { "ClientBootstrap is required" }

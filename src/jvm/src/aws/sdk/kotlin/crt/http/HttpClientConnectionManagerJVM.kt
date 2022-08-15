@@ -1,6 +1,6 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package aws.sdk.kotlin.crt.http
@@ -19,7 +19,7 @@ import software.amazon.awssdk.crt.http.HttpProxyOptions as HttpProxyOptionsJni
 import software.amazon.awssdk.crt.io.SocketOptions as SocketOptionsJni
 
 public actual class HttpClientConnectionManager actual constructor(
-    public actual val options: HttpClientConnectionManagerOptions
+    public actual val options: HttpClientConnectionManagerOptions,
 ) : Closeable, AsyncShutdown {
 
     private val jniManager = HttpClientConnectionManagerJni.create(options.into())

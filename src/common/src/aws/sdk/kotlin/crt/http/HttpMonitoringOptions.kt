@@ -1,6 +1,6 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package aws.sdk.kotlin.crt.http
@@ -23,7 +23,7 @@ public data class HttpMonitoringOptions(
     /**
      * How long, in seconds, a connection is allowed to be unhealthy before getting shut down.  Must be at least two
      */
-    val allowableThroughputFailureIntervalSeconds: Int = 2
+    val allowableThroughputFailureIntervalSeconds: Int = 2,
 ) {
     init {
         require(minThroughputBytesPerSecond >= 0) { "Http monitoring minimum throughput must be non-negative" }

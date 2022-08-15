@@ -1,6 +1,6 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package aws.sdk.kotlin.crt.http
@@ -22,7 +22,7 @@ class HttpRequestResponseTest : HttpClientTest() {
             assertEquals(
                 expectedStatus,
                 response.statusCode,
-                "[$url]: expected http status ($expectedStatus) does not match"
+                "[$url]: expected http status ($expectedStatus) does not match",
             )
         } catch (ex: Exception) {
             fail("[$url]: failed to round trip request: $ex")

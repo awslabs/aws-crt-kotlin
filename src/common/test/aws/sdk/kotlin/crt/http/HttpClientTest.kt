@@ -1,6 +1,6 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package aws.sdk.kotlin.crt.http
@@ -48,7 +48,7 @@ abstract class HttpClientTest : CrtTest() {
         tlsContext: TlsContext,
         socketOptions: SocketOptions? = null,
         connTimeoutMs: Int = DEFAULT_CONNECT_TIMEOUT_MS,
-        block: suspend (HttpClientConnection) -> Unit = {}
+        block: suspend (HttpClientConnection) -> Unit = {},
     ) {
         val uri = Uri.parse(url)
         val httpConnOpts = HttpClientConnectionManagerOptions.build {
@@ -139,7 +139,7 @@ private class HttpTestResponseHandler : HttpStreamResponseHandler {
         stream: HttpStream,
         responseStatusCode: Int,
         blockType: Int,
-        nextHeaders: List<HttpHeader>?
+        nextHeaders: List<HttpHeader>?,
     ) {
         // FIXME - getting the headers or body out of these callbacks in k/n is...difficult
         // k/n concurrency rules causes an immutability exception - we'd have to use something like DetachedObjectGraph to update the values

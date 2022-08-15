@@ -24,7 +24,7 @@ public data class AwsSigningResult(
      *
      * @return the signature value from the signing process
      */
-    val signature: ByteArray
+    val signature: ByteArray,
 ) {
 
     override fun equals(other: Any?): Boolean {

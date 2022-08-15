@@ -1,6 +1,6 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package aws.sdk.kotlin.crt.io
@@ -18,7 +18,7 @@ class UriTest : CrtTest() {
         val uri = Uri(
             Protocol.HTTPS,
             "test.aws.com",
-            path = "/kotlin"
+            path = "/kotlin",
         )
         assertEquals(expected, uri.toString())
     }
@@ -42,7 +42,7 @@ class UriTest : CrtTest() {
             Protocol.HTTPS,
             "test.aws.com",
             path = "/kotlin",
-            parameters = "foo=bar&baz=quux&baz=qux"
+            parameters = "foo=bar&baz=quux&baz=qux",
         )
         assertEquals(expected, uri.toString())
     }
@@ -53,7 +53,7 @@ class UriTest : CrtTest() {
         val uri = Uri(
             Protocol.HTTPS,
             "test.aws.com",
-            specifiedPort = 8000
+            specifiedPort = 8000,
         )
         assertEquals(expected, uri.toString())
 
@@ -61,7 +61,7 @@ class UriTest : CrtTest() {
         val uri2 = Uri(
             Protocol.HTTP,
             "test.aws.com",
-            specifiedPort = 80
+            specifiedPort = 80,
         )
         assertEquals(expected2, uri2.toString())
     }
@@ -74,8 +74,8 @@ class UriTest : CrtTest() {
                 Uri(
                     Protocol.HTTPS,
                     "test.aws.com",
-                    specifiedPort = n
-                ).specifiedPort
+                    specifiedPort = n,
+                ).specifiedPort,
             )
         }
 

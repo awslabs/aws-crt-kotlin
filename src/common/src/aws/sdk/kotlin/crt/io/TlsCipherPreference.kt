@@ -1,6 +1,6 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package aws.sdk.kotlin.crt.io
@@ -38,7 +38,7 @@ public enum class TlsCipherPreference(public val value: Int) {
      *
      * This Cipher Preference may stop being supported at any time.
      */
-    KMS_PQ_TLSv1_0_2019_06(1),
+    KMS_PQ_TLS_V1_0_2019_06(1),
 
     /**
      * This TlsCipherPreference contains SIKE Round 1 Draft Hybrid TLS Ciphers at the top of the preference list.
@@ -49,7 +49,7 @@ public enum class TlsCipherPreference(public val value: Int) {
      *
      * This Cipher Preference may stop being supported at any time.
      */
-    KMS_PQ_SIKE_TLSv1_0_2019_11(2),
+    KMS_PQ_SIKE_TLS_V1_0_2019_11(2),
 
     /**
      * This TlsCipherPreference contains BIKE Round 2, SIKE Round 2, BIKE Round 1, and SIKE Round 1 Draft Hybrid TLS
@@ -61,7 +61,7 @@ public enum class TlsCipherPreference(public val value: Int) {
      *
      * This Cipher Preference may stop being supported at any time.
      */
-    KMS_PQ_TLSv1_0_2020_02(3),
+    KMS_PQ_TLS_V1_0_2020_02(3),
 
     /**
      * This TlsCipherPreference contains SIKE Round 2 and SIKE Round 1 Draft Hybrid TLS Ciphers at the top of the
@@ -73,7 +73,7 @@ public enum class TlsCipherPreference(public val value: Int) {
      *
      * This Cipher Preference may stop being supported at any time.
      */
-    KMS_PQ_SIKE_TLSv1_0_2020_02(4),
+    KMS_PQ_SIKE_TLS_V1_0_2020_02(4),
 
     /**
      * This TlsCipherPreference contains Kyber Round 2, BIKE Round 2, SIKE Round 2, BIKE Round 1, and SIKE Round 1 Draft
@@ -85,7 +85,7 @@ public enum class TlsCipherPreference(public val value: Int) {
      *
      * This Cipher Preference may stop being supported at any time.
      */
-    KMS_PQ_TLSv1_0_2020_07(5);
+    KMS_PQ_TLS_V1_0_2020_07(5);
 
     /**
      * Not all Cipher Preferences are supported on all Platforms due to differences in the underlying TLS Libraries.

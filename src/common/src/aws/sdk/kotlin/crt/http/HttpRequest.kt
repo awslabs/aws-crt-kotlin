@@ -1,6 +1,6 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package aws.sdk.kotlin.crt.http
@@ -16,7 +16,7 @@ public data class HttpRequest(
     val method: String,
     val encodedPath: String,
     val headers: Headers,
-    val body: HttpRequestBodyStream? = null
+    val body: HttpRequestBodyStream? = null,
 ) {
     public companion object {
         public fun build(block: HttpRequestBuilder.() -> Unit): HttpRequest = HttpRequestBuilder().apply(block).build()
