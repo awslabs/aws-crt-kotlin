@@ -1,0 +1,8 @@
+{
+    "id": "02e5ad67-aad8-4802-86fd-475ed01480f8",
+    "type": "bugfix",
+    "description": "Upgrade aws-crt-java dependency to fix Mac dlopen issue",
+    "issues": [
+        "awslabs/aws-crt-kotlin#55"
+    ]
+}
