@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.6.4] - 08/18/2022
+
+### Fixes
+* [#55](https://github.com/awslabs/aws-crt-kotlin/issues/55) Upgrade aws-crt-java dependency to fix Mac dlopen issue
+* [#601](https://github.com/awslabs/aws-sdk-kotlin/issues/601) Remove incorrect `.` at end of license identifier header in source files.
+
+### Miscellaneous
+* Upgrade ktlint to 0.46.1.
+* Upgrade Kotlin version to 1.7.10
+
 ## [0.5.4] - 03/24/2022
 
 ### New features
