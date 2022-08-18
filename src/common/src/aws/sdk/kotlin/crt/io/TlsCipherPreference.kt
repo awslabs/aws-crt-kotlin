@@ -19,73 +19,55 @@ public enum class TlsCipherPreference(public val value: Int) {
     SYSTEM_DEFAULT(0),
 
     /**
-     * This TlsCipherPreference contains BIKE Round 1 and SIKE Round 1 Draft Hybrid TLS Ciphers at the top of the
-     * preference list.
-     *
-     * For more info see:
-     * - https://tools.ietf.org/html/draft-campagna-tls-bike-sike-hybrid
-     * - https://aws.amazon.com/blogs/security/post-quantum-tls-now-supported-in-aws-kms/
-     *
-     * These Hybrid TLS ciphers perform two Key Exchanges (1 ECDHE + 1 Post-Quantum) during the TLS Handshake in order
-     * to combine the security of Classical ECDHE Key Exchange with the conjectured quantum-resistance of newly
-     * proposed key exchanges.
-     *
-     * The algorithms these new Post-Quantum ciphers are based on have been submitted to NIST's Post-Quantum Crypto
-     * Standardization Process, and are still under review.
-     *
-     * While these Post Quantum Hybrid TLS Ciphers are the most preferred ciphers in the preference list, classical
-     * ciphers are still present and can be negotiated if the TLS peer does not support these Hybrid TLS Ciphers.
-     *
-     * This Cipher Preference may stop being supported at any time.
+     * This cipher preference is no longer supported. Use PQ_TLS_V1_0_2021_05 instead.
      */
+    @Deprecated("This cipher preference is no longer supported. Use PQ_TLS_V1_0_2021_05 instead.")
     KMS_PQ_TLS_V1_0_2019_06(1),
 
     /**
-     * This TlsCipherPreference contains SIKE Round 1 Draft Hybrid TLS Ciphers at the top of the preference list.
-     *
-     * For more info see:
-     * - https://tools.ietf.org/html/draft-campagna-tls-bike-sike-hybrid
-     * - https://aws.amazon.com/blogs/security/post-quantum-tls-now-supported-in-aws-kms/
-     *
-     * This Cipher Preference may stop being supported at any time.
+     * This cipher preference is no longer supported. Use PQ_TLS_V1_0_2021_05 instead.
      */
+    @Deprecated("This cipher preference is no longer supported. Use PQ_TLS_V1_0_2021_05 instead.")
     KMS_PQ_SIKE_TLS_V1_0_2019_11(2),
 
     /**
-     * This TlsCipherPreference contains BIKE Round 2, SIKE Round 2, BIKE Round 1, and SIKE Round 1 Draft Hybrid TLS
-     * Ciphers at the top of the preference list.
-     *
-     * For more info see:
-     * - https://tools.ietf.org/html/draft-campagna-tls-bike-sike-hybrid
-     * - https://aws.amazon.com/blogs/security/post-quantum-tls-now-supported-in-aws-kms/
-     *
-     * This Cipher Preference may stop being supported at any time.
+     * This cipher preference is no longer supported. Use PQ_TLS_V1_0_2021_05 instead.
      */
+    @Deprecated("This cipher preference is no longer supported. Use PQ_TLS_V1_0_2021_05 instead.")
     KMS_PQ_TLS_V1_0_2020_02(3),
 
     /**
-     * This TlsCipherPreference contains SIKE Round 2 and SIKE Round 1 Draft Hybrid TLS Ciphers at the top of the
-     * preference list.
-     *
-     * For more info see:
-     * - https://tools.ietf.org/html/draft-campagna-tls-bike-sike-hybrid
-     * - https://aws.amazon.com/blogs/security/post-quantum-tls-now-supported-in-aws-kms/
-     *
-     * This Cipher Preference may stop being supported at any time.
+     * This cipher preference is no longer supported. Use PQ_TLS_V1_0_2021_05 instead.
      */
+    @Deprecated("This cipher preference is no longer supported. Use PQ_TLS_V1_0_2021_05 instead.")
     KMS_PQ_SIKE_TLS_V1_0_2020_02(4),
 
     /**
-     * This TlsCipherPreference contains Kyber Round 2, BIKE Round 2, SIKE Round 2, BIKE Round 1, and SIKE Round 1 Draft
-     * Hybrid TLS Ciphers at the top of the preference list.
+     * This cipher preference is no longer supported. Use PQ_TLS_V1_0_2021_05 instead.
+     */
+    @Deprecated("This cipher preference is no longer supported. Use PQ_TLS_V1_0_2021_05 instead.")
+    KMS_PQ_TLS_V1_0_2020_07(5),
+
+    /**
+     * This TlsCipherPreference supports TLS 1.0 through TLS 1.3, and contains Kyber Round 3 as its highest priority
+     * PQ algorithm. PQ algorithms in this preference list will be used in hybrid mode, and will be combined with a
+     * classical ECDHE key exchange.
+     *
+     * NIST has announced that Kyber will be first post-quantum key-agreement algorithm that it will standardize.
+     * However, the NIST standardization process might introduce minor changes that may cause the final Kyber standard
+     * to differ from the Kyber Round 3 implementation available in this preference list.
+     *
+     * Since this TlsCipherPreference contains algorithms that have not yet been officially standardized by NIST, this
+     * preference list, and any of the PQ algorithms in it, may stop being supported at any time.
      *
      * For more info see:
-     * - https://tools.ietf.org/html/draft-campagna-tls-bike-sike-hybrid
-     * - https://aws.amazon.com/blogs/security/post-quantum-tls-now-supported-in-aws-kms/
-     *
-     * This Cipher Preference may stop being supported at any time.
+     *   - https://tools.ietf.org/html/draft-campagna-tls-bike-sike-hybrid
+     *   - https://datatracker.ietf.org/doc/html/draft-ietf-tls-hybrid-design
+     *   - https://aws.amazon.com/blogs/security/how-to-tune-tls-for-hybrid-post-quantum-cryptography-with-kyber/
+     *   - https://nvlpubs.nist.gov/nistpubs/ir/2022/NIST.IR.8413.pdf
      */
-    KMS_PQ_TLS_V1_0_2020_07(5);
+    PQ_TLS_V1_0_2021_05(6),
+    ;
 
     /**
      * Not all Cipher Preferences are supported on all Platforms due to differences in the underlying TLS Libraries.
