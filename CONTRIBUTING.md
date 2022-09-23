@@ -46,13 +46,13 @@ Merges to this repository must include one or more changelog entries which descr
 Entries are placed in the top-level `.changes/` directory. An entry is a file containing a JSON object with the
 following fields:
 
-| Field name    | Type       | Required | Enum                                         | Description                                                                                                                                                                                                                                                                                                                                     |
-|---------------|------------|----------|----------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `id`          | `string`   | yes      |                                              | A unique identifier for this entry. We recommend you generate a UUID for this field.                                                                                                                                                                                                                                                            |
-| `type`        | `string`   | yes      | `bugfix`, `feature`, `documentation`, `misc` | The type of change being made.                                                                                                                                                                                                                                                                                                                  |
-| `description` | `string`   | yes      |                                              | A description of the change being made.                                                                                                                                                                                                                                                                                                         |
+| Field name    | Type       | Required | Enum                                         | Description                                                                                                                                                                                                                                                                                                                                      |
+|---------------|------------|----------|----------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `id`          | `string`   | yes      |                                              | A unique identifier for this entry. We recommend you generate a UUID for this field.                                                                                                                                                                                                                                                             |
+| `type`        | `string`   | yes      | `bugfix`, `feature`, `documentation`, `misc` | The type of change being made.                                                                                                                                                                                                                                                                                                                   |
+| `description` | `string`   | yes      |                                              | A description of the change being made.<ul><li>Prefix with `**Breaking**:` if the change is breaking</li><li>Use the imperative present tense (e.g., "change" not "changed" nor "changes")</li><li>Capitalize first letter</li><li>No dot (.) at the end unless there are multiple sentences</li></ul>                                           |
 | `issues`      | `string[]` | no       |                                              | A list of references to any related issues in the relevant repositories. A reference can be specified in several ways:<ul><li>The issue number, if local to this repository (eg. `#12345`)</li><li>A fully-qualified issue ID (eg.`awslabs/aws-sdk-kotlin#12345`)</li><li>A fully-qualified URL (eg. `https://issuetracker.com/12345`)</li></ul> |
-| `module`      | `string`   | no       |                                              | The area of the code affected by your changes. If unsure, leave this value unset.                                                                                                                                                                                                                                                               |
+| `module`      | `string`   | no       |                                              | The area of the code affected by your changes. If unsure, leave this value unset.                                                                                                                                                                                                                                                                |
 
 The filename of an entry is arbitrary. We recommend `<id>.json`, where `<id>` corresponds to the `id` field of the entry
 itself.
@@ -68,7 +68,7 @@ of your request may disagree and ask that you add one anyway.
 {
   "id": "263ea6ab-4b75-41a8-9c37-821c30d7b9e5",
   "type": "feature",
-  "description": "Add binding for CRT URL parsing.",
+  "description": "Add binding for CRT URL parsing",
   "issues": [
     "awslabs/aws-crt-kotlin#12345"
   ]
@@ -88,7 +88,7 @@ opensource-codeofconduct@amazon.com with any additional questions or comments.
 
 
 ## Security issue notifications
-If you discover a potential security issue in this project we ask that you notify AWS/Amazon Security via our [vulnerability reporting page](http://aws.amazon.com/security/vulnerability-reporting/). Please do **not** create a public github issue.
+If you discover a potential security issue in this project we ask that you notify AWS/Amazon Security via our [vulnerability reporting page](http://aws.amazon.com/security/vulnerability-reporting/). Please do **not** create a public GitHub issue.
 
 
 ## Licensing
