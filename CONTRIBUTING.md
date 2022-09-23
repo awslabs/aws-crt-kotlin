@@ -78,10 +78,10 @@ of your request may disagree and ask that you add one anyway.
 ### Git Commit Guidelines
 This project uses [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) for its commit message format and expects all contributors to follow these guidelines.
 
-Each commit message consists of a **header**, a **body** (optional), and a **footer** (optional). The header has a special format that includes a **type**, a **scope** and a **subject**:
+Each commit message consists of a **header**, a **body** (optional), and a **footer** (optional). The header has a special format that includes a **type** and a **subject**:
 
 ```
-<type>(<scope>): <subject>
+<type>: <subject>
 <BLANK LINE>
 <body>
 <BLANK LINE>
@@ -104,13 +104,6 @@ Must be one of the following:
 - **chore**: Changes to the build process or auxiliary tools and libraries such as documentation generation
 - **ci**: Changes to CI/CD scripts and tooling
 
-#### Scope
-
-The scope is optional but should be included when possible and refer to a module that is being touched. Examples:
-
-- codegen
-- rt (optionally the target platform e.g. rt-android)
-
 #### Subject
 
 The subject contains succinct description of the change:
@@ -121,7 +114,7 @@ The subject contains succinct description of the change:
 
 #### Body (optional)
 
-Just as in the **subject**, use the imperative, present tense: "change" not "changed" nor "changes". The body should include the motivation for the change and contrast this with previous behavior.
+Just as in the **subject**, use the imperative present tense (e.g., "change" not "changed" nor "changes"). The body should include the motivation for the change and contrast this with previous behavior.
 
 #### Footer (optional)
 
@@ -129,7 +122,7 @@ The footer should contain any information about **Breaking Changes** and is also
 
 The last line of commits introducing breaking changes should be in the form `BREAKING CHANGE: <desc>`
 
-Breaking changes should also add an exclamation mark `!` after the type/scope (e.g. `refactor(rt)!: drop support for Android API < 20`)
+Breaking changes should also add an exclamation mark `!` after the type (e.g. `refactor!: drop support for Android API < 20`)
 
 ## Finding contributions to work on
 Looking at the existing issues is a great way to find something to contribute on. As our projects, by default, use the default GitHub issue labels (enhancement/bug/duplicate/help wanted/invalid/question/wontfix), looking at any 'help wanted' issues is a great place to start.
