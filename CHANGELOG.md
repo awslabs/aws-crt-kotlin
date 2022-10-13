@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.5] - 10/13/2022
+
+### Fixes
+* [#715](https://github.com/awslabs/aws-sdk-kotlin/issues/715) Enable intra-repo links in API ref docs
+
+### Miscellaneous
+* Update/clarify changelog and add commit instructions in the Contributing Guidelines
+
 ## [0.6.4] - 08/18/2022
 
 ### Fixes
