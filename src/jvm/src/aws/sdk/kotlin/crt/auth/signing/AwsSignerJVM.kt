@@ -85,7 +85,7 @@ public actual object AwsSigner {
 
         // canonicalize the headers
         val headers: List<HttpHeader> = trailingHeaders.entries().sortedBy { e -> e.key.lowercase() }
-            .map { e -> HttpHeader(e.key.lowercase(), e.value.joinToString(",")) }
+            .map { e -> HttpHeader(e.key.lowercase(), e.value.joinToString(",") { v -> v.trim() }) }
 
         return asyncCrtJniCall {
             val signFuture = AwsSignerJni.sign(headers, prevSignature, config.into())
