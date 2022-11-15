@@ -5,6 +5,7 @@
 
 package aws.sdk.kotlin.crt.auth.signing
 
+import aws.sdk.kotlin.crt.http.Headers
 import aws.sdk.kotlin.crt.http.HttpRequest
 
 public expect object AwsSigner {
@@ -13,4 +14,6 @@ public expect object AwsSigner {
     public suspend fun sign(request: HttpRequest, config: AwsSigningConfig): AwsSigningResult
 
     public suspend fun signChunk(chunkBody: ByteArray, prevSignature: ByteArray, config: AwsSigningConfig): AwsSigningResult
+
+    public suspend fun signChunkTrailer(trailingHeaders: Headers, prevSignature: ByteArray, config: AwsSigningConfig): AwsSigningResult
 }

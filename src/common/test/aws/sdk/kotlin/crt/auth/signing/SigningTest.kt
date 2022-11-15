@@ -8,6 +8,7 @@ package aws.sdk.kotlin.crt.auth.signing
 import aws.sdk.kotlin.crt.*
 import aws.sdk.kotlin.crt.auth.credentials.StaticCredentialsProvider
 import aws.sdk.kotlin.crt.auth.credentials.build
+import aws.sdk.kotlin.crt.http.Headers
 import aws.sdk.kotlin.crt.http.HttpRequest
 import aws.sdk.kotlin.crt.http.HttpRequestBodyStream
 import aws.sdk.kotlin.crt.http.headers
@@ -191,6 +192,38 @@ class SigningTest : CrtTest() {
             assertTrue(signedRequest.headers.contains("X-Amz-Date", "20150830T123600Z"), "${signedRequest.headers}")
             val prefix = "AWS4-ECDSA-P256-SHA256 Credential=AKIDEXAMPLE/20150830/service/aws4_request, SignedHeaders=host;x-amz-date;x-amz-region-set, Signature="
             assertTrue(signedRequest.headers["Authorization"]!!.contains(prefix), signedRequest.headers["Authorization"])
+        }
+    }
+
+    @Test
+    fun testSigningChunkTrailingHeaders() = runSuspendTest {
+        StaticCredentialsProvider.build {
+            accessKeyId = "AKID"
+            secretAccessKey = "SECRET"
+        }.use { provider ->
+
+            val creds = provider.getCredentials()
+
+            val signingConfig = AwsSigningConfig.build {
+                algorithm = AwsSigningAlgorithm.SIGV4
+                signatureType = AwsSignatureType.HTTP_REQUEST_TRAILING_HEADERS
+                region = "foo"
+                service = "bar"
+                date = 1651022625000
+                credentialsProvider = provider
+                credentials = creds
+            }
+
+            val trailingHeaders = Headers.build {
+                append("x-amz-checksum-crc32", "AAAAAA==")
+                append("x-amz-arbitrary-header-with-value", "test")
+            }
+
+            val previousSignature = "106d0654706e3e8dde144d69ca9882ea38d4d72576056c724ba763f8ed3074f3".encodeToByteArray()
+
+            val signature = AwsSigner.signChunkTrailer(trailingHeaders, previousSignature, signingConfig).signature.decodeToString()
+            val expectedSignature = "24f8ed01c7add645b75e65d2382fae5233b97526fdd1a2c4094933b93f6a08bf" // validated using DefaultAwsSigner
+            assertEquals(expectedSignature, signature)
         }
     }
 }

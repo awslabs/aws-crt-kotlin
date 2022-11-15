@@ -12,6 +12,7 @@ import aws.sdk.kotlin.crt.http.from
 import aws.sdk.kotlin.crt.http.into
 import kotlinx.coroutines.future.await
 import software.amazon.awssdk.crt.auth.credentials.Credentials
+import software.amazon.awssdk.crt.http.HttpHeader
 import java.util.function.Predicate
 import software.amazon.awssdk.crt.auth.signing.AwsSigner as AwsSignerJni
 import software.amazon.awssdk.crt.auth.signing.AwsSigningConfig as AwsSigningConfigJni
@@ -64,6 +65,30 @@ public actual object AwsSigner {
         val bodyStream = JniRequestBodyStream(ktStream)
         return asyncCrtJniCall {
             val signFuture = AwsSignerJni.sign(bodyStream, prevSignature, config.into())
+            val jniResult = signFuture.await()
+            AwsSigningResult(null, jniResult.signature)
+        }
+    }
+
+    /**
+     * Signs a chunk consisting of trailing headers
+     * @param trailingHeaders the trailing headers to be signed
+     * @param prevSignature the signature of the previous component of the request (in most cases, this will be the signature
+     * of the final data chunk, since the trailing header chunk is always sent last)
+     * @param config the signing configuration to use
+     * @return signing result, which provides access to all signing-related result properties
+     */
+    public actual suspend fun signChunkTrailer(trailingHeaders: Headers, prevSignature: ByteArray, config: AwsSigningConfig): AwsSigningResult {
+        if (trailingHeaders.isEmpty()) {
+            throw IllegalArgumentException("can't sign empty trailing headers")
+        }
+
+        // canonicalize the headers
+        val headers: List<HttpHeader> = trailingHeaders.entries().sortedBy { e -> e.key.lowercase() }
+            .map { e -> HttpHeader(e.key.lowercase(), e.value.joinToString(",")) }
+
+        return asyncCrtJniCall {
+            val signFuture = AwsSignerJni.sign(headers, prevSignature, config.into())
             val jniResult = signFuture.await()
             AwsSigningResult(null, jniResult.signature)
         }
