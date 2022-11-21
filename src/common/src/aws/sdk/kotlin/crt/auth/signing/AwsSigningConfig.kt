@@ -18,7 +18,8 @@ public enum class AwsSignatureType(public val value: Int) {
     HTTP_REQUEST_VIA_HEADERS(0),
     HTTP_REQUEST_VIA_QUERY_PARAMS(1),
     HTTP_REQUEST_CHUNK(2),
-    HTTP_REQUEST_EVENT(3);
+    HTTP_REQUEST_EVENT(3),
+    HTTP_REQUEST_TRAILING_HEADERS(6);
 }
 
 public object AwsSignedBodyValue {

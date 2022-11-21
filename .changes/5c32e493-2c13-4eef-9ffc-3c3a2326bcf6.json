@@ -1,0 +1,8 @@
+{
+    "id": "5c32e493-2c13-4eef-9ffc-3c3a2326bcf6",
+    "type": "feature",
+    "description": "Implement signChunkTrailer",
+    "issues": [
+        "awslabs/aws-sdk-kotlin/#747"
+    ]
+}
