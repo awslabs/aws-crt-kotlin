@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.6.6] - 11/22/2022
+
+### Features
+*  Implement signChunkTrailer
+
 ## [0.6.5] - 10/13/2022
 
 ### Fixes
