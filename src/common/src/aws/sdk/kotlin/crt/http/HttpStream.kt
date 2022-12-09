@@ -40,4 +40,11 @@ public interface HttpStream : Closeable {
      * Activate the client stream and start processing the request
      */
     public fun activate()
+
+    /**
+     * Send a chunk of data. You must call activate() before using this function.
+     * @param chunkData the chunk of data to send. this should be already formatted in the chunked transfer encoding.
+     * @param isFinalChunk represents if the chunk of data is the final chunk. if set to true, this will terminate the request stream.
+     */
+    public fun writeChunk(chunkData: ByteArray, isFinalChunk: Boolean)
 }

@@ -1,0 +1,8 @@
+{
+    "id": "1695ebf6-1351-4555-8ab9-d90c91622549",
+    "type": "feature",
+    "description": "Add `writeChunk` method to HttpStream",
+    "issues": [
+        "https://github.com/awslabs/smithy-kotlin/issues/759"
+    ]
+}
