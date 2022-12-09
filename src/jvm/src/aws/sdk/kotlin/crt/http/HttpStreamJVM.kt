@@ -19,4 +19,8 @@ internal class HttpStreamJVM(private val jniStream: HttpStreamJni) : HttpStream 
     override fun activate() = jniStream.activate()
 
     override fun close() = jniStream.close()
+
+    override fun writeChunk(chunkData: ByteArray, isFinalChunk: Boolean) {
+        jniStream.writeChunk(chunkData, isFinalChunk)
+    }
 }
