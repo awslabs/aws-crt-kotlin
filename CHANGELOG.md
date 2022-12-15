@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.6.7] - 12/15/2022
+
+### Features
+* [#759](https://github.com/awslabs/smithy-kotlin/issues/759) Add `writeChunk` method to HttpStream
+
 ## [0.6.6] - 11/22/2022
 
 ### Features
