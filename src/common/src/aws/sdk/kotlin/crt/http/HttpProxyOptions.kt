@@ -19,7 +19,7 @@ public enum class HttpProxyAuthorizationType(public val value: Int) {
     /**
      * Basic (username and password base64 encoded) authentication
      */
-    Basic(1);
+    Basic(1),
 }
 
 /**

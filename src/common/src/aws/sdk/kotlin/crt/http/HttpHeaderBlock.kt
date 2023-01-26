@@ -13,5 +13,5 @@ public enum class HttpHeaderBlock(public val blockType: Int) {
 
     INFORMATIONAL(1),
 
-    TRAILING(2);
+    TRAILING(2),
 }

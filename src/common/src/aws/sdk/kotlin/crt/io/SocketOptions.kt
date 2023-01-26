@@ -22,7 +22,7 @@ public enum class SocketDomain(public val value: Int) {
     /**
      * Corresponds to PF_LOCAL in Berkeley sockets, usually UNIX domain sockets or named pipes
      */
-    LOCAL(2);
+    LOCAL(2),
 }
 
 /**
@@ -37,7 +37,7 @@ public enum class SocketType(public val value: Int) {
     /**
      * Corresponds to SOCK_DGRAM in Berkeley sockets (UDP)
      */
-    DGRAM(1);
+    DGRAM(1),
 }
 
 /**

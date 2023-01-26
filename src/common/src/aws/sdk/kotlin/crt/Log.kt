@@ -15,7 +15,7 @@ public enum class LogLevel(public val value: Int) {
     Warn(3),
     Info(4),
     Debug(5),
-    Trace(6);
+    Trace(6),
 }
 
 /**
@@ -25,5 +25,5 @@ public enum class LogDestination {
     None,
     Stdout,
     Stderr,
-    File;
+    File,
 }
