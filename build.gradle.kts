@@ -101,7 +101,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("stdlib-common"))
                 // native multithreading support for coroutines is not stable...
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion-native-mt")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
             }
         }
         val commonTest by getting {
