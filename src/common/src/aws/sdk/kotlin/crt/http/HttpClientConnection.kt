@@ -36,4 +36,6 @@ public interface HttpClientConnection : Closeable {
      * and potentially be re-used.
      */
     public fun shutdown()
+
+    public val id: String
 }

@@ -20,4 +20,6 @@ internal class HttpClientConnectionJVM constructor(internal val jniConn: HttpCli
     override fun close() = jniConn.close()
 
     override fun shutdown() = jniConn.shutdown()
+
+    override val id: String = jniConn.nativeHandle.toString()
 }
