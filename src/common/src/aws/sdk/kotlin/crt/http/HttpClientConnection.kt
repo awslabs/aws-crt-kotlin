@@ -10,11 +10,15 @@ import aws.sdk.kotlin.crt.Closeable
 /**
  * This class wraps aws-c-http to provide the basic HTTP request/response functionality via the AWS Common Runtime.
  *
- * HttpClientConnection represents a single connection to a HTTP service endpoint.
+ * HttpClientConnection represents a single connection to an HTTP service endpoint.
  *
  * This class is not thread safe and should not be called from different threads.
  */
 public interface HttpClientConnection : Closeable {
+    /**
+     * The unique ID of this connection.
+     */
+    public val id: String
 
     /**
      * Schedules an HttpRequest on the Native EventLoop for this HttpClientConnection.

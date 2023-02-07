@@ -11,6 +11,7 @@ import software.amazon.awssdk.crt.http.HttpClientConnection as HttpClientConnect
  * Wrapper around JNI HttpClientConnection type that implements the expected KMP interface
  */
 internal class HttpClientConnectionJVM constructor(internal val jniConn: HttpClientConnectionJni) : HttpClientConnection {
+    override val id: String = jniConn.nativeHandle.toString()
 
     override fun makeRequest(httpReq: HttpRequest, handler: HttpStreamResponseHandler): HttpStream {
         val jniStream = jniConn.makeRequest(httpReq.into(), handler.asJniStreamResponseHandler())
