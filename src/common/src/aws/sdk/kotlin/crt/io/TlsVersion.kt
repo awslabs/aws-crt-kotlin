@@ -32,5 +32,5 @@ public enum class TlsVersion(public val value: Int) {
      * Use whatever the system default is. This is usually the best option, as it will be automatically updated
      * as the underlying OS or platform changes.
      */
-    SYS_DEFAULT(128);
+    SYS_DEFAULT(128),
 }

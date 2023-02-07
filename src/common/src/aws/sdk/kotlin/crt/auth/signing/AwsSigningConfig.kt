@@ -11,7 +11,7 @@ import aws.sdk.kotlin.crt.auth.credentials.CredentialsProvider
 
 public enum class AwsSigningAlgorithm(public val value: Int) {
     SIGV4(0),
-    SIGV4_ASYMMETRIC(1);
+    SIGV4_ASYMMETRIC(1),
 }
 
 public enum class AwsSignatureType(public val value: Int) {
@@ -19,7 +19,7 @@ public enum class AwsSignatureType(public val value: Int) {
     HTTP_REQUEST_VIA_QUERY_PARAMS(1),
     HTTP_REQUEST_CHUNK(2),
     HTTP_REQUEST_EVENT(3),
-    HTTP_REQUEST_TRAILING_HEADERS(6);
+    HTTP_REQUEST_TRAILING_HEADERS(6),
 }
 
 public object AwsSignedBodyValue {
@@ -38,7 +38,7 @@ public enum class AwsSignedBodyHeaderType(public val value: Int) {
     /**
      * Add the "x-amz-content-sha256" header with the canonical request's body value
      */
-    X_AMZ_CONTENT_SHA256(1);
+    X_AMZ_CONTENT_SHA256(1),
 }
 
 /**
