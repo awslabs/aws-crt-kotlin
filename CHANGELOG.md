@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.6.8] - 02/09/2023
+
+### Miscellaneous
+* Update Java CRT dependency to 0.21.7
+* Upgrade Kotlin to 1.8.10 and third party dependencies to their latest versions
+
 ## [0.6.7] - 12/15/2022
 
 ### Features
