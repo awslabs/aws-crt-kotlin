@@ -56,7 +56,7 @@ private fun HttpClientConnectionManagerOptions.into(): HttpClientConnectionManag
         .withUri(URI.create(uri.toString()))
         .withClientBootstrap(clientBootstrap.jniBootstrap)
         .withSocketOptions(socketOptions.into())
-        .withWindowSize(initialWindowSize)
+        .withWindowSize(initialWindowSize.toLong())
         .withManualWindowManagement(manualWindowManagement)
         .withMaxConnections(maxConnections)
         .withMaxConnectionIdleInMilliseconds(maxConnectionIdleMs)

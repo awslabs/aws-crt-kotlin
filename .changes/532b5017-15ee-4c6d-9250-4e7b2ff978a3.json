@@ -1,0 +1,5 @@
+{
+    "id": "532b5017-15ee-4c6d-9250-4e7b2ff978a3",
+    "type": "misc",
+    "description": "Update Java CRT dependency to 0.21.7"
+}
