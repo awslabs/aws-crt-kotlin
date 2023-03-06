@@ -9,6 +9,7 @@ import java.util.Properties
 plugins {
     kotlin("multiplatform")
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
+    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.12.1"
 }
 
 val sdkVersion: String by project
@@ -226,3 +227,7 @@ tasks.register<JavaExec>("ktlintFormat") {
 }
 
 tasks.check.get().dependsOn(":ktlint")
+
+apiValidation {
+    ignoredProjects += setOf("elasticurl")
+}
