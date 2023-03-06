@@ -18,6 +18,7 @@
         "{gradlew} publishToMavenLocal"
     ],
     "test_steps": [
+        "{gradlew} apiCheck",
         "{gradlew} test allTests"
     ],
     "targets": {
@@ -29,6 +30,7 @@
                 "{gradlew} assemble -Dlibcrypto.path={libcrypto_path}"
             ],
             "!test_steps": [
+                "{gradlew} apiCheck",
                 "{gradlew} test allTests -Dlibcrypto.path={libcrypto_path}"
             ]
         }
