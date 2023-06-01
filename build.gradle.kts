@@ -96,6 +96,7 @@ kotlin {
 
     val kotlinVersion: String by project
     val coroutinesVersion: String by project
+    val mockServerVersion: String by project
 
     sourceSets {
         val commonMain by getting {
@@ -108,6 +109,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
+                implementation("org.mock-server:mockserver-netty:$mockServerVersion")
             }
         }
 
