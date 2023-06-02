@@ -116,8 +116,11 @@ class HttpRequestResponseTest : HttpClientTest() {
         mockServer.`when`(expectedRequest)
             .respond(response().withStatusCode(200).withBody("\"data\":\"$bodyToSend\""))
 
-        val response = roundTrip(url = "$url/anything", verb = "PUT", body = bodyToSend)
-        mockServer.clear(expectedRequest)
+        val response = try {
+            roundTrip(url = "$url/anything", verb = "PUT", body = bodyToSend)
+        } finally {
+            mockServer.clear(expectedRequest)
+        }
 
         assertEquals(200, response.statusCode, "expected http status does not match")
         assertNotNull(response.body, "expected a response body for http upload")
