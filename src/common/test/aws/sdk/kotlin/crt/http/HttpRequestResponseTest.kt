@@ -23,14 +23,13 @@ class HttpRequestResponseTest : HttpClientTest() {
         "This is a sample to prove that http downloads and uploads work. It doesn't really matter what's in here, we mainly just need to verify the downloads and uploads work."
     private val TEST_DOC_SHA256 = "c7fdb5314b9742467b16bd5ea2f8012190b5e2c44a005f7984f89aab58219534"
 
-    val port = 60108
-    val url = "http://localhost:$port"
-
-    var mockServer: MockServerClient = MockServerClient("localhost", port)
+    var mockServer: MockServerClient = MockServerClient("localhost", 0)
+    var url = "http://localhost:"
 
     @BeforeAll
     fun setup() {
-        mockServer = ClientAndServer.startClientAndServer(port)
+        mockServer = ClientAndServer.startClientAndServer(0)
+        url += mockServer.port
     }
 
     @AfterAll
@@ -114,7 +113,7 @@ class HttpRequestResponseTest : HttpClientTest() {
         // Set up mock server
         val expectedRequest = request().withMethod("PUT").withPath("/anything")
         mockServer.`when`(expectedRequest)
-            .respond(response().withStatusCode(200).withBody("\"data\":\"$bodyToSend\""))
+            .respond(response().withStatusCode(200).withBody(bodyToSend))
 
         val response = try {
             roundTrip(url = "$url/anything", verb = "PUT", body = bodyToSend)
@@ -125,44 +124,7 @@ class HttpRequestResponseTest : HttpClientTest() {
         assertEquals(200, response.statusCode, "expected http status does not match")
         assertNotNull(response.body, "expected a response body for http upload")
 
-        /**
-         * Example Json Response Body from httpbin.org:
-         *
-         * {
-         *   "args": {},
-         *   "data": "This is a sample to prove that http downloads and uploads work. It doesn't really matter what's in here, we mainly just need to verify the downloads and uploads work.",
-         *   "files": {},
-         *   "form": {},
-         *   "headers": {
-         *     "Content-Length": "166",
-         *     "Host": "httpbin.org"
-         *   },
-         *   "json": null,
-         *   "method": "PUT",
-         *   "origin": "1.2.3.4, 5.6.7.8",
-         *   "url": "https://httpbin.org/anything"
-         * }
-         */
-        val bodyText = response.body.decodeToString().split("\n")
-        var echoedBody: String? = null
-        for (line in bodyText) {
-            val keyAndValue = line.split(":", limit = 2)
-            if (keyAndValue.size == 2) {
-                val key = extractValueFromJson(keyAndValue[0])
-                val value = extractValueFromJson(keyAndValue[1])
-
-                if (key == "data") {
-                    echoedBody = extractValueFromJson(value)
-                }
-            }
-        }
-        assertNotNull(echoedBody, "body not found from echoed response")
-        assertEquals(bodyToSend, echoedBody)
-    }
-
-    private fun extractValueFromJson(input: String): String {
-        return input.trim()
-            .replace(Regex(",$"), "") // remove comma if it's the last character
-            .replace(Regex("^\"|\"$"), "") // strip quotes
+        val bodyText = response.body.decodeToString()
+        assertEquals(bodyToSend, bodyText)
     }
 }
