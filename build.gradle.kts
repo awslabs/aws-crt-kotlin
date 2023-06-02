@@ -96,6 +96,7 @@ kotlin {
 
     val kotlinVersion: String by project
     val coroutinesVersion: String by project
+    val mockServerVersion: String by project
 
     sourceSets {
         val commonMain by getting {
@@ -127,6 +128,7 @@ kotlin {
                 api("org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion")
                 implementation("org.junit.jupiter:junit-jupiter:$junitVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-debug:$coroutinesVersion")
+                implementation("org.mock-server:mockserver-netty:$mockServerVersion")
             }
         }
 
