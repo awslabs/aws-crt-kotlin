@@ -23,13 +23,13 @@ class HttpRequestResponseTest : HttpClientTest() {
         "This is a sample to prove that http downloads and uploads work. It doesn't really matter what's in here, we mainly just need to verify the downloads and uploads work."
     private val TEST_DOC_SHA256 = "c7fdb5314b9742467b16bd5ea2f8012190b5e2c44a005f7984f89aab58219534"
 
-    var mockServer: MockServerClient = MockServerClient("localhost", 0)
-    var url = "http://localhost:"
+    lateinit var mockServer: MockServerClient
+    lateinit var url: String
 
     @BeforeAll
     fun setup() {
         mockServer = ClientAndServer.startClientAndServer(0)
-        url += mockServer.port
+        url = "http://localhost:${mockServer.port}"
     }
 
     @AfterAll
