@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.0] - 08/10/2023
+
+### Miscellaneous
+* Upgrade Kotlin to 1.8.22
+* Upgrade kotlinx.coroutines to 1.7.3
+
 ## [0.6.8] - 02/09/2023
 
 ### Miscellaneous
