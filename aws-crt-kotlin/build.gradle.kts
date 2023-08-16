@@ -2,10 +2,8 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-import aws.sdk.kotlin.gradle.dsl.configureLinting
 import aws.sdk.kotlin.gradle.dsl.configurePublishing
 import aws.sdk.kotlin.gradle.kmp.configureKmpTargets
-import aws.sdk.kotlin.gradle.util.typedProp
 
 plugins {
     kotlin("multiplatform")
@@ -16,17 +14,14 @@ group = "aws.sdk.kotlin.crt"
 version = sdkVersion
 description = "Kotlin Multiplatform bindings for AWS SDK Common Runtime"
 
-
 // See: https://kotlinlang.org/docs/reference/opt-in-requirements.html#opting-in-to-using-api
-val optinAnnotations= listOf("kotlin.RequiresOptIn")
+val optinAnnotations = listOf("kotlin.RequiresOptIn")
 
 val ideaActive = System.getProperty("idea.active") == "true"
 extra["ideaActive"] = ideaActive
 
-
 // KMP configuration from build plugin
 configureKmpTargets()
-
 
 kotlin {
     explicitApi()
@@ -35,7 +30,7 @@ kotlin {
         attributes {
             attribute<org.gradle.api.attributes.java.TargetJvmEnvironment>(
                 TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
-                objects.named(TargetJvmEnvironment.STANDARD_JVM)
+                objects.named(TargetJvmEnvironment.STANDARD_JVM),
             )
         }
     }
@@ -57,11 +52,11 @@ kotlin {
             attributes {
                 attribute(
                     org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.Companion.attribute,
-                    org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.androidJvm
+                    org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.androidJvm,
                 )
                 attribute(
                     TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
-                    objects.named(TargetJvmEnvironment.ANDROID)
+                    objects.named(TargetJvmEnvironment.ANDROID),
                 )
             }
         }
@@ -96,7 +91,6 @@ kotlin {
             }
         }
 
-
         if (!ideaActive) {
             val androidMain by getting {
                 // re-use the jvm (desktop) sourceSet. We only really care about declaring a variant with a different set
@@ -127,7 +121,5 @@ kotlin {
     }
 }
 
-
 // Publishing
 configurePublishing("aws-crt-kotlin")
-

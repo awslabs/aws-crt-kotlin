@@ -8,7 +8,6 @@ plugins {
     application
 }
 
-
 kotlin {
     jvm {
         withJava()
@@ -52,4 +51,3 @@ kotlin {
 application {
     mainClassName = "ApplicationKt"
 }
-

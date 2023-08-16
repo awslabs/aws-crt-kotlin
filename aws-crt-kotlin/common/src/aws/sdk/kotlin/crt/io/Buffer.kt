@@ -37,7 +37,7 @@ public interface Buffer {
 
 private object EmptyBuffer : Buffer {
     override val len: Int = 0
-    override fun copyTo(dest: ByteArray, offset: Int): Int { return 0 }
+    override fun copyTo(dest: ByteArray, offset: Int): Int = 0
     override fun readAll(): ByteArray = byteArrayOf()
 }
 

@@ -36,16 +36,15 @@ internal actual constructor(builder: StsAssumeRoleCredentialsProviderBuilder) :
 }
 
 // Convert the SDK version of CredentialsProvider type to the CRT version
-internal fun adapt(credentialsProvider: CredentialsProvider?): CredentialsProviderJni? {
-    return if (credentialsProvider == null) {
+internal fun adapt(credentialsProvider: CredentialsProvider?): CredentialsProviderJni? =
+    if (credentialsProvider == null) {
         null
     } else {
         toCrtCredentialsProvider(credentialsProvider)
     }
-}
 
-private fun toCrtCredentialsProvider(sdkCredentialsProvider: CredentialsProvider): CredentialsProviderJni {
-    return object : CredentialsProviderJni() {
+private fun toCrtCredentialsProvider(sdkCredentialsProvider: CredentialsProvider): CredentialsProviderJni =
+    object : CredentialsProviderJni() {
 
         override fun getCredentials(): CompletableFuture<CredentialsJni> = runBlocking {
             val deferred = async(start = CoroutineStart.UNDISPATCHED) {
@@ -55,20 +54,12 @@ private fun toCrtCredentialsProvider(sdkCredentialsProvider: CredentialsProvider
             deferred.asCompletableFuture()
         }
     }
-}
 
-private fun toCrtCredentials(sdkCredentials: Credentials): CredentialsJni {
-    return object : CredentialsJni() {
-        override fun getAccessKeyId(): ByteArray {
-            return sdkCredentials.accessKeyId.encodeToByteArray()
-        }
+private fun toCrtCredentials(sdkCredentials: Credentials): CredentialsJni =
+    object : CredentialsJni() {
+        override fun getAccessKeyId(): ByteArray = sdkCredentials.accessKeyId.encodeToByteArray()
 
-        override fun getSecretAccessKey(): ByteArray {
-            return sdkCredentials.secretAccessKey.encodeToByteArray()
-        }
+        override fun getSecretAccessKey(): ByteArray = sdkCredentials.secretAccessKey.encodeToByteArray()
 
-        override fun getSessionToken(): ByteArray {
-            return sdkCredentials.sessionToken?.encodeToByteArray() ?: ByteArray(0)
-        }
+        override fun getSessionToken(): ByteArray = sdkCredentials.sessionToken?.encodeToByteArray() ?: ByteArray(0)
     }
-}

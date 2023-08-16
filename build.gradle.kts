@@ -26,7 +26,6 @@ plugins {
     id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.12.1"
 }
 
-
 allprojects {
     repositories {
         mavenLocal()
@@ -42,10 +41,8 @@ if (project.typedProp<Boolean>("kotlinWarningsAsErrors") == true) {
     }
 }
 
-
 // Publishing
 configureNexus()
-
 
 // Code Style
 val lintPaths = listOf(

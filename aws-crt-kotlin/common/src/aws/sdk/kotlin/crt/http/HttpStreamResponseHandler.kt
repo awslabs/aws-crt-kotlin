@@ -62,12 +62,11 @@ public interface HttpStreamResponseHandler {
      * @return The number of bytes to move the sliding window by. Repeatedly returning zero will eventually cause the
      * sliding window to fill up and data to stop flowing until the user slides the window back open.
      */
-    public fun onResponseBody(stream: HttpStream, bodyBytesIn: Buffer): Int {
+    public fun onResponseBody(stream: HttpStream, bodyBytesIn: Buffer): Int =
         /* Optional Callback, ignore incoming response body by default unless user wants to capture it. */
         // FIXME - do we want to follow this pattern or just have a single way of incrementing the
         // window size through `Stream.incrementWindow()`?
-        return bodyBytesIn.len
-    }
+        bodyBytesIn.len
 
     /**
      * Called from Native when the Response has completed.
