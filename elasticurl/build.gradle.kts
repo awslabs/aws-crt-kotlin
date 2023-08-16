@@ -36,7 +36,7 @@ kotlin {
 
                 implementation(kotlin("stdlib-common"))
                 implementation("org.jetbrains.kotlinx:kotlinx-cli:$kotlinxCliVersion")
-                implementation(project(":"))
+                implementation(project(":aws-crt-kotlin"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
             }
         }
