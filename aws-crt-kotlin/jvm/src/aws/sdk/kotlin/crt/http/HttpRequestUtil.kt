@@ -70,9 +70,7 @@ internal class JniRequestBodyStream(val ktStream: HttpRequestBodyStream) : HttpR
         return ktStream.sendRequestBody(MutableBuffer(bodyBytesOut))
     }
 
-    override fun resetPosition(): Boolean {
-        return ktStream.resetPosition()
-    }
+    override fun resetPosition(): Boolean = ktStream.resetPosition()
 }
 
 /**

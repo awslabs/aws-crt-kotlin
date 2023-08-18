@@ -26,9 +26,7 @@ public interface HttpRequestBodyStream {
      * @param buffer The outgoing buffer to write the payload to.
      * @return true if the body has been completely written, false otherwise
      */
-    public fun sendRequestBody(buffer: MutableBuffer): Boolean {
-        return true
-    }
+    public fun sendRequestBody(buffer: MutableBuffer): Boolean = true
 
     /**
      * Called when the processing needs the stream to rewind itself back to the beginning.
