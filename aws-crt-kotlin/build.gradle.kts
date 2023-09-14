@@ -10,7 +10,7 @@ plugins {
 }
 
 val sdkVersion: String by project
-group = "aws.sdk.kotlin.crt"
+group = properties["publishGroupName"] ?: error("missing publishGroupName")
 version = sdkVersion
 description = "Kotlin Multiplatform bindings for AWS SDK Common Runtime"
 
