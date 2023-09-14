@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.7.1] - 09/14/2023
+
+### Miscellaneous
+* bump aws-crt-java to 0.26.1
+
 ## [0.7.0] - 08/10/2023
 
 ### Miscellaneous
