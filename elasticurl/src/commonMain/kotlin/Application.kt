@@ -7,10 +7,8 @@ import aws.sdk.kotlin.crt.CrtRuntimeException
 import aws.sdk.kotlin.crt.LogDestination
 import aws.sdk.kotlin.crt.http.*
 import aws.sdk.kotlin.crt.io.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 
-@ExperimentalCoroutinesApi
 fun main(args: Array<String>) {
     platformInit()
 
@@ -115,7 +113,6 @@ fun main(args: Array<String>) {
     println("exiting")
 }
 
-@ExperimentalCoroutinesApi
 private suspend fun HttpClientConnection.roundTrip(request: HttpRequest, sink: Sink) {
     val streamDone = Channel<Unit>()
 
