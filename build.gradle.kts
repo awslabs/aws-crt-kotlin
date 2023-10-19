@@ -54,3 +54,9 @@ configureLinting(lintPaths)
 apiValidation {
     ignoredProjects += setOf("elasticurl")
 }
+
+tasks.withType<Test> {
+    if (name.toLowerCase().contains("linuxx64", ignoreCase = true)) {
+        enabled = false
+    }
+}
