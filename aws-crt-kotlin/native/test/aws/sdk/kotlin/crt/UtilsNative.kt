@@ -7,6 +7,11 @@ package aws.sdk.kotlin.crt
 
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 
-actual fun <T> runSuspendTest(context: CoroutineContext, block: suspend CoroutineScope.() -> T): T = TODO("Not yet implemented")
+actual fun <T> runSuspendTest(context: CoroutineContext, block: suspend CoroutineScope.() -> T): T {
+    return runBlocking(context) {
+        block()
+    }
+}
