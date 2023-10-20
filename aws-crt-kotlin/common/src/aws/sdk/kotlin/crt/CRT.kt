@@ -18,20 +18,27 @@ public expect object CRT {
     public fun lastError(): Int
 
     /**
-     * Given an integer error code from an internal operation
+     * Given an integer error code from an internal operation, return the associated error message.
      * @param errorCode An error code returned from an exception or other native function call
      * @return A user-friendly description of the error
      */
     public fun errorString(errorCode: Int): String?
 
     /**
-     * Given an integer error code from an internal operation
+     * Given an integer error code from an internal operation, return the associated error name.
      *
      * @param errorCode An error code returned from an exception or other native
      * function call
      * @return A string identifier for the error
      */
     public fun errorName(errorCode: Int): String?
+
+    /**
+     * Given an integer HTTP error code from an internal operation, return whether the error is retryable.
+     * @param errorCode An error code returned from an exception or other native function call
+     * @return True if the given HTTP error is retryable; otherwise, false.
+     */
+    public fun isHttpErrorRetryable(errorCode: Int): Boolean
 
     /**
      * @return The number of bytes allocated in native resources. If aws.crt.memory.tracing is 1 or 2, this will
