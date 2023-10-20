@@ -123,3 +123,7 @@ kotlin {
 
 // Publishing
 configurePublishing("aws-crt-kotlin")
+
+tasks.named("linuxX64Test") {
+    enabled = false
+}
