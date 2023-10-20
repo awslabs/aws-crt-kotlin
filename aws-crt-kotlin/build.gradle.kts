@@ -123,9 +123,3 @@ kotlin {
 
 // Publishing
 configurePublishing("aws-crt-kotlin")
-
-tasks.withType<Test> {
-    if (name.toLowerCase().contains("linuxx64", ignoreCase = true)) {
-        enabled = false
-    }
-}
