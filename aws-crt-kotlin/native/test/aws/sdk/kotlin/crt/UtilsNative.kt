@@ -11,7 +11,5 @@ import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 
 actual fun <T> runSuspendTest(context: CoroutineContext, block: suspend CoroutineScope.() -> T): T {
-    return runBlocking(context) {
-        block()
-    }
+    TODO("Not yet implemented")
 }
