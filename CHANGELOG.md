@@ -1,8 +1,12 @@
 # Changelog
 
 ## [0.8.0] - 10/23/2023
+### Miscellaneous
+* Bump minor version for internal versioning compatibility
 
 ## [0.7.4] - 10/23/2023
+### Miscellaneous
+* Upgrade Gradle's heap and metaspace memory allocations   
 
 ## [0.7.3] - 10/19/2023
 
