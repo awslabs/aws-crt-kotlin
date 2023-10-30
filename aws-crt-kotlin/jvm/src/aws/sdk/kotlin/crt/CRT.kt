@@ -6,6 +6,8 @@
 package aws.sdk.kotlin.crt
 
 import software.amazon.awssdk.crt.Log
+import software.amazon.awssdk.crt.http.HttpClientConnection
+import software.amazon.awssdk.crt.http.HttpException
 import java.util.concurrent.atomic.AtomicInteger as AtomicInt
 import software.amazon.awssdk.crt.CRT as crtJni
 
@@ -52,6 +54,17 @@ public actual object CRT {
      * @return A string identifier for the error
      */
     public actual fun errorName(errorCode: Int): String? = crtJni.awsErrorName(errorCode)
+
+    public actual fun isHttpErrorRetryable(errorCode: Int): Boolean {
+        // An exception subtype that doesn't create a stack, which saves a bunch of time
+        class StacklessHttpException(errorCode: Int) : HttpException(errorCode) {
+            // Changing `fillInStackTrace` to a no-op skips filling in the stack
+            override fun fillInStackTrace(): Throwable = this
+        }
+
+        val phonyException = StacklessHttpException(errorCode)
+        return HttpClientConnection.isErrorRetryable(phonyException)
+    }
 
     /**
      * @return The number of bytes allocated in native resources. If aws.crt.memory.tracing is 1 or 2, this will

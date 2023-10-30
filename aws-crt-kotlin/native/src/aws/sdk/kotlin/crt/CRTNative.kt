@@ -34,6 +34,10 @@ public actual object CRT {
         TODO("Not yet implemented")
     }
 
+    public actual fun isHttpErrorRetryable(errorCode: Int): Boolean {
+        TODO("Not yet implemented")
+    }
+
     /**
      * @return The number of bytes allocated in native resources. If aws.crt.memory.tracing is 1 or 2, this will
      * be a non-zero value. Otherwise, no tracing will be done, and the value will always be 0
