@@ -1,0 +1,5 @@
+{
+    "id": "c2af8534-4505-415d-bafa-ab035e261c08",
+    "type": "misc",
+    "description": "Upgrade dependencies to their latest versions, notably Kotlin 1.9.20"
+}
