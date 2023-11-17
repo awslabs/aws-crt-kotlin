@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.8.2] - 11/17/2023
+
+### Miscellaneous
+* Upgrade dependencies to their latest versions, notably Kotlin 1.9.20
+
 ## [0.8.0] - 10/23/2023
 
 ### Miscellaneous
