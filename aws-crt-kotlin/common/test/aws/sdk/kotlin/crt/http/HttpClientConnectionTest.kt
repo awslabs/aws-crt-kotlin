@@ -124,7 +124,6 @@ class HttpClientConnectionTest : CrtTest() {
      * Connect to the URL with all TLS ciphers supported. Throws an exception if the connection attempt fails for
      * any reason
      */
-    @OptIn(ExperimentalTime::class)
     private suspend fun connectAllCiphers(url: String) {
         withDefaultBootstrap { clientBootstrap ->
             TlsCipherPreference.values()
