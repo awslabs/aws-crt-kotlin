@@ -5,7 +5,6 @@
 
 package aws.sdk.kotlin.crt.auth.credentials
 
-
 public actual class CachedCredentialsProvider internal actual constructor(builder: CachedCredentialsProviderBuilder) :
     CredentialsProvider {
     public actual companion object {}

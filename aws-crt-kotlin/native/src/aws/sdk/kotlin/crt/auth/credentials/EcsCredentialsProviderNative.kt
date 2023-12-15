@@ -21,5 +21,4 @@ internal actual constructor(builder: EcsCredentialsProviderBuilder) :
     override suspend fun waitForShutdown() {
         TODO("Not yet implemented")
     }
-
 }

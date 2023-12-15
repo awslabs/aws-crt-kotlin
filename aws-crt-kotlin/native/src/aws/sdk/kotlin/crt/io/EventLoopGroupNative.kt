@@ -24,5 +24,4 @@ public actual class EventLoopGroup actual constructor(maxThreads: Int) : Closeab
     override fun close() {
         TODO("Not yet implemented")
     }
-
 }

@@ -33,21 +33,21 @@ kotlin {
                 val kotlinxCliVersion: String by project
                 val coroutinesVersion: String by project
 
-                implementation(kotlin("stdlib-common"))
-                implementation("org.jetbrains.kotlinx:kotlinx-cli:$kotlinxCliVersion")
+                implementation(libs.kotlin.stdlib)
+                implementation(libs.kotlinx.cli)
                 implementation(project(":aws-crt-kotlin"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+                implementation(libs.kotlinx.coroutines.core)
             }
         }
 
         val jvmMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-stdlib")
+                implementation(libs.kotlin.stdlib)
             }
         }
     }
 }
 
 application {
-    mainClassName = "ApplicationKt"
+    mainClass = "ApplicationKt"
 }

@@ -11,7 +11,6 @@ import aws.sdk.kotlin.crt.runSuspendTest
 import aws.sdk.kotlin.crt.use
 import kotlinx.coroutines.withTimeout
 import kotlin.test.*
-import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
 class HttpClientConnectionTest : CrtTest() {

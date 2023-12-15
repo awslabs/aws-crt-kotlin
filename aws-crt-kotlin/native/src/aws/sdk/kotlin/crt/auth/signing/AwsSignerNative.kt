@@ -40,5 +40,4 @@ public actual object AwsSigner {
     ): AwsSigningResult {
         TODO("Not yet implemented")
     }
-
 }
