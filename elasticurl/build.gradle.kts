@@ -10,7 +10,6 @@ plugins {
 
 kotlin {
     jvm {
-        withJava()
         val jvmJar by tasks.getting(org.gradle.jvm.tasks.Jar::class) {
             doFirst {
                 manifest {
