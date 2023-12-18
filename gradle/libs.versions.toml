@@ -35,3 +35,6 @@ kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.
 kotest-assertions-core-jvm = { module = "io.kotest:kotest-assertions-core-jvm", version.ref = "kotest-version" }
 
 mockserver-netty = { module = "org.mock-server:mockserver-netty", version.ref = "mock-server-version" }
+
+[plugins]
+kotlin-multiplatform = {id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin-version" }

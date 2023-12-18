@@ -26,6 +26,7 @@ buildscript {
 
 plugins {
     id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.13.2"
+    alias(libs.plugins.kotlin.multiplatform) apply false
 }
 
 allprojects {
