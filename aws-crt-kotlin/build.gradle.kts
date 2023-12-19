@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import aws.sdk.kotlin.gradle.dsl.configurePublishing
+import aws.sdk.kotlin.gradle.kmp.IDEA_ACTIVE
 import aws.sdk.kotlin.gradle.kmp.configureKmpTargets
 
 plugins {
-    kotlin("multiplatform")
+    alias(libs.plugins.kotlin.multiplatform)
 }
 
 val sdkVersion: String by project
@@ -16,9 +17,6 @@ description = "Kotlin Multiplatform bindings for AWS SDK Common Runtime"
 
 // See: https://kotlinlang.org/docs/reference/opt-in-requirements.html#opting-in-to-using-api
 val optinAnnotations = listOf("kotlin.RequiresOptIn")
-
-val ideaActive = System.getProperty("idea.active") == "true"
-extra["ideaActive"] = ideaActive
 
 // KMP configuration from build plugin
 configureKmpTargets()
@@ -44,7 +42,7 @@ kotlin {
     // See:
     //     * https://kotlinlang.org/docs/mpp-share-on-platforms.html#share-code-in-libraries
     //     * https://kotlinlang.org/docs/mpp-set-up-targets.html#distinguish-several-targets-for-one-platform
-    if (!ideaActive) {
+    if (!IDEA_ACTIVE) {
 
         // NOTE: We don't actually need the Android plugin. All of the Android specifics are handled in aws-crt-java,
         // we just need a variant with a different dependency set + some distinguishing attributes.
@@ -69,42 +67,41 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(kotlin("stdlib-common"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+                implementation(libs.kotlin.stdlib)
+                implementation(libs.kotlinx.coroutines.core)
             }
         }
 
         val jvmMain by getting {
             dependencies {
-                val crtJavaVersion: String by project
-                implementation("software.amazon.awssdk.crt:aws-crt:$crtJavaVersion")
+                implementation(libs.crt.java)
 
                 // FIXME - temporary integration with CompletableFuture while we work out a POC on the jvm target
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$coroutinesVersion")
+                implementation(libs.kotlinx.coroutines.jdk8)
             }
         }
 
         val jvmTest by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-debug:$coroutinesVersion")
-                implementation("org.mock-server:mockserver-netty:$mockServerVersion")
+                implementation(libs.kotlinx.coroutines.debug)
+                implementation(libs.mockserver.netty)
             }
         }
 
-        if (!ideaActive) {
+        if (!IDEA_ACTIVE) {
             val androidMain by getting {
                 // re-use the jvm (desktop) sourceSet. We only really care about declaring a variant with a different set
                 // of runtime dependencies
                 kotlin.srcDir("jvm/src")
                 dependsOn(commonMain)
                 dependencies {
-                    val crtJavaVersion: String by project
                     // we need symbols we can resolve during compilation but at runtime (i.e. on device) we depend on the Android dependency
-                    compileOnly("software.amazon.awssdk.crt:aws-crt:$crtJavaVersion")
+                    compileOnly(libs.crt.java)
+                    val crtJavaVersion = libs.versions.crt.java.version.get()
                     implementation("software.amazon.awssdk.crt:aws-crt-android:$crtJavaVersion@aar")
 
                     // FIXME - temporary integration with CompletableFuture while we work out a POC on the jvm target
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$coroutinesVersion")
+                    implementation(libs.kotlinx.coroutines.jdk8)
                 }
             }
 

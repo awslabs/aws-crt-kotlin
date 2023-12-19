@@ -20,5 +20,4 @@ public actual class DefaultChainCredentialsProvider internal actual constructor(
     override suspend fun waitForShutdown() {
         TODO("Not yet implemented")
     }
-
 }

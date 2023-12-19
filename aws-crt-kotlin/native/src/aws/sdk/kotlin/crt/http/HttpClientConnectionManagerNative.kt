@@ -32,5 +32,4 @@ public actual class HttpClientConnectionManager actual constructor(
     override fun close() {
         TODO("Not yet implemented")
     }
-
 }

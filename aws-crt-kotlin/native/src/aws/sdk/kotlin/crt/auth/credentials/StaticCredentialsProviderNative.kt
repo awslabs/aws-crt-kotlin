@@ -23,5 +23,4 @@ public actual class StaticCredentialsProvider internal actual constructor(builde
     override suspend fun waitForShutdown() {
         TODO("Not yet implemented")
     }
-
 }
