@@ -18,7 +18,7 @@ buildscript {
         // only need to include it here, imports in subprojects will work automagically
         classpath("aws.sdk.kotlin:build-plugins") {
             version {
-                require("0.3.0")
+                require("0.3.1")
             }
         }
     }
