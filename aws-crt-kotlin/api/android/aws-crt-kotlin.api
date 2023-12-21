@@ -635,6 +635,7 @@ public abstract interface class aws/sdk/kotlin/crt/http/HttpStream : aws/sdk/kot
 }
 
 public abstract interface class aws/sdk/kotlin/crt/http/HttpStreamResponseHandler {
+	public abstract fun onMetrics (Laws/sdk/kotlin/crt/http/HttpStream;Laws/sdk/kotlin/crt/http/HttpStreamMetrics;)V
 	public abstract fun onResponseBody (Laws/sdk/kotlin/crt/http/HttpStream;Laws/sdk/kotlin/crt/io/Buffer;)I
 	public abstract fun onResponseComplete (Laws/sdk/kotlin/crt/http/HttpStream;I)V
 	public abstract fun onResponseHeaders (Laws/sdk/kotlin/crt/http/HttpStream;IILjava/util/List;)V
@@ -642,6 +643,7 @@ public abstract interface class aws/sdk/kotlin/crt/http/HttpStreamResponseHandle
 }
 
 public final class aws/sdk/kotlin/crt/http/HttpStreamResponseHandler$DefaultImpls {
+	public static fun onMetrics (Laws/sdk/kotlin/crt/http/HttpStreamResponseHandler;Laws/sdk/kotlin/crt/http/HttpStream;Laws/sdk/kotlin/crt/http/HttpStreamMetrics;)V
 	public static fun onResponseBody (Laws/sdk/kotlin/crt/http/HttpStreamResponseHandler;Laws/sdk/kotlin/crt/http/HttpStream;Laws/sdk/kotlin/crt/io/Buffer;)I
 	public static fun onResponseHeadersDone (Laws/sdk/kotlin/crt/http/HttpStreamResponseHandler;Laws/sdk/kotlin/crt/http/HttpStream;I)V
 }

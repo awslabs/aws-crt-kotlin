@@ -8,8 +8,12 @@ package aws.sdk.kotlin.crt.http
 import aws.sdk.kotlin.crt.io.MutableBuffer
 import aws.sdk.kotlin.crt.io.byteArrayBuffer
 import java.nio.ByteBuffer
+import software.amazon.awssdk.crt.http.HttpHeader as HttpHeaderJni
 import software.amazon.awssdk.crt.http.HttpRequest as HttpRequestJni
 import software.amazon.awssdk.crt.http.HttpRequestBodyStream as HttpRequestBodyStreamJni
+import software.amazon.awssdk.crt.http.HttpStream as HttpStreamJni
+import software.amazon.awssdk.crt.http.HttpStreamMetrics as HttpStreamMetricsJni
+import software.amazon.awssdk.crt.http.HttpStreamResponseHandler as HttpStreamResponseHandlerJni
 
 /**
  * Convert the KMP version of [HttpRequest] into the JNI equivalent
@@ -17,46 +21,49 @@ import software.amazon.awssdk.crt.http.HttpRequestBodyStream as HttpRequestBodyS
 internal fun HttpRequest.into(): HttpRequestJni {
     val jniHeaders = headers.entries()
         .map { entry ->
-            entry.value.map {
-                software.amazon.awssdk.crt.http.HttpHeader(entry.key, it)
-            }
+            entry.value.map { HttpHeaderJni(entry.key, it) }
         }
         .flatten()
         .toTypedArray()
 
     val bodyStream = body?.let { JniRequestBodyStream(it) }
-    return software.amazon.awssdk.crt.http.HttpRequest(method, encodedPath, jniHeaders, bodyStream)
+    return HttpRequestJni(method, encodedPath, jniHeaders, bodyStream)
 }
 
-internal fun HttpStreamResponseHandler.asJniStreamResponseHandler(): software.amazon.awssdk.crt.http.HttpStreamResponseHandler {
+internal fun HttpStreamResponseHandler.asJniStreamResponseHandler(): HttpStreamResponseHandlerJni {
     val handler = this
-    return object : software.amazon.awssdk.crt.http.HttpStreamResponseHandler {
+    return object : HttpStreamResponseHandlerJni {
         override fun onResponseHeaders(
-            stream: software.amazon.awssdk.crt.http.HttpStream,
+            stream: HttpStreamJni,
             statusCode: Int,
             blockType: Int,
-            headers: Array<out software.amazon.awssdk.crt.http.HttpHeader>?,
+            headers: Array<out HttpHeaderJni>?,
         ) {
             val ktHeaders = headers?.map { HttpHeader(it.name, it.value) }
             val ktStream = HttpStreamJVM(stream)
             handler.onResponseHeaders(ktStream, statusCode, blockType, ktHeaders)
         }
 
-        override fun onResponseHeadersDone(stream: software.amazon.awssdk.crt.http.HttpStream, blockType: Int) {
+        override fun onResponseHeadersDone(stream: HttpStreamJni, blockType: Int) {
             val ktStream = HttpStreamJVM(stream)
             handler.onResponseHeadersDone(ktStream, blockType)
         }
 
-        override fun onResponseBody(stream: software.amazon.awssdk.crt.http.HttpStream, bodyBytesIn: ByteArray?): Int {
+        override fun onResponseBody(stream: HttpStreamJni, bodyBytesIn: ByteArray?): Int {
             if (bodyBytesIn == null) return 0
             val ktStream = HttpStreamJVM(stream)
             val buffer = byteArrayBuffer(bodyBytesIn)
             return handler.onResponseBody(ktStream, buffer)
         }
 
-        override fun onResponseComplete(stream: software.amazon.awssdk.crt.http.HttpStream, errorCode: Int) {
+        override fun onResponseComplete(stream: HttpStreamJni, errorCode: Int) {
             val ktStream = HttpStreamJVM(stream)
             handler.onResponseComplete(ktStream, errorCode)
+        }
+
+        override fun onMetrics(stream: HttpStreamJni, metrics: HttpStreamMetricsJni) {
+            val ktStream = HttpStreamJVM(stream)
+            handler.onMetrics(ktStream, metrics.toKotlin())
         }
     }
 }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 buildscript {
     repositories {
         mavenCentral()
+        mavenLocal()
     }
 
     dependencies {
