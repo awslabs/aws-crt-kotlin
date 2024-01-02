@@ -1,6 +1,8 @@
 [versions]
 kotlin-version = "1.9.21"
 
+aws-kotlin-repo-tools-version = "0.3.2"
+
 # libs
 crt-java-version = "0.29.1"
 coroutines-version = "1.7.3"
@@ -38,3 +40,4 @@ mockserver-netty = { module = "org.mock-server:mockserver-netty", version.ref = 
 
 [plugins]
 kotlin-multiplatform = {id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin-version" }
+aws-kotlin-repo-tools-kmp = { id = "aws.sdk.kotlin.kmp", version.ref = "aws-kotlin-repo-tools-version" }

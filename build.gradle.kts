@@ -11,22 +11,12 @@ buildscript {
     repositories {
         mavenCentral()
     }
-
-    dependencies {
-        // Add our custom gradle plugin(s) to buildscript classpath (comes from github source)
-        // NOTE: buildscript classpath for the root project is the parent classloader for the subprojects, we
-        // only need to include it here, imports in subprojects will work automagically
-        classpath("aws.sdk.kotlin:build-plugins") {
-            version {
-                require("0.3.1")
-            }
-        }
-    }
 }
 
 plugins {
     id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.13.2"
     alias(libs.plugins.kotlin.multiplatform) apply false
+    alias(libs.plugins.aws.kotlin.repo.tools.kmp)
 }
 
 allprojects {
