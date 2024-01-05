@@ -1,0 +1,8 @@
+{
+    "id": "cfc58da7-d2c6-47d7-a40e-72893b49bca7",
+    "type": "feature",
+    "description": "Enable access to metrics for HTTP streams",
+    "issues": [
+        "https://github.com/awslabs/smithy-kotlin/issues/893"
+    ]
+}
