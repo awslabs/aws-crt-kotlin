@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.8.3] - 01/05/2024
+
+### Features
+* [#893](https://github.com/awslabs/smithy-kotlin/issues/893) Enable access to metrics for HTTP streams
+
 ## [0.8.2] - 11/17/2023
 
 ### Miscellaneous
