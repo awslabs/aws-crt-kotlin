@@ -634,6 +634,33 @@ public abstract interface class aws/sdk/kotlin/crt/http/HttpStream : aws/sdk/kot
 	public abstract fun writeChunk ([BZ)V
 }
 
+public final class aws/sdk/kotlin/crt/http/HttpStreamMetrics {
+	public fun <init> (JJJJJJI)V
+	public final fun component1 ()J
+	public final fun component2 ()J
+	public final fun component3 ()J
+	public final fun component4 ()J
+	public final fun component5 ()J
+	public final fun component6 ()J
+	public final fun component7 ()I
+	public final fun copy (JJJJJJI)Laws/sdk/kotlin/crt/http/HttpStreamMetrics;
+	public static synthetic fun copy$default (Laws/sdk/kotlin/crt/http/HttpStreamMetrics;JJJJJJIILjava/lang/Object;)Laws/sdk/kotlin/crt/http/HttpStreamMetrics;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getReceiveEndTimestampNs ()J
+	public final fun getReceiveStartTimestampNs ()J
+	public final fun getReceivingDurationNs ()J
+	public final fun getSendEndTimestampNs ()J
+	public final fun getSendStartTimestampNs ()J
+	public final fun getSendingDurationNs ()J
+	public final fun getStreamId ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class aws/sdk/kotlin/crt/http/HttpStreamMetricsJVMKt {
+	public static final fun toKotlin (Lsoftware/amazon/awssdk/crt/http/HttpStreamMetrics;)Laws/sdk/kotlin/crt/http/HttpStreamMetrics;
+}
+
 public abstract interface class aws/sdk/kotlin/crt/http/HttpStreamResponseHandler {
 	public abstract fun onMetrics (Laws/sdk/kotlin/crt/http/HttpStream;Laws/sdk/kotlin/crt/http/HttpStreamMetrics;)V
 	public abstract fun onResponseBody (Laws/sdk/kotlin/crt/http/HttpStream;Laws/sdk/kotlin/crt/io/Buffer;)I
