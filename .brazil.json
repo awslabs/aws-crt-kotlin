@@ -1,0 +1,33 @@
+{
+  "dependencies": {
+    "org.jetbrains.kotlin:kotlin-stdlib-common:1.9.*": "KotlinStdlibCommon-1.9.x",
+    "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.*": "KotlinStdlibJdk8-1.9.x",
+    "org.jetbrains.kotlin:kotlin-stdlib:1.9.*": "KotlinStdlib-1.9.x",
+    "org.jetbrains.kotlinx:atomicfu-jvm:0.23.1": "AtomicfuJvm-0.23.1",
+    "org.jetbrains.kotlinx:atomicfu:0.23.1": "Atomicfu-0.23.1",
+    "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.*": "KotlinxCoroutinesCoreJvm-1.7.x",
+    "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.*": "KotlinxCoroutinesCore-1.7.x",
+    "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.7.*": "KotlinxCoroutinesJdk8-1.7.x",
+    "software.amazon.awssdk.crt:aws-crt:0.*": "Aws-crt-java-1.0.x"
+  },
+  "packageHandlingRules": {
+    "versioning": {
+      "defaultVersionLayout": "{MAJOR}.{MINOR}.x"
+    },
+    "rename": {
+      "aws.sdk.kotlin.crt:aws-crt-kotlin": "AwsCrtKotlin"
+    },
+    "ignore": [
+        "aws.sdk.kotlin.crt:aws-crt-kotlin-android"
+    ],
+    "resolvesConflictDependencies": {
+      "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.*": [
+        "KotlinStdlibCommon-1.9.x",
+        "KotlinStdlibJdk8-1.9.x"
+      ],
+      "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.7.*": [
+        "KotlinStdlibJdk8-1.9.x"
+      ]
+    }
+  }
+}
