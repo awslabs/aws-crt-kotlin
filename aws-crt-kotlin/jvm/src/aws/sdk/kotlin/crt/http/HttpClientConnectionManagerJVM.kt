@@ -24,6 +24,16 @@ public actual class HttpClientConnectionManager actual constructor(
 
     private val jniManager = HttpClientConnectionManagerJni.create(options.into())
 
+    public actual val managerMetrics: HttpManagerMetrics
+        get() {
+            val jniMetrics = jniManager.managerMetrics
+            return HttpManagerMetrics(
+                availableConcurrency = jniMetrics.availableConcurrency,
+                pendingConcurrencyAcquires = jniMetrics.pendingConcurrencyAcquires,
+                leasedConcurrency = jniMetrics.leasedConcurrency,
+            )
+        }
+
     /**
      * Request an HttpClientConnection from the pool
      */
