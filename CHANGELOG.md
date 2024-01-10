@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.8.4] - 01/10/2024
+
+### Features
+* [#893](https://github.com/awslabs/smithy-kotlin/issues/893) Surface HTTP connection manager metrics
+
 ## [0.8.3] - 01/05/2024
 
 ### Features
