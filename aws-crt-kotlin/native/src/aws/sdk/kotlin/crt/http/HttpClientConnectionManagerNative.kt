@@ -11,6 +11,9 @@ import aws.sdk.kotlin.crt.Closeable
 public actual class HttpClientConnectionManager actual constructor(
     public actual val options: HttpClientConnectionManagerOptions,
 ) : Closeable, AsyncShutdown {
+    public actual val managerMetrics: HttpManagerMetrics
+        get() = TODO("Not yet implemented")
+
     /**
      * Request an HttpClientConnection from the pool
      */

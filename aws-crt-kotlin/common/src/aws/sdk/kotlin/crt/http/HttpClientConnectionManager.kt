@@ -15,6 +15,11 @@ public expect class HttpClientConnectionManager(options: HttpClientConnectionMan
     Closeable,
     AsyncShutdown {
     /**
+     * The active metrics for this connection manager
+     */
+    public val managerMetrics: HttpManagerMetrics
+
+    /**
      * The options this manager was configured with
      */
     public val options: HttpClientConnectionManagerOptions

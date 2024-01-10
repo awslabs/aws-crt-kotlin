@@ -1,0 +1,8 @@
+{
+    "id": "11a891eb-b51f-4508-9010-f17d35ce96a3",
+    "type": "feature",
+    "description": "Surface HTTP connection manager metrics",
+    "issues": [
+        "awslabs/smithy-kotlin#893"
+    ]
+}
