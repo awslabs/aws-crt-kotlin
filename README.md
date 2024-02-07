@@ -13,7 +13,7 @@ This project is licensed under the Apache-2.0 License.
 
 ## Building
 
-Kotlin Multiplatform projects are in [Alpha](https://kotlinlang.org/docs/reference/evolution/components-stability.html). The CRT interfaces are subject to change.
+CRT interfaces are subject to change.
 
 ### Linux/Unix
 Install some version of libcrypto on which s2n depends. See the [s2n](https://github.com/awslabs/s2n) documentation.
@@ -23,6 +23,7 @@ apt-get install libssl-dev
 ```
 
 OR
+
 ```sh
 yum install openssl-devel
 ```
@@ -69,3 +70,9 @@ CRTDEBUG=trace=2 ./elasticurl/bin/macosX64/elasticurl.kexe -v trace https://aws.
 Run the simple elasticurl integration test script
 
 `./scripts/elasticurl-test.sh`
+
+
+### TODO
+
+cmake >= 3.19.5
+https://cmake.org/cmake/help/latest/manual/cmake-toolchains.7.html#cross-compiling-for-ios-tvos-visionos-or-watchos

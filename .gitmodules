@@ -28,3 +28,6 @@
 [submodule "crt/aws-lc"]
 	path = crt/aws-lc
 	url = https://github.com/aws/aws-lc
+[submodule "crt/aws-c-sdkutils"]
+	path = crt/aws-c-sdkutils
+	url = https://github.com/awslabs/aws-c-sdkutils
