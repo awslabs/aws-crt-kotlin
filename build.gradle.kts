@@ -12,12 +12,17 @@ buildscript {
         mavenCentral()
         mavenLocal()
     }
+    // NOTE: buildscript classpath for the root project is the parent classloader for all subprojects.
+    // Anything included in the root buildscript classpath is added to the classpath for all projects!
+    dependencies {
+        // Add our custom gradle build logic to buildscript classpath
+        classpath(libs.aws.kotlin.repo.tools.build.support)
+    }
 }
 
 plugins {
     id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.13.2"
     alias(libs.plugins.kotlin.multiplatform) apply false
-    alias(libs.plugins.aws.kotlin.repo.tools.kmp)
 }
 
 allprojects {

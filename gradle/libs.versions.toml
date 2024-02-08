@@ -1,7 +1,7 @@
 [versions]
 kotlin-version = "1.9.21"
 
-aws-kotlin-repo-tools-version = "0.3.2"
+aws-kotlin-repo-tools-version = "0.4.0"
 
 # libs
 crt-java-version = "0.29.6"
@@ -16,6 +16,7 @@ kotlinx-cli-version = "0.3.6"
 
 
 [libraries]
+aws-kotlin-repo-tools-build-support = { module="aws.sdk.kotlin.gradle:build-support", version.ref = "aws-kotlin-repo-tools-version" }
 crt-java = { module = "software.amazon.awssdk.crt:aws-crt", version.ref = "crt-java-version" }
 
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin-version"}
@@ -40,4 +41,4 @@ mockserver-netty = { module = "org.mock-server:mockserver-netty", version.ref = 
 
 [plugins]
 kotlin-multiplatform = {id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin-version" }
-aws-kotlin-repo-tools-kmp = { id = "aws.sdk.kotlin.kmp", version.ref = "aws-kotlin-repo-tools-version" }
+aws-kotlin-repo-tools-kmp = { id = "aws.sdk.kotlin.gradle.kmp", version.ref = "aws-kotlin-repo-tools-version" }

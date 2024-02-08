@@ -76,3 +76,9 @@ Run the simple elasticurl integration test script
 
 cmake >= 3.19.5
 https://cmake.org/cmake/help/latest/manual/cmake-toolchains.7.html#cross-compiling-for-ios-tvos-visionos-or-watchos
+
+```sh
+docker build -f docker-images/linux-x64/Dockerfile -t aws-crt-kotlin/linux-x64:latest .
+# update dockcross script
+docker run --rm aws-crt-kotlin/linux-x64:latest > dockcross-linux-x64    
+```

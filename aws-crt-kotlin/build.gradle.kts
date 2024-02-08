@@ -2,12 +2,19 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
+import aws.sdk.kotlin.gradle.crt.configureCrtCMakeBuild
 import aws.sdk.kotlin.gradle.dsl.configurePublishing
 import aws.sdk.kotlin.gradle.kmp.IDEA_ACTIVE
 import aws.sdk.kotlin.gradle.kmp.configureKmpTargets
+import aws.sdk.kotlin.gradle.util.typedProp
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.aws.kotlin.repo.tools.kmp)
+    id("crt-build-support")
 }
 
 val sdkVersion: String by project
@@ -59,10 +66,6 @@ kotlin {
             }
         }
     }
-
-    val kotlinVersion: String by project
-    val coroutinesVersion: String by project
-    val mockServerVersion: String by project
 
     sourceSets {
         val commonMain by getting {
@@ -116,7 +119,16 @@ kotlin {
     sourceSets.all {
         optinAnnotations.forEach { languageSettings.optIn(it) }
     }
+
+    // create a single "umbrella" cinterop will all the aws-c-* API's we want to consume
+    // see: https://github.com/JetBrains/kotlin-native/issues/2423#issuecomment-466300153
+    targets.withType<KotlinNativeTarget> {
+        val knTarget = this
+        configureCrtCMakeBuild(knTarget)
+    }
 }
+
+fun KotlinNativeTarget.namedSuffix(prefix: String): String = "$prefix$name"
 
 // Publishing
 configurePublishing("aws-crt-kotlin")
