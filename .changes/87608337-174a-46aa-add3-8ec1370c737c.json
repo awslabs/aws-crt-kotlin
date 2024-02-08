@@ -1,0 +1,5 @@
+{
+    "id": "87608337-174a-46aa-add3-8ec1370c737c",
+    "type": "feature",
+    "description": "Add SIGV4_S3EXPRESS signing algorithm and AwsSigningConfig.toBuilder function"
+}
