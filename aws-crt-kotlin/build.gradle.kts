@@ -2,6 +2,7 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
+import aws.sdk.kotlin.gradle.crt.cmakeInstallDir
 import aws.sdk.kotlin.gradle.crt.configureCrtCMakeBuild
 import aws.sdk.kotlin.gradle.dsl.configurePublishing
 import aws.sdk.kotlin.gradle.kmp.IDEA_ACTIVE
@@ -127,11 +128,30 @@ kotlin {
     // see: https://github.com/JetBrains/kotlin-native/issues/2423#issuecomment-466300153
     targets.withType<KotlinNativeTarget> {
         val knTarget = this
-        configureCrtCMakeBuild(knTarget)
+        logger.info("configuring $knTarget: ${knTarget.name}")
+        val cmakeInstallTask = configureCrtCMakeBuild(knTarget)
+
+        compilations["main"].cinterops {
+            val interopDir = "$projectDir/native/interop"
+
+            val targetInstallDir = project.cmakeInstallDir(knTarget)
+            val headerDir = targetInstallDir.resolve("include")
+            val libDir = targetInstallDir.resolve("lib")
+
+            println("configuring crt cinterop for: ${knTarget.name}")
+            val interopSettings = create("aws-crt"){
+                defFile("$interopDir/crt.def")
+                includeDirs(headerDir)
+                compilerOpts("-L${libDir.absolutePath}")
+            }
+
+            // cinterop tasks processes header files which requires the corresponding CMake build/install to run
+            val cinteropTask = tasks.findByName(interopSettings.interopProcessingTaskName)
+            cinteropTask?.dependsOn(cmakeInstallTask)
+
+        }
     }
 }
-
-fun KotlinNativeTarget.namedSuffix(prefix: String): String = "$prefix$name"
 
 // Publishing
 configurePublishing("aws-crt-kotlin")

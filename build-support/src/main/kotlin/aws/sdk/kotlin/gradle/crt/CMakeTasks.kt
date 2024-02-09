@@ -21,27 +21,36 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
-/*
-cmakeConfigure<NativeTargetName>   -- e.g. cmakeConfigureLinuxX64
-cmakeBuild<NativeTargetName>       -- e.g. cmakeBuildLinuxX64
-cmakeInstall<NativeTargetName>     -- e.g. cmakeInstallLinuxX64
-
-CMake tasks may or may not run inside of a docker container depending on the native target being built.
-
-All linux targets are built in a container.
-
-*/
-
+/**
+ * See [CMAKE_BUILD_TYPE](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html)
+ */
 enum class CMakeBuildType {
     Debug,
     RelWithDebInfo,
     Release
 }
 
+
+/**
+ * Configure CMake tasks for building and installing CRT locally for a given Kotlin/Native target.
+ *
+ * This function sets up the following tasks:
+ * * cmakeConfigure<NativeTargetName>   -- e.g. cmakeConfigureLinuxX64
+ * * cmakeBuild<NativeTargetName>       -- e.g. cmakeBuildLinuxX64
+ * * cmakeInstall<NativeTargetName>     -- e.g. cmakeInstallLinuxX64
+ *
+ * CMake tasks may or may not run inside of a docker container depending on the native target being built.
+ * All linux targets are built in a container.
+ *
+ * @param knTarget the native target to build CRT for
+ * @param buildType the [CMakeBuildType] to build for CMake build type. Defaults to `RelWithDebInfo` since end users
+ * can always strip the binary of all debug info.
+ * @return the `cmakeInstall` task for the target which can be used to wire up additional task dependency relationships
+*/
 fun Project.configureCrtCMakeBuild(
     knTarget: KotlinNativeTarget,
     buildType: CMakeBuildType = CMakeBuildType.RelWithDebInfo
-) {
+): TaskProvider<Task> {
     val cmakeConfigure = registerCmakeConfigureTask(knTarget, buildType)
 
     val cmakeBuild = registerCmakeBuildTask(knTarget, buildType)
@@ -54,6 +63,7 @@ fun Project.configureCrtCMakeBuild(
         dependsOn(cmakeBuild)
     }
 
+    return cmakeInstall
 }
 
 internal fun Project.registerCmakeConfigureTask(
@@ -77,7 +87,6 @@ internal fun Project.registerCmakeConfigureTask(
         doLast {
             val args = mutableListOf(
                 "-B$relativeBuildDir",
-                // "-H$relCmakeLists",
                 "-DCMAKE_BUILD_TYPE=$buildType",
                 "-DCMAKE_INSTALL_PREFIX=$relativeInstallDir",
                 "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
@@ -88,30 +97,21 @@ internal fun Project.registerCmakeConfigureTask(
             if (HostManager.hostIsMac && knTarget.konanTarget.family.isAppleFamily) {
                 args.add("-GXcode")
 
-                // see https://cmake.org/cmake/help/latest/manual/cmake-toolchains.7.html#cross-compiling-for-ios-tvos-visionos-or-watchos
-                val osxArch = when (knTarget.konanTarget.architecture) {
-                    Architecture.X64 -> "x86_64"
-                    Architecture.X86 -> "i386"
-                    Architecture.ARM64 -> "arm64"
-                    Architecture.ARM32 -> when(knTarget.konanTarget) {
-                        KonanTarget.WATCHOS_ARM32 -> "armv7k"
-                        KonanTarget.WATCHOS_ARM64 -> "arm64_32"
-                        else -> null
-                    }
-                    else -> null
-                }
-                osxArch?.let {
+                // FIXME - What should the min target for ios be? Does it matter for our build? DCMAKE_OSX_DEPLOYMENT_TARGET
+                knTarget.konanTarget.osxArchitectureName?.let {
                     args.add("-DCMAKE_OSX_ARCHITECTURES=$it")
                 }
 
-                val osxSystemName = when(knTarget.konanTarget.family) {
-                    Family.IOS -> "iOS"
-                    Family.TVOS -> "tvOS"
-                    Family.WATCHOS -> "watchOS"
-                    else -> null
-                }
-                osxSystemName?.let {
+                knTarget.konanTarget.osxSystemName?.let {
                     args.add("-DCMAKE_SYSTEM_NAME=$it")
+                }
+
+                // Xcode allows switching between device and simulator (via -sdk) even if we only configure one.
+                // Unfortunately this breaks during install as there is no way to override and pass `-sdk` for
+                // install like there is for `--build`. For simulator devices we set the name explicitly to
+                // ensure the correct directory is searched.
+                if (knTarget.konanTarget.isSimulatorSdk) {
+                    args.add("-DCMAKE_OSX_SYSROOT=${knTarget.konanTarget.osxDeviceSdkName}")
                 }
             }
 
@@ -124,14 +124,6 @@ internal fun Project.registerCmakeConfigureTask(
     }
 
 }
-
-// See https://cmake.org/cmake/help/latest/manual/cmake-toolchains.7.html#cross-compiling-for-ios-tvos-visionos-or-watchos
-const val IOS_DEVICE_SDK = "iphoneos"
-const val IOS_SIMULATOR_SDK = "iphonesimulator"
-const val TVOS_DEVICE_SDK = "appletvos"
-const val TVOS_SIMULATOR_SDK = "appletvsimulator"
-const val WATCHOS_DEVICE_SDK = "watchos"
-const val WATCHOS_SIMULATOR_SDK = "watchsimulator"
 
 internal fun Project.registerCmakeBuildTask(
     knTarget: KotlinNativeTarget,
@@ -158,20 +150,7 @@ internal fun Project.registerCmakeBuildTask(
                 buildType.toString()
             )
 
-            val osxSdk = when(knTarget.konanTarget) {
-                KonanTarget.IOS_ARM64 -> IOS_DEVICE_SDK
-                KonanTarget.IOS_SIMULATOR_ARM64, KonanTarget.IOS_X64 -> IOS_SIMULATOR_SDK
-                KonanTarget.TVOS_ARM64 -> TVOS_DEVICE_SDK
-                KonanTarget.TVOS_SIMULATOR_ARM64, KonanTarget.TVOS_X64 -> TVOS_SIMULATOR_SDK
-                KonanTarget.WATCHOS_ARM32,
-                KonanTarget.WATCHOS_ARM64,
-                KonanTarget.WATCHOS_DEVICE_ARM64 -> WATCHOS_DEVICE_SDK
-                KonanTarget.WATCHOS_SIMULATOR_ARM64,
-                KonanTarget.WATCHOS_X64,
-                KonanTarget.WATCHOS_X86 -> WATCHOS_SIMULATOR_SDK
-                else -> null
-            }
-
+            val osxSdk = knTarget.konanTarget.osxDeviceSdkName
             if (osxSdk != null) {
                 // see https://cmake.org/cmake/help/latest/manual/cmake-toolchains.7.html#switching-between-device-and-simulator
                 // assumes Xcode generator
@@ -211,19 +190,6 @@ internal fun Project.registerCmakeInstallTask(
 
 }
 
-fun KotlinNativeTarget.namedSuffix(prefix: String, capitalized: Boolean = false): String =
-    prefix + if (capitalized) name.capitalized() else name
-
-
-fun Project.cmakeBuildDir(target: KotlinNativeTarget): File =
-    project.rootProject.layout.buildDirectory.file(target.namedSuffix("cmake-build/")).get().asFile
-
-fun Project.cmakeInstallDir(target: KotlinNativeTarget): File =
-    project.rootProject.layout.buildDirectory.file(target.namedSuffix("crt-libs/")).get().asFile
-
-val Project.cmakeLists: File
-    get() = rootProject.projectDir.resolve("CMakeLists.txt")
-
 internal fun runCmake(project: Project, target: KotlinNativeTarget, cmakeArgs: List<String>) {
     project.exec {
         workingDir(project.rootDir)
@@ -238,6 +204,8 @@ internal fun runCmake(project: Project, target: KotlinNativeTarget, cmakeArgs: L
         }
 
         project.logger.info("$exeName ${exeArgs.joinToString(separator=" ")}")
+        // FIXME - remove
+        println("$exeName ${exeArgs.joinToString(separator=" ")}")
         executable(exeName)
         args(exeArgs)
     }
