@@ -7,10 +7,7 @@ import aws.sdk.kotlin.gradle.crt.configureCrtCMakeBuild
 import aws.sdk.kotlin.gradle.dsl.configurePublishing
 import aws.sdk.kotlin.gradle.kmp.IDEA_ACTIVE
 import aws.sdk.kotlin.gradle.kmp.configureKmpTargets
-import aws.sdk.kotlin.gradle.util.typedProp
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -34,6 +31,7 @@ kotlin {
 
     iosArm64()
     iosSimulatorArm64()
+    iosX64()
 
     jvm {
         attributes {
@@ -130,25 +128,28 @@ kotlin {
         val knTarget = this
         logger.info("configuring $knTarget: ${knTarget.name}")
         val cmakeInstallTask = configureCrtCMakeBuild(knTarget)
+        val targetInstallDir = project.cmakeInstallDir(knTarget)
+        val headerDir = targetInstallDir.resolve("include")
+        val libDir = targetInstallDir.resolve("lib")
 
         compilations["main"].cinterops {
             val interopDir = "$projectDir/native/interop"
-
-            val targetInstallDir = project.cmakeInstallDir(knTarget)
-            val headerDir = targetInstallDir.resolve("include")
-            val libDir = targetInstallDir.resolve("lib")
-
             println("configuring crt cinterop for: ${knTarget.name}")
-            val interopSettings = create("aws-crt"){
+            val interopSettings = create("aws-crt") {
                 defFile("$interopDir/crt.def")
                 includeDirs(headerDir)
                 compilerOpts("-L${libDir.absolutePath}")
             }
 
             // cinterop tasks processes header files which requires the corresponding CMake build/install to run
-            val cinteropTask = tasks.findByName(interopSettings.interopProcessingTaskName)
-            cinteropTask?.dependsOn(cmakeInstallTask)
+            val cinteropTask = tasks.named(interopSettings.interopProcessingTaskName)
+            cinteropTask.configure {
+                dependsOn(cmakeInstallTask)
+            }
+        }
 
+        compilations["test"].compilerOptions.configure {
+            freeCompilerArgs.addAll(listOf("-linker-options", "-L${libDir.absolutePath}"))
         }
     }
 }

@@ -33,6 +33,36 @@ Set the path to `libcrypto.a` either as a command line argument to gradle `-Plib
 
 ### OSX
 
+#### Debugging simulator test issues
+
+**Xcode does not support simulator tests for <native target>**
+
+```
+* What went wrong:
+Execution failed for task ':aws-crt-kotlin:iosX64Test'.
+> Error while evaluating property 'device' of task ':aws-crt-kotlin:iosX64Test'.
+   > Failed to calculate the value of task ':aws-crt-kotlin:iosX64Test' property 'device'.
+      > Xcode does not support simulator tests for ios_x64. Check that requested SDK is installed.
+```
+
+Ensure that you have an appropriate simulator runtime installed.
+
+e.g. to install `iOS` platform support including simulator runtimes:
+```sh
+xcodebuild -downloadPlatform iOS
+```
+
+List simulator runtimes with:
+
+```sh
+xcrun simctl list devices available
+```
+
+
+See also: 
+
+* https://developer.apple.com/documentation/xcode/installing-additional-simulator-runtimes
+* https://www.iosdev.recipes/simctl/
 
 ### Windows
 
@@ -86,3 +116,4 @@ docker run --rm aws-crt-kotlin/linux-x64:latest > dockcross-linux-x64
 
 [ ] When to generate dockcross scripts? Seems like we should publish them to ECR and use that by default and have a mode to generate them
     locally?
+xcodebuild -showsdks

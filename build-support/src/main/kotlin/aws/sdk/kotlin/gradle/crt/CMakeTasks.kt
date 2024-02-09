@@ -1,25 +1,15 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package aws.sdk.kotlin.gradle.crt
 
-import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.configurationcache.extensions.capitalized
-import org.gradle.kotlin.dsl.listProperty
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.konan.target.Architecture
-import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import java.io.File
 
 /**
  * See [CMAKE_BUILD_TYPE](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html)
@@ -27,9 +17,8 @@ import java.io.File
 enum class CMakeBuildType {
     Debug,
     RelWithDebInfo,
-    Release
+    Release,
 }
-
 
 /**
  * Configure CMake tasks for building and installing CRT locally for a given Kotlin/Native target.
@@ -49,7 +38,7 @@ enum class CMakeBuildType {
 */
 fun Project.configureCrtCMakeBuild(
     knTarget: KotlinNativeTarget,
-    buildType: CMakeBuildType = CMakeBuildType.RelWithDebInfo
+    buildType: CMakeBuildType = CMakeBuildType.RelWithDebInfo,
 ): TaskProvider<Task> {
     val cmakeConfigure = registerCmakeConfigureTask(knTarget, buildType)
 
@@ -68,7 +57,7 @@ fun Project.configureCrtCMakeBuild(
 
 internal fun Project.registerCmakeConfigureTask(
     knTarget: KotlinNativeTarget,
-    buildType: CMakeBuildType
+    buildType: CMakeBuildType,
 ): TaskProvider<Task> {
     val cmakeBuildDir = project.cmakeBuildDir(knTarget)
     val installDir = project.cmakeInstallDir(knTarget)
@@ -91,7 +80,7 @@ internal fun Project.registerCmakeConfigureTask(
                 "-DCMAKE_INSTALL_PREFIX=$relativeInstallDir",
                 "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
                 "-DBUILD_DEPS=ON",
-                "-DBUILD_TESTING=OFF"
+                "-DBUILD_TESTING=OFF",
             )
 
             if (HostManager.hostIsMac && knTarget.konanTarget.family.isAppleFamily) {
@@ -122,12 +111,11 @@ internal fun Project.registerCmakeConfigureTask(
             runCmake(project, knTarget, args)
         }
     }
-
 }
 
 internal fun Project.registerCmakeBuildTask(
     knTarget: KotlinNativeTarget,
-    buildType: CMakeBuildType
+    buildType: CMakeBuildType,
 ): TaskProvider<Task> {
     val cmakeBuildDir = project.cmakeBuildDir(knTarget)
     val relativeBuildDir = cmakeBuildDir.relativeTo(project.rootDir).path
@@ -137,17 +125,20 @@ internal fun Project.registerCmakeBuildTask(
 
         inputs.property("buildType", buildType.toString())
         inputs.file(project.cmakeLists)
-        inputs.files(fileTree("$rootDir/crt").matching {
-            include(listOf("**/CMakeLists.txt", "**/*.c", "**/*.h"))
-        })
+        inputs.files(
+            fileTree("$rootDir/crt").matching {
+                include(listOf("**/CMakeLists.txt", "**/*.c", "**/*.h"))
+            },
+        )
+
+        outputs.dir(project.cmakeBuildDir(knTarget))
 
         doLast {
-
             val args = mutableListOf(
                 "--build",
                 relativeBuildDir,
                 "--config",
-                buildType.toString()
+                buildType.toString(),
             )
 
             val osxSdk = knTarget.konanTarget.osxDeviceSdkName
@@ -164,10 +155,9 @@ internal fun Project.registerCmakeBuildTask(
     }
 }
 
-
 internal fun Project.registerCmakeInstallTask(
     knTarget: KotlinNativeTarget,
-    buildType: CMakeBuildType
+    buildType: CMakeBuildType,
 ): TaskProvider<Task> {
     val cmakeBuildDir = project.cmakeBuildDir(knTarget)
     val relativeBuildDir = cmakeBuildDir.relativeTo(project.rootDir).path
@@ -176,25 +166,25 @@ internal fun Project.registerCmakeInstallTask(
         group = "ffi"
 
         inputs.file(project.cmakeLists)
+        outputs.dir(project.cmakeInstallDir(knTarget))
 
         doLast {
             val args = mutableListOf(
                 "--install",
                 relativeBuildDir,
                 "--config",
-                buildType.toString()
+                buildType.toString(),
             )
             runCmake(project, knTarget, args)
         }
     }
-
 }
 
 internal fun runCmake(project: Project, target: KotlinNativeTarget, cmakeArgs: List<String>) {
     project.exec {
         workingDir(project.rootDir)
         val exeArgs = cmakeArgs.toMutableList()
-        val exeName = when(target.konanTarget) {
+        val exeName = when (target.konanTarget) {
             KonanTarget.LINUX_X64, KonanTarget.LINUX_ARM64 -> {
                 // cross compiling via dockcross - set the docker exe to cmake
                 exeArgs.add(0, "cmake")
@@ -203,9 +193,9 @@ internal fun runCmake(project: Project, target: KotlinNativeTarget, cmakeArgs: L
             else -> "cmake"
         }
 
-        project.logger.info("$exeName ${exeArgs.joinToString(separator=" ")}")
+        project.logger.info("$exeName ${exeArgs.joinToString(separator = " ")}")
         // FIXME - remove
-        println("$exeName ${exeArgs.joinToString(separator=" ")}")
+        println("$exeName ${exeArgs.joinToString(separator = " ")}")
         executable(exeName)
         args(exeArgs)
     }

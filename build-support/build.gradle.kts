@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 plugins {
     `kotlin-dsl`
     `java-gradle-plugin`
@@ -12,7 +16,6 @@ repositories {
 dependencies {
     compileOnly(kotlin("gradle-plugin"))
     compileOnly(kotlin("gradle-plugin-api"))
-
 
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.junit.jupiter.params)

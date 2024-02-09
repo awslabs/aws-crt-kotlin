@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package aws.sdk.kotlin.gradle.crt
 
 import org.gradle.api.Project
@@ -11,17 +15,16 @@ import java.io.File
 fun KotlinNativeTarget.namedSuffix(prefix: String, capitalized: Boolean = false): String =
     prefix + if (capitalized) name.capitalized() else name
 
-
 val KonanTarget.isSimulatorSdk: Boolean
-    get() = when(this) {
+    get() = when (this) {
         KonanTarget.IOS_SIMULATOR_ARM64, KonanTarget.IOS_X64,
         KonanTarget.TVOS_SIMULATOR_ARM64, KonanTarget.TVOS_X64,
         KonanTarget.WATCHOS_SIMULATOR_ARM64,
         KonanTarget.WATCHOS_X64,
-        KonanTarget.WATCHOS_X86 -> true
+        KonanTarget.WATCHOS_X86,
+        -> true
         else -> false
     }
-
 
 // See https://cmake.org/cmake/help/latest/manual/cmake-toolchains.7.html#cross-compiling-for-ios-tvos-visionos-or-watchos
 const val IOS_DEVICE_SDK = "iphoneos"
@@ -32,22 +35,24 @@ const val WATCHOS_DEVICE_SDK = "watchos"
 const val WATCHOS_SIMULATOR_SDK = "watchsimulator"
 
 val KonanTarget.osxDeviceSdkName: String?
-    get() = when(this) {
+    get() = when (this) {
         KonanTarget.IOS_ARM64 -> IOS_DEVICE_SDK
         KonanTarget.IOS_SIMULATOR_ARM64, KonanTarget.IOS_X64 -> IOS_SIMULATOR_SDK
         KonanTarget.TVOS_ARM64 -> TVOS_DEVICE_SDK
         KonanTarget.TVOS_SIMULATOR_ARM64, KonanTarget.TVOS_X64 -> TVOS_SIMULATOR_SDK
         KonanTarget.WATCHOS_ARM32,
         KonanTarget.WATCHOS_ARM64,
-        KonanTarget.WATCHOS_DEVICE_ARM64 -> WATCHOS_DEVICE_SDK
+        KonanTarget.WATCHOS_DEVICE_ARM64,
+        -> WATCHOS_DEVICE_SDK
         KonanTarget.WATCHOS_SIMULATOR_ARM64,
         KonanTarget.WATCHOS_X64,
-        KonanTarget.WATCHOS_X86 -> WATCHOS_SIMULATOR_SDK
+        KonanTarget.WATCHOS_X86,
+        -> WATCHOS_SIMULATOR_SDK
         else -> null
     }
 
-val KonanTarget.osxSystemName:String?
-    get() = when(family) {
+val KonanTarget.osxSystemName: String?
+    get() = when (family) {
         Family.IOS -> "iOS"
         Family.TVOS -> "tvOS"
         Family.WATCHOS -> "watchOS"
@@ -59,7 +64,7 @@ val KonanTarget.osxArchitectureName
         Architecture.X64 -> "x86_64"
         Architecture.X86 -> "i386"
         Architecture.ARM64 -> "arm64"
-        Architecture.ARM32 -> when(this) {
+        Architecture.ARM32 -> when (this) {
             KonanTarget.WATCHOS_ARM32 -> "armv7k"
             KonanTarget.WATCHOS_ARM64 -> "arm64_32"
             else -> null
