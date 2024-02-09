@@ -60,6 +60,7 @@ configureNexus()
 // Code Style
 val lintPaths = listOf(
     "**/*.{kt,kts}",
+    "!crt/**",
 )
 
 configureLinting(lintPaths)
