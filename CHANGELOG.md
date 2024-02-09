@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.8.5] - 02/09/2024
+
+### Features
+* Add SIGV4_S3EXPRESS signing algorithm and AwsSigningConfig.toBuilder function
+
 ## [0.8.4] - 01/10/2024
 
 ### Features
