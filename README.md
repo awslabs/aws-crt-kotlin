@@ -75,6 +75,7 @@ Run the simple elasticurl integration test script
 ### TODO
 
 cmake >= 3.19.5
+
 https://cmake.org/cmake/help/latest/manual/cmake-toolchains.7.html#cross-compiling-for-ios-tvos-visionos-or-watchos
 
 ```sh
@@ -82,3 +83,6 @@ docker build -f docker-images/linux-x64/Dockerfile -t aws-crt-kotlin/linux-x64:l
 # update dockcross script
 docker run --rm aws-crt-kotlin/linux-x64:latest > dockcross-linux-x64    
 ```
+
+[ ] When to generate dockcross scripts? Seems like we should publish them to ECR and use that by default and have a mode to generate them
+    locally?

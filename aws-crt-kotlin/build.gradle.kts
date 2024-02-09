@@ -31,6 +31,9 @@ configureKmpTargets()
 kotlin {
     explicitApi()
 
+    iosArm64()
+    iosSimulatorArm64()
+
     jvm {
         attributes {
             attribute<org.gradle.api.attributes.java.TargetJvmEnvironment>(

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.io.File
 
 /*
 cmakeConfigure<NativeTargetName>   -- e.g. cmakeConfigureLinuxX64
@@ -48,14 +49,19 @@ fun Project.configureCrtCMakeBuild(
         dependsOn(cmakeConfigure)
     }
 
+    val cmakeInstall = registerCmakeInstallTask(knTarget, buildType)
+    cmakeInstall.configure {
+        dependsOn(cmakeBuild)
+    }
+
 }
 
 internal fun Project.registerCmakeConfigureTask(
     knTarget: KotlinNativeTarget,
     buildType: CMakeBuildType
 ): TaskProvider<Task> {
-    val cmakeBuildDir = project.layout.buildDirectory.file(knTarget.namedSuffix("cmake-build/")).get().asFile
-    val installDir = project.layout.buildDirectory.file(knTarget.namedSuffix("crt-libs/")).get().asFile
+    val cmakeBuildDir = project.cmakeBuildDir(knTarget)
+    val installDir = project.cmakeInstallDir(knTarget)
 
     val relativeBuildDir = cmakeBuildDir.relativeTo(project.rootDir).path
     val relativeInstallDir = installDir.relativeTo(project.rootDir).path
@@ -119,7 +125,7 @@ internal fun Project.registerCmakeConfigureTask(
 
 }
 
-
+// See https://cmake.org/cmake/help/latest/manual/cmake-toolchains.7.html#cross-compiling-for-ios-tvos-visionos-or-watchos
 const val IOS_DEVICE_SDK = "iphoneos"
 const val IOS_SIMULATOR_SDK = "iphonesimulator"
 const val TVOS_DEVICE_SDK = "appletvos"
@@ -131,15 +137,14 @@ internal fun Project.registerCmakeBuildTask(
     knTarget: KotlinNativeTarget,
     buildType: CMakeBuildType
 ): TaskProvider<Task> {
-    val cmakeBuildDir = project.layout.buildDirectory.file(knTarget.namedSuffix("cmake-build/")).get().asFile
+    val cmakeBuildDir = project.cmakeBuildDir(knTarget)
     val relativeBuildDir = cmakeBuildDir.relativeTo(project.rootDir).path
-    val cmakeLists = project.rootProject.projectDir.resolve("CMakeLists.txt")
 
     return project.tasks.register(knTarget.namedSuffix("cmakeBuild", capitalized = true)) {
         group = "ffi"
 
         inputs.property("buildType", buildType.toString())
-        inputs.file(cmakeLists)
+        inputs.file(project.cmakeLists)
         inputs.files(fileTree("$rootDir/crt").matching {
             include(listOf("**/CMakeLists.txt", "**/*.c", "**/*.h"))
         })
@@ -149,6 +154,8 @@ internal fun Project.registerCmakeBuildTask(
             val args = mutableListOf(
                 "--build",
                 relativeBuildDir,
+                "--config",
+                buildType.toString()
             )
 
             val osxSdk = when(knTarget.konanTarget) {
@@ -176,12 +183,46 @@ internal fun Project.registerCmakeBuildTask(
             runCmake(project, knTarget, args)
         }
     }
+}
+
+
+internal fun Project.registerCmakeInstallTask(
+    knTarget: KotlinNativeTarget,
+    buildType: CMakeBuildType
+): TaskProvider<Task> {
+    val cmakeBuildDir = project.cmakeBuildDir(knTarget)
+    val relativeBuildDir = cmakeBuildDir.relativeTo(project.rootDir).path
+
+    return project.tasks.register(knTarget.namedSuffix("cmakeInstall", capitalized = true)) {
+        group = "ffi"
+
+        inputs.file(project.cmakeLists)
+
+        doLast {
+            val args = mutableListOf(
+                "--install",
+                relativeBuildDir,
+                "--config",
+                buildType.toString()
+            )
+            runCmake(project, knTarget, args)
+        }
+    }
 
 }
 
 fun KotlinNativeTarget.namedSuffix(prefix: String, capitalized: Boolean = false): String =
     prefix + if (capitalized) name.capitalized() else name
 
+
+fun Project.cmakeBuildDir(target: KotlinNativeTarget): File =
+    project.rootProject.layout.buildDirectory.file(target.namedSuffix("cmake-build/")).get().asFile
+
+fun Project.cmakeInstallDir(target: KotlinNativeTarget): File =
+    project.rootProject.layout.buildDirectory.file(target.namedSuffix("crt-libs/")).get().asFile
+
+val Project.cmakeLists: File
+    get() = rootProject.projectDir.resolve("CMakeLists.txt")
 
 internal fun runCmake(project: Project, target: KotlinNativeTarget, cmakeArgs: List<String>) {
     project.exec {
