@@ -6,7 +6,9 @@ package aws.sdk.kotlin.gradle.crt
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -61,6 +63,12 @@ fun Project.configureCrtCMakeBuild(
                 hm.isEnabled(knTarget.konanTarget)
             }
         }
+    }
+
+    // TODO - add separate `cleanCMake<KN-Target>` tasks and make the parent `clean` task depend on the individuals
+    tasks.named<Delete>("clean") {
+        delete(project.rootProject.layout.buildDirectory.dir("cmake-build"))
+        delete(project.rootProject.layout.buildDirectory.dir("crt-libs"))
     }
 
     return cmakeInstall
@@ -142,7 +150,7 @@ private fun Project.registerCmakeBuildTask(
             },
         )
 
-        outputs.dir(project.cmakeBuildDir(knTarget))
+        outputs.dir(cmakeBuildDir)
 
         doLast {
             val args = mutableListOf(
@@ -172,12 +180,13 @@ private fun Project.registerCmakeInstallTask(
 ): TaskProvider<Task> {
     val cmakeBuildDir = project.cmakeBuildDir(knTarget)
     val relativeBuildDir = cmakeBuildDir.relativeTo(project.rootDir).path
+    val installDir = project.cmakeInstallDir(knTarget)
 
     return project.tasks.register(knTarget.namedSuffix("cmakeInstall", capitalized = true)) {
         group = "ffi"
 
         inputs.file(project.cmakeLists)
-        outputs.dir(project.cmakeInstallDir(knTarget))
+        outputs.dir(installDir)
 
         doLast {
             val args = mutableListOf(

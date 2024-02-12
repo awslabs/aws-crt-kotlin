@@ -27,6 +27,15 @@ jobs:
           distribution: 'corretto'
           java-version: 17
           cache: 'gradle'
+      # Cache the Kotlin/Native toolchain based on the input Kotlin version from version catalog
+      # see https://kotlinlang.org/docs/native-improving-compilation-time.html
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-konan-
       # FIXME - we will need to migrate this to ECR to avoid throttle limits from dockerhub, for now rebuild the images during CI
       - name: Configure Docker Images
         run: |
