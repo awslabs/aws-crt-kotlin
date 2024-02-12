@@ -35,7 +35,7 @@ Set the path to `libcrypto.a` either as a command line argument to gradle `-Plib
 
 #### Debugging simulator test issues
 
-**Xcode does not support simulator tests for <native target>**
+**Xcode does not support simulator tests for \<native target>**
 
 ```
 * What went wrong:
