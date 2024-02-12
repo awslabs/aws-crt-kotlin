@@ -52,10 +52,21 @@ fun Project.configureCrtCMakeBuild(
         dependsOn(cmakeBuild)
     }
 
+    // only enable cmake* tasks if that target is enabled
+    // FIXME - fix CI to not use CRT builder (or rationilize why we would keep it)
+    val hm = HostManager()
+    listOf(cmakeConfigure, cmakeBuild, cmakeInstall).forEach { task ->
+        task.configure {
+            onlyIf {
+                hm.isEnabled(knTarget.konanTarget)
+            }
+        }
+    }
+
     return cmakeInstall
 }
 
-internal fun Project.registerCmakeConfigureTask(
+private fun Project.registerCmakeConfigureTask(
     knTarget: KotlinNativeTarget,
     buildType: CMakeBuildType,
 ): TaskProvider<Task> {
@@ -113,7 +124,7 @@ internal fun Project.registerCmakeConfigureTask(
     }
 }
 
-internal fun Project.registerCmakeBuildTask(
+private fun Project.registerCmakeBuildTask(
     knTarget: KotlinNativeTarget,
     buildType: CMakeBuildType,
 ): TaskProvider<Task> {
@@ -155,7 +166,7 @@ internal fun Project.registerCmakeBuildTask(
     }
 }
 
-internal fun Project.registerCmakeInstallTask(
+private fun Project.registerCmakeInstallTask(
     knTarget: KotlinNativeTarget,
     buildType: CMakeBuildType,
 ): TaskProvider<Task> {
@@ -180,7 +191,7 @@ internal fun Project.registerCmakeInstallTask(
     }
 }
 
-internal fun runCmake(project: Project, target: KotlinNativeTarget, cmakeArgs: List<String>) {
+private fun runCmake(project: Project, target: KotlinNativeTarget, cmakeArgs: List<String>) {
     project.exec {
         workingDir(project.rootDir)
         val exeArgs = cmakeArgs.toMutableList()
@@ -194,8 +205,6 @@ internal fun runCmake(project: Project, target: KotlinNativeTarget, cmakeArgs: L
         }
 
         project.logger.info("$exeName ${exeArgs.joinToString(separator = " ")}")
-        // FIXME - remove
-        println("$exeName ${exeArgs.joinToString(separator = " ")}")
         executable(exeName)
         args(exeArgs)
     }
