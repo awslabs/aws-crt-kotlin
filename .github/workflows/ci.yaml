@@ -18,48 +18,62 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
-      - uses: actions/cache@v2
+        uses: actions/checkout@v4
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+          submodules: true
+      - name: Configure JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: 17
+          cache: 'gradle'
+      # FIXME - we will need to migrate this to ECR to avoid throttle limits from dockerhub, for now rebuild the images during CI
+      - name: Configure Docker Images
+        run: |
+          ./docker-images/build-all.sh
       - name: Build and Test ${{ env.PACKAGE_NAME }}
         run: |
-          python3 -c "from urllib.request import urlretrieve; urlretrieve('${{ env.BUILDER_HOST }}/${{ env.BUILDER_SOURCE }}/${{ env.BUILDER_VERSION }}/builder.pyz?run=${{ env.RUN }}', 'builder.pyz')"
-          chmod a+x builder.pyz
-          echo "kotlinWarningsAsErrors=true" >> $GITHUB_WORKSPACE/local.properties
-          ./builder.pyz build -p ${{ env.PACKAGE_NAME }}
+          ./gradlew apiCheck
+          ./gradlew allTests
 
   macos-compat:
     runs-on: macos-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
-      - uses: actions/cache@v2
+        uses: actions/checkout@v4
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+          submodules: true
+      - name: Configure JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: 17
+          cache: 'gradle'
+      - name: Configure Docker Images
+        run: |
+          ./docker-images/build-all.sh
       - name: Build and Test ${{ env.PACKAGE_NAME }}
         run: |
-          python3 -c "from urllib.request import urlretrieve; urlretrieve('${{ env.BUILDER_HOST }}/${{ env.BUILDER_SOURCE }}/${{ env.BUILDER_VERSION }}/builder.pyz?run=${{ env.RUN }}', 'builder.pyz')"
-          chmod a+x builder.pyz
-          echo "kotlinWarningsAsErrors=true" >> $GITHUB_WORKSPACE/local.properties
-          ./builder.pyz build -p ${{ env.PACKAGE_NAME }}
+          ./gradlew apiCheck
+          ./gradlew allTests
 
   windows-compat:
     runs-on: windows-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Configure JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: 17
+          cache: 'gradle'
+      - name: Configure Docker Images
+        run: |
+          ./docker-images/build-all.sh
       - name: Build and Test ${{ env.PACKAGE_NAME }}
         run: |
-          python3 -c "from urllib.request import urlretrieve; urlretrieve('${{ env.BUILDER_HOST }}/${{ env.BUILDER_SOURCE }}/${{ env.BUILDER_VERSION }}/builder.pyz?run=${{ env.RUN }}', 'builder.pyz')"
-          python3 builder.pyz build -p ${{ env.PACKAGE_NAME }}
+          ./gradlew apiCheck
+          ./gradlew allTests
