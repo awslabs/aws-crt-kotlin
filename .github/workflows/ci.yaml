@@ -28,13 +28,12 @@ jobs:
           java-version: 17
           cache: 'gradle'
       # FIXME - we will need to migrate this to ECR to avoid throttle limits from dockerhub, for now rebuild the images during CI
-#      - name: Configure Docker Images
-#        run: |
-#          ./docker-images/build-all.sh
-#          docker images
-      - name: Build and Test ${{ env.PACKAGE_NAME }}
+      - name: Configure Docker Images
         run: |
           ./docker-images/build-all.sh
+          docker images
+      - name: Build and Test ${{ env.PACKAGE_NAME }}
+        run: |
           docker images
           ./gradlew apiCheck
           ./gradlew allTests
