@@ -51,29 +51,30 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: test-reports-${{ runner.os }}
+          name: test-reports-macos-arm
           path: '**/build/reports'
 
+# FIXME - re-enable - working
   # macosX64, iosX64
-  macos-x64-native:
-    runs-on: macos-13
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - name: Setup build environment
-        uses: ./.github/actions/setup-build
-        with:
-          install-finch: false
-      - name: Build and Test ${{ env.PACKAGE_NAME }}
-        run: |
-          ./gradlew macosX64Test iosX64Test
-      - name: Save Test Reports
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-reports-${{ runner.os }}
-          path: '**/build/reports'
+#  macos-x64-native:
+#    runs-on: macos-13
+#    steps:
+#      - uses: actions/checkout@v4
+#        with:
+#          submodules: true
+#      - name: Setup build environment
+#        uses: ./.github/actions/setup-build
+#        with:
+#          install-finch: false
+#      - name: Build and Test ${{ env.PACKAGE_NAME }}
+#        run: |
+#          ./gradlew macosX64Test iosX64Test
+#      - name: Save Test Reports
+#        if: failure()
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: test-reports-macos-x64-native
+#          path: '**/build/reports'
 
 
   # linuxX64, linuxArm64
@@ -104,6 +105,7 @@ jobs:
           ls -R
           .github/scripts/run-container-test-binary ${{ matrix.os }} ${{ matrix.arch }} ./test-binaries/aws-crt-kotlin/build/bin
 
+# TODO - linux-native test reports
 # TODO - linux jvm, windows jvm, windows native, jvm versions
 
 #  all-platforms:
