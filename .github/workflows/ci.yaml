@@ -18,8 +18,13 @@ env:
   OCI_EXE: docker
 
 jobs:
-  linux-compat:
-    runs-on: ubuntu-latest
+  all-platforms:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # macos-13=x64, macos-14=m1
+        os: [ubuntu-latest, macos-13, macos-14, windows-latest]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -48,47 +53,4 @@ jobs:
       - name: Build and Test ${{ env.PACKAGE_NAME }}
         run: |
           docker images
-          ./gradlew apiCheck
-          ./gradlew allTests
-
-#  macos-compat:
-#    runs-on: macos-latest
-#    steps:
-#      - name: Checkout sources
-#        uses: actions/checkout@v4
-#        with:
-#          submodules: true
-#      - name: Configure JDK
-#        uses: actions/setup-java@v3
-#        with:
-#          distribution: 'corretto'
-#          java-version: 17
-#          cache: 'gradle'
-#      - name: Configure Docker Images
-#        run: |
-#          ./docker-images/build-all.sh
-#      - name: Build and Test ${{ env.PACKAGE_NAME }}
-#        run: |
-#          ./gradlew apiCheck
-#          ./gradlew allTests
-#
-#  windows-compat:
-#    runs-on: windows-latest
-#    steps:
-#      - name: Checkout sources
-#        uses: actions/checkout@v4
-#        with:
-#          submodules: true
-#      - name: Configure JDK
-#        uses: actions/setup-java@v3
-#        with:
-#          distribution: 'corretto'
-#          java-version: 17
-#          cache: 'gradle'
-#      - name: Configure Docker Images
-#        run: |
-#          ./docker-images/build-all.sh
-#      - name: Build and Test ${{ env.PACKAGE_NAME }}
-#        run: |
-#          ./gradlew apiCheck
-#          ./gradlew allTests
+          ./gradlew build

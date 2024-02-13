@@ -29,9 +29,14 @@ configureKmpTargets()
 kotlin {
     explicitApi()
 
-    iosArm64()
+    // FIXME - move to repo-tools plugin
+    macosX64()
+    macosArm64()
     iosSimulatorArm64()
+    iosArm64()
     iosX64()
+    linuxX64()
+    linuxArm64()
 
     jvm {
         attributes {
