@@ -13,7 +13,7 @@ This project is licensed under the Apache-2.0 License.
 
 ## Building
 
-Kotlin Multiplatform projects are in [Alpha](https://kotlinlang.org/docs/reference/evolution/components-stability.html). The CRT interfaces are subject to change.
+CRT interfaces are subject to change.
 
 ### Linux/Unix
 Install some version of libcrypto on which s2n depends. See the [s2n](https://github.com/awslabs/s2n) documentation.
@@ -23,6 +23,7 @@ apt-get install libssl-dev
 ```
 
 OR
+
 ```sh
 yum install openssl-devel
 ```
@@ -32,6 +33,36 @@ Set the path to `libcrypto.a` either as a command line argument to gradle `-Plib
 
 ### OSX
 
+#### Debugging simulator test issues
+
+**Xcode does not support simulator tests for \<native target>**
+
+```
+* What went wrong:
+Execution failed for task ':aws-crt-kotlin:iosX64Test'.
+> Error while evaluating property 'device' of task ':aws-crt-kotlin:iosX64Test'.
+   > Failed to calculate the value of task ':aws-crt-kotlin:iosX64Test' property 'device'.
+      > Xcode does not support simulator tests for ios_x64. Check that requested SDK is installed.
+```
+
+Ensure that you have an appropriate simulator runtime installed.
+
+e.g. to install `iOS` platform support including simulator runtimes:
+```sh
+xcodebuild -downloadPlatform iOS
+```
+
+List simulator runtimes with:
+
+```sh
+xcrun simctl list devices available
+```
+
+
+See also: 
+
+* https://developer.apple.com/documentation/xcode/installing-additional-simulator-runtimes
+* https://www.iosdev.recipes/simctl/
 
 ### Windows
 
@@ -69,3 +100,4 @@ CRTDEBUG=trace=2 ./elasticurl/bin/macosX64/elasticurl.kexe -v trace https://aws.
 Run the simple elasticurl integration test script
 
 `./scripts/elasticurl-test.sh`
+

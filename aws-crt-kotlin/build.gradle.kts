@@ -2,12 +2,17 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
+import aws.sdk.kotlin.gradle.crt.cmakeInstallDir
+import aws.sdk.kotlin.gradle.crt.configureCrtCMakeBuild
 import aws.sdk.kotlin.gradle.dsl.configurePublishing
 import aws.sdk.kotlin.gradle.kmp.IDEA_ACTIVE
 import aws.sdk.kotlin.gradle.kmp.configureKmpTargets
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.aws.kotlin.repo.tools.kmp)
+    id("crt-build-support")
 }
 
 val sdkVersion: String by project
@@ -23,6 +28,10 @@ configureKmpTargets()
 
 kotlin {
     explicitApi()
+
+    iosArm64()
+    iosSimulatorArm64()
+    iosX64()
 
     jvm {
         attributes {
@@ -59,10 +68,6 @@ kotlin {
             }
         }
     }
-
-    val kotlinVersion: String by project
-    val coroutinesVersion: String by project
-    val mockServerVersion: String by project
 
     sourceSets {
         val commonMain by getting {
@@ -115,6 +120,37 @@ kotlin {
 
     sourceSets.all {
         optinAnnotations.forEach { languageSettings.optIn(it) }
+    }
+
+    // create a single "umbrella" cinterop will all the aws-c-* API's we want to consume
+    // see: https://github.com/JetBrains/kotlin-native/issues/2423#issuecomment-466300153
+    targets.withType<KotlinNativeTarget> {
+        val knTarget = this
+        logger.info("configuring $knTarget: ${knTarget.name}")
+        val cmakeInstallTask = configureCrtCMakeBuild(knTarget)
+        val targetInstallDir = project.cmakeInstallDir(knTarget)
+        val headerDir = targetInstallDir.resolve("include")
+        val libDir = targetInstallDir.resolve("lib")
+
+        compilations["main"].cinterops {
+            val interopDir = "$projectDir/native/interop"
+            println("configuring crt cinterop for: ${knTarget.name}")
+            val interopSettings = create("aws-crt") {
+                defFile("$interopDir/crt.def")
+                includeDirs(headerDir)
+                compilerOpts("-L${libDir.absolutePath}")
+            }
+
+            // cinterop tasks processes header files which requires the corresponding CMake build/install to run
+            val cinteropTask = tasks.named(interopSettings.interopProcessingTaskName)
+            cinteropTask.configure {
+                dependsOn(cmakeInstallTask)
+            }
+        }
+
+        compilations["test"].compilerOptions.configure {
+            freeCompilerArgs.addAll(listOf("-linker-options", "-L${libDir.absolutePath}"))
+        }
     }
 }
 
