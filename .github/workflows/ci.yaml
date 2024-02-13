@@ -44,6 +44,7 @@ jobs:
       - name: Build and Test ${{ env.PACKAGE_NAME }}
         run: |
           docker images
+          docker run --rm aws-crt-kotlin/linux-x64:latest cmake --version  
           ./gradlew apiCheck
           ./gradlew allTests
 
