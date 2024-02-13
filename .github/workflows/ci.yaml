@@ -30,7 +30,7 @@ jobs:
         with:
           submodules: true
       - name: Setup build environment
-        uses: .github/actions/setup-build
+        uses: ./.github/actions/setup-build
       - name: Configure Docker Images
         run: |
           ./docker-images/build-all.sh
@@ -62,7 +62,7 @@ jobs:
         with:
           submodules: true
       - name: Setup build environment
-        uses: .github/actions/setup-build
+        uses: ./.github/actions/setup-build
         with:
           install-finch: false
       - name: Build and Test ${{ env.PACKAGE_NAME }}
@@ -93,7 +93,7 @@ jobs:
       OCI_EXE: finch
     steps:
       - name: Setup build environment
-        uses: .github/actions/setup-build
+        uses: ./.github/actions/setup-build
       - name: Download test binaries
         uses: actions/download-artifact@v4
         with:
