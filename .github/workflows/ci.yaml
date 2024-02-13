@@ -12,6 +12,10 @@ env:
   BUILDER_HOST: https://d19elf31gohf1l.cloudfront.net
   PACKAGE_NAME: aws-crt-kotlin
   RUN: ${{ github.run_id }}-${{ github.run_number }}
+  # generated dockcross scripts default to `podman` when installed which
+  # has issues when building with docker then executing via dockcross script which
+  # picks up `podman` instead.
+  OCI_EXE: docker
 
 jobs:
   linux-compat:
@@ -44,7 +48,6 @@ jobs:
       - name: Build and Test ${{ env.PACKAGE_NAME }}
         run: |
           docker images
-          docker run --rm aws-crt-kotlin/linux-x64:latest cmake --version  
           ./gradlew apiCheck
           ./gradlew allTests
 
