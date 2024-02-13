@@ -3,10 +3,6 @@ description: >
   Common repository and build tool setup
 
 inputs:
-  do-checkout:
-    description: 'Flag to skip cloning the repository'
-    default: 'true'
-    required: false
   install-finch:
     description: 'Flag to install finch OCI tooling on mac hosts'
     default: 'true'
@@ -16,10 +12,6 @@ runs:
   using: composite
 
   steps:
-    - uses: actions/checkout@v4
-      if: ${{ inputs.do-checkout == 'true' }}
-      with:
-        submodules: true
     - name: Configure JDK
       uses: actions/setup-java@v3
       with:

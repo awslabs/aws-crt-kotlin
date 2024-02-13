@@ -26,6 +26,9 @@ jobs:
       # docker not available on macos-* due to licensing
       OCI_EXE: finch
     steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
       - name: Setup build environment
         uses: .github/actions/setup-build
       - name: Configure Docker Images
@@ -55,6 +58,9 @@ jobs:
   macos-x64-native:
     runs-on: macos-13
     steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
       - name: Setup build environment
         uses: .github/actions/setup-build
         with:
@@ -88,8 +94,6 @@ jobs:
     steps:
       - name: Setup build environment
         uses: .github/actions/setup-build
-        with:
-          do-checkout: false
       - name: Download test binaries
         uses: actions/download-artifact@v4
         with:
