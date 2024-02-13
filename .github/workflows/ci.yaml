@@ -18,39 +18,123 @@ env:
   OCI_EXE: docker
 
 jobs:
-  all-platforms:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        # macos-13=x64, macos-14=m1
-        os: [ubuntu-latest, macos-13, macos-14, windows-latest]
+  # build and test macos-arm targets: jvm, macoArm64, iosSimulatorArm64, watchosSimulatorArm65, tvosSimulatorArm64
+  # cross compile native test targets for: linuxArm64, linuxX64, mingwX64
+  macos-arm:
+    runs-on: macos-14
+    env:
+      # docker not available on macos-* due to licensing
+      OCI_EXE: finch
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-      - name: Configure JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'corretto'
-          java-version: 17
-          cache: 'gradle'
-      # Cache the Kotlin/Native toolchain based on the input Kotlin version from version catalog
-      # see https://kotlinlang.org/docs/native-improving-compilation-time.html
-      - uses: actions/cache@v4
-        with:
-          path: |
-            ~/.konan
-          key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-konan-
-      # FIXME - we will need to migrate this to ECR to avoid throttle limits from dockerhub, for now rebuild the images during CI
+      - name: Setup build environment
+        uses: .github/actions/setup-build
       - name: Configure Docker Images
         run: |
           ./docker-images/build-all.sh
-          docker images
       - name: Build and Test ${{ env.PACKAGE_NAME }}
         run: |
-          docker images
+          $OCI_EXE images
           ./gradlew build
+      - name: Generate cross platform test binaries
+        run: |
+          ./gradlew crossPlatformTestBinaries
+      - uses: actions/upload-artifact@v4
+        with:
+          name: test-binaries
+          path: |
+            aws-crt-kotlin/build/bin
+            .github/scripts
+      - name: Save Test Reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-${{ runner.os }}
+          path: '**/build/reports'
+
+  # macosX64, iosX64
+  macos-x64-native:
+    runs-on: macos-13
+    steps:
+      - name: Setup build environment
+        uses: .github/actions/setup-build
+        with:
+          install-finch: false
+      - name: Build and Test ${{ env.PACKAGE_NAME }}
+        run: |
+          ./gradlew macosX64Test iosX64Test
+      - name: Save Test Reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-${{ runner.os }}
+          path: '**/build/reports'
+
+
+  # linuxX64, linuxArm64
+  # re-use test binaries cross compiled on previous build step
+  linux-native:
+    runs-on: macos-14
+    needs: macos-arm
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x64, arm64]
+        os:
+          - ubuntu-22.04
+          - al2023
+          - al2
+    env:
+      OCI_EXE: finch
+    steps:
+      - name: Setup build environment
+        uses: .github/actions/setup-build
+        with:
+          do-checkout: false
+      - name: Download test binaries
+        uses: actions/download-artifact@v4
+        with:
+          name: test-binaries
+          path: test-binaries
+      - name: Test ${{ matrix.os }} on ${{ matrix.arch }}
+        run: |
+          ls -R
+          .github/scripts/run-container-test-binary ${{ matrix.os }} ${{ matrix.arch }} ./test-binaries/aws-crt-kotlin/build/bin
+
+# TODO - linux jvm, windows jvm, windows native, jvm versions
+
+#  all-platforms:
+#    runs-on: ${{ matrix.os }}
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        # macos-14=m1
+#        os: [ubuntu-latest, macos-13, macos-14, windows-latest]
+#    steps:
+#      - name: Checkout sources
+#        uses: actions/checkout@v4
+#        with:
+#          submodules: true
+#      - name: Configure JDK
+#        uses: actions/setup-java@v3
+#        with:
+#          distribution: 'corretto'
+#          java-version: 17
+#          cache: 'gradle'
+#      # Cache the Kotlin/Native toolchain based on the input Kotlin version from version catalog
+#      # see https://kotlinlang.org/docs/native-improving-compilation-time.html
+#      - uses: actions/cache@v4
+#        with:
+#          path: |
+#            ~/.konan
+#          key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml') }}
+#          restore-keys: |
+#            ${{ runner.os }}-konan-
+#      # FIXME - we will need to migrate this to ECR to avoid throttle limits from dockerhub, for now rebuild the images during CI
+#      - name: Configure Docker Images
+#        run: |
+#          ./docker-images/build-all.sh
+#          docker images
+#      - name: Build and Test ${{ env.PACKAGE_NAME }}
+#        run: |
+#          docker images
+#          ./gradlew build

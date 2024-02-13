@@ -37,6 +37,8 @@ kotlin {
     iosX64()
     linuxX64()
     linuxArm64()
+    // FIXME - setup docker files and cmake tasks appropriately
+    // mingwX64()
 
     jvm {
         attributes {
@@ -161,3 +163,14 @@ kotlin {
 
 // Publishing
 configurePublishing("aws-crt-kotlin")
+
+
+// create a summary task that compiles all cross platform test binaries
+val testBinariesTask = tasks.register("crossPlatformTestBinaries") {
+    val crossPlatformTargets = listOf(
+        "linuxX64",
+        "linuxArm64",
+    )
+
+}
+
