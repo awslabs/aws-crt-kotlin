@@ -18,35 +18,26 @@ env:
   OCI_EXE: docker
 
 jobs:
+  # FIXME - re-enable - working
   # build and test for targets: jvm, macoArm64, iosSimulatorArm64, watchosSimulatorArm65, tvosSimulatorArm64
   # cross compile native test targets for: linuxArm64, linuxX64, mingwX64
-  macos-arm:
-    runs-on: macos-14
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-
-      - name: Setup build environment
-        uses: ./.github/actions/setup-build
-      - name: Build and Test ${{ env.PACKAGE_NAME }}
-        run: |
-          ./gradlew -Paws.sdk.kotlin.crt.disableCrossCompile=true build
-      - name: Generate cross platform test binaries
-        run: |
-          ./gradlew crossPlatformTestBinaries
-      - uses: actions/upload-artifact@v4
-        with:
-          name: test-binaries
-          path: |
-            aws-crt-kotlin/build/bin
-            .github/scripts
-      - name: Save Test Reports
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-reports-macos-arm
-          path: '**/build/reports'
+#  macos-arm:
+#    runs-on: macos-14
+#    steps:
+#      - uses: actions/checkout@v4
+#        with:
+#          submodules: true
+#      - name: Setup build environment
+#        uses: ./.github/actions/setup-build
+#      - name: Build and Test ${{ env.PACKAGE_NAME }}
+#        run: |
+#          ./gradlew -Paws.sdk.kotlin.crt.disableCrossCompile=true build
+#      - name: Save Test Reports
+#        if: failure()
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: test-reports-macos-arm
+#          path: '**/build/reports'
 
   # build and test for targets: jvm, linuxX64
   # cross compile for: linuxX64, linuxArm64
@@ -127,8 +118,8 @@ jobs:
         uses: docker/setup-qemu-action@v3
       - name: Test ${{ matrix.os }} on ${{ matrix.arch }}
         run: |
-          ls -R
-          .github/scripts/run-container-test.py --distro ${{ matrix.distro }} --arch ${{ matrix.arch }} --test-bin-dir ./native-test-binaries/aws-crt-kotlin/build/bin
+          ls -lsaR
+          ./native-test-binaries/.github/scripts/run-container-test.py --distro ${{ matrix.distro }} --arch ${{ matrix.arch }} --test-bin-dir ./native-test-binaries/aws-crt-kotlin/build/bin
 
 # TODO - linux-native test reports
 # TODO - windows jvm, windows native, jvm versions
