@@ -80,3 +80,12 @@ fun Project.cmakeInstallDir(target: KotlinNativeTarget): File =
 
 val Project.cmakeLists: File
     get() = rootProject.projectDir.resolve("CMakeLists.txt")
+
+val KotlinNativeTarget.cmakeConfigureTaskName: String
+    get() = namedSuffix("cmakeConfigure", capitalized = true)
+
+val KotlinNativeTarget.cmakeBuildTaskName: String
+    get() = namedSuffix("cmakeBuild", capitalized = true)
+
+val KotlinNativeTarget.cmakeInstallTaskName: String
+    get() = namedSuffix("cmakeInstall", capitalized = true)

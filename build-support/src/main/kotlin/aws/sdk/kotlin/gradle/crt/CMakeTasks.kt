@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
+// FIXME - check for dockcross scripts and give better error if they don't exist, possibly with bootstrap commands
+
 /**
  * See [CMAKE_BUILD_TYPE](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html)
  */
@@ -55,7 +57,6 @@ fun Project.configureCrtCMakeBuild(
     }
 
     // only enable cmake* tasks if that target is enabled
-    // FIXME - fix CI to not use CRT builder (or rationilize why we would keep it)
     val hm = HostManager()
     listOf(cmakeConfigure, cmakeBuild, cmakeInstall).forEach { task ->
         task.configure {
@@ -85,7 +86,7 @@ private fun Project.registerCmakeConfigureTask(
     val relativeInstallDir = installDir.relativeTo(project.rootDir).path
     val cmakeLists = project.rootProject.projectDir.resolve("CMakeLists.txt")
 
-    return project.tasks.register(knTarget.namedSuffix("cmakeConfigure", capitalized = true)) {
+    return project.tasks.register(knTarget.cmakeConfigureTaskName) {
         group = "ffi"
 
         inputs.property("buildType", buildType.toString())
@@ -139,7 +140,7 @@ private fun Project.registerCmakeBuildTask(
     val cmakeBuildDir = project.cmakeBuildDir(knTarget)
     val relativeBuildDir = cmakeBuildDir.relativeTo(project.rootDir).path
 
-    return project.tasks.register(knTarget.namedSuffix("cmakeBuild", capitalized = true)) {
+    return project.tasks.register(knTarget.cmakeBuildTaskName) {
         group = "ffi"
 
         inputs.property("buildType", buildType.toString())
@@ -182,7 +183,7 @@ private fun Project.registerCmakeInstallTask(
     val relativeBuildDir = cmakeBuildDir.relativeTo(project.rootDir).path
     val installDir = project.cmakeInstallDir(knTarget)
 
-    return project.tasks.register(knTarget.namedSuffix("cmakeInstall", capitalized = true)) {
+    return project.tasks.register(knTarget.cmakeInstallTaskName) {
         group = "ffi"
 
         inputs.file(project.cmakeLists)

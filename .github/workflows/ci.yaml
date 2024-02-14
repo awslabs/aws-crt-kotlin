@@ -30,10 +30,8 @@ jobs:
       - name: Setup build environment
         uses: ./.github/actions/setup-build
       - name: Build and Test ${{ env.PACKAGE_NAME }}
-        # FIXME - add disable cross compile flag
         run: |
-          $OCI_EXE images
-          ./gradlew build
+          ./gradlew -Paws.sdk.kotlin.crt.disableCrossCompile=true build
       - name: Generate cross platform test binaries
         run: |
           ./gradlew crossPlatformTestBinaries

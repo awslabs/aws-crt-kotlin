@@ -4,6 +4,7 @@
  */
 import aws.sdk.kotlin.gradle.crt.cmakeInstallDir
 import aws.sdk.kotlin.gradle.crt.configureCrtCMakeBuild
+import aws.sdk.kotlin.gradle.crt.disableCrossCompileTargets
 import aws.sdk.kotlin.gradle.dsl.configurePublishing
 import aws.sdk.kotlin.gradle.kmp.IDEA_ACTIVE
 import aws.sdk.kotlin.gradle.kmp.configureKmpTargets
@@ -165,7 +166,6 @@ kotlin {
 // Publishing
 configurePublishing("aws-crt-kotlin")
 
-
 val linuxTargets: List<String> = listOf(
     "linuxX64",
     "linuxArm64",
@@ -180,7 +180,7 @@ tasks.register("linuxTestBinaries") {
     }
 }
 
-// FIXME - so docker containers won't work on GH CI using macos arm64 runners due to nested virtualization
-// see https://youtrack.jetbrains.com/issue/KT-30498
-// https://github.com/Dominaezzz/kgl/blob/41155a8200602535697b872232e41cfe6f5eb20e/build.gradle.kts#L55
-// typedProp<Boolean>("aws.crt.kotlin.disableCrossCompilation")
+val disableCrossCompile = typedProp<Boolean>("aws.sdk.kotlin.crt.disableCrossCompile") == true
+if (disableCrossCompile) {
+    disableCrossCompileTargets()
+}
