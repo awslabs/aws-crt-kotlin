@@ -120,7 +120,7 @@ jobs:
         uses: docker/setup-qemu-action@v3
       - name: Test ${{ matrix.os }} on ${{ matrix.arch }}
         run: |
-          chmod -R 755 $RUN_CONTAINER_TEST
+          chmod -R 755 native-test-binaries
           pwd
           ls -lsaR
           RUN_CONTAINER_TEST=./native-test-binaries/.github/scripts/run-container-test.py 
