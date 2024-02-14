@@ -7,6 +7,7 @@ import aws.sdk.kotlin.gradle.crt.configureCrtCMakeBuild
 import aws.sdk.kotlin.gradle.dsl.configurePublishing
 import aws.sdk.kotlin.gradle.kmp.IDEA_ACTIVE
 import aws.sdk.kotlin.gradle.kmp.configureKmpTargets
+import aws.sdk.kotlin.gradle.util.typedProp
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
@@ -165,12 +166,21 @@ kotlin {
 configurePublishing("aws-crt-kotlin")
 
 
-// create a summary task that compiles all cross platform test binaries
-val testBinariesTask = tasks.register("crossPlatformTestBinaries") {
-    val crossPlatformTargets = listOf(
-        "linuxX64",
-        "linuxArm64",
-    )
+val linuxTargets: List<String> = listOf(
+    "linuxX64",
+    "linuxArm64",
+)
 
+// create a summary task that compiles all cross platform test binaries
+tasks.register("linuxTestBinaries") {
+    linuxTargets.map {
+        tasks.named("${it}TestBinaries")
+    }.forEach { testTask ->
+        dependsOn(testTask)
+    }
 }
 
+// FIXME - so docker containers won't work on GH CI using macos arm64 runners due to nested virtualization
+// see https://youtrack.jetbrains.com/issue/KT-30498
+// https://github.com/Dominaezzz/kgl/blob/41155a8200602535697b872232e41cfe6f5eb20e/build.gradle.kts#L55
+// typedProp<Boolean>("aws.crt.kotlin.disableCrossCompilation")

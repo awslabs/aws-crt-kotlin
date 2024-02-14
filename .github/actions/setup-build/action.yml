@@ -3,9 +3,10 @@ description: >
   Common repository and build tool setup
 
 inputs:
+  # note nested virtualization is not supported on current arm64 mac runners: https://github.com/runfinch/finch/issues/812
   install-finch:
     description: 'Flag to install finch OCI tooling on mac hosts'
-    default: 'true'
+    default: 'false'
     required: false
 
 runs:
