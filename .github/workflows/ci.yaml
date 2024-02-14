@@ -65,12 +65,14 @@ jobs:
           path: |
             aws-crt-kotlin/build/bin
             .github/scripts
+          retention-days: 15
       - name: Save Test Reports
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: test-reports-linux
           path: '**/build/reports'
+          retention-days: 15
 
 # FIXME - re-enable - working (also if we disable cross compilation we can just run the build task to build targets valid for the given host)
   # macosX64, iosX64
@@ -118,9 +120,10 @@ jobs:
         uses: docker/setup-qemu-action@v3
       - name: Test ${{ matrix.os }} on ${{ matrix.arch }}
         run: |
+          chmod -R 755 $RUN_CONTAINER_TEST
+          pwd
           ls -lsaR
           RUN_CONTAINER_TEST=./native-test-binaries/.github/scripts/run-container-test.py 
-          chmod u+x $RUN_CONTAINER_TEST
           $RUN_CONTAINER_TEST --distro ${{ matrix.distro }} --arch ${{ matrix.arch }} --test-bin-dir ./native-test-binaries/aws-crt-kotlin/build/bin
 
 # TODO - linux-native test reports
