@@ -119,7 +119,9 @@ jobs:
       - name: Test ${{ matrix.os }} on ${{ matrix.arch }}
         run: |
           ls -lsaR
-          ./native-test-binaries/.github/scripts/run-container-test.py --distro ${{ matrix.distro }} --arch ${{ matrix.arch }} --test-bin-dir ./native-test-binaries/aws-crt-kotlin/build/bin
+          RUN_CONTAINER_TEST=./native-test-binaries/.github/scripts/run-container-test.py 
+          chmod u+x $RUN_CONTAINER_TEST
+          $RUN_CONTAINER_TEST --distro ${{ matrix.distro }} --arch ${{ matrix.arch }} --test-bin-dir ./native-test-binaries/aws-crt-kotlin/build/bin
 
 # TODO - linux-native test reports
 # TODO - windows jvm, windows native, jvm versions
