@@ -184,3 +184,21 @@ val disableCrossCompile = typedProp<Boolean>("aws.sdk.kotlin.crt.disableCrossCom
 if (disableCrossCompile) {
     disableCrossCompileTargets()
 }
+
+// run tests on specific JVM version
+val testJavaVersion = typedProp<String>("test.java.version")?.let {
+    JavaLanguageVersion.of(it)
+}?.also {
+    println("configuring tests to run with jdk $it")
+}
+
+if (testJavaVersion != null) {
+    tasks.withType<Test> {
+        val toolchains = project.extensions.getByType<JavaToolchainService>()
+        javaLauncher.set(
+            toolchains.launcherFor {
+                languageVersion.set(testJavaVersion)
+            },
+        )
+    }
+}
