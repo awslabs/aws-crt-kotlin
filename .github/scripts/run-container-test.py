@@ -15,7 +15,7 @@ Locally you would need to run one of:
 
 OR
 
-` docker run --privileged --rm tonistiigi/binfmt --install all`
+`docker run --privileged --rm tonistiigi/binfmt --install all`
 """
 
 import argparse
@@ -117,7 +117,7 @@ def run_docker_test(opts):
 
 def create_cli():
     parser = argparse.ArgumentParser(
-        prog="container-test",
+        prog="run-container-test",
         description="Run cross platform test binaries in a container",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )

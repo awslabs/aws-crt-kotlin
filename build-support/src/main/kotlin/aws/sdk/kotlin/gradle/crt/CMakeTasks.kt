@@ -11,9 +11,6 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
-
-// FIXME - check for dockcross scripts and give better error if they don't exist, possibly with bootstrap commands
 
 /**
  * See [CMAKE_BUILD_TYPE](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html)
@@ -205,12 +202,14 @@ private fun runCmake(project: Project, target: KotlinNativeTarget, cmakeArgs: Li
     project.exec {
         workingDir(project.rootDir)
         val exeArgs = cmakeArgs.toMutableList()
-        val exeName = when (target.konanTarget) {
-            KonanTarget.LINUX_X64, KonanTarget.LINUX_ARM64 -> {
+        val exeName = when {
+            target.konanTarget in crossCompileTargets -> {
                 // cross compiling via dockcross - set the docker exe to cmake
-                val containerScriptArgs = listOf("--args", "--pull=never", "--", "cmake")
+                val containerScriptArgs = listOf("--args", "--pull=missing", "--", "cmake")
                 exeArgs.addAll(0, containerScriptArgs)
-                "./dockcross-" + target.konanTarget.name.replace("_", "-")
+                val script = "dockcross-" + target.konanTarget.name.replace("_", "-")
+                validateCrossCompileScriptsAvailable(project, script)
+                "./$script"
             }
             else -> "cmake"
         }
@@ -218,5 +217,20 @@ private fun runCmake(project: Project, target: KotlinNativeTarget, cmakeArgs: Li
         project.logger.info("$exeName ${exeArgs.joinToString(separator = " ")}")
         executable(exeName)
         args(exeArgs)
+    }
+}
+
+private fun validateCrossCompileScriptsAvailable(project: Project, script: String) {
+    val scriptFile = project.rootProject.file(script)
+    if (!scriptFile.exists()) {
+        val message = """
+        dockcross script: `$scriptFile` does not exist! Try re-building the relevant docker image(s) and generating
+        the cross compile scripts.
+        
+        e.g. `./docker-images/build-all.sh`
+        
+        Alternatively disable cross compilation by setting the property `-Paws.sdk.kotlin.crt.disableCrossCompile=true`
+        """.trimIndent()
+        error(message)
     }
 }

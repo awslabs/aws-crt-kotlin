@@ -7,9 +7,6 @@ on:
       - '!main'
 
 env:
-  BUILDER_VERSION: v0.8.22
-  BUILDER_SOURCE: releases
-  BUILDER_HOST: https://d19elf31gohf1l.cloudfront.net
   PACKAGE_NAME: aws-crt-kotlin
   RUN: ${{ github.run_id }}-${{ github.run_number }}
   # generated dockcross scripts default to `podman` when installed which
@@ -18,26 +15,29 @@ env:
   OCI_EXE: docker
 
 jobs:
-  # FIXME - re-enable - working
   # build and test for targets: jvm, macoArm64, iosSimulatorArm64, watchosSimulatorArm65, tvosSimulatorArm64
   # cross compile native test targets for: linuxArm64, linuxX64, mingwX64
-#  macos-arm:
-#    runs-on: macos-14
-#    steps:
-#      - uses: actions/checkout@v4
-#        with:
-#          submodules: true
-#      - name: Setup build environment
-#        uses: ./.github/actions/setup-build
-#      - name: Build and Test ${{ env.PACKAGE_NAME }}
-#        run: |
-#          ./gradlew -Paws.sdk.kotlin.crt.disableCrossCompile=true build
-#      - name: Save Test Reports
-#        if: failure()
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: test-reports-macos-arm
-#          path: '**/build/reports'
+  macos:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-14, macos-13]
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Setup build environment
+        uses: ./.github/actions/setup-build
+      - name: Build and Test ${{ env.PACKAGE_NAME }}
+        run: |
+          ./gradlew -Paws.sdk.kotlin.crt.disableCrossCompile=true build
+      - name: Save Test Reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-macos-${{ matrix.os }}
+          path: '**/build/reports'
 
   # build and test for targets: jvm, linuxX64
   # cross compile for: linuxX64, linuxArm64
@@ -73,29 +73,6 @@ jobs:
           name: test-reports-linux
           path: '**/build/reports'
           retention-days: 15
-
-# FIXME - re-enable - working (also if we disable cross compilation we can just run the build task to build targets valid for the given host)
-  # macosX64, iosX64
-#  macos-x64-native:
-#    runs-on: macos-13
-#    steps:
-#      - uses: actions/checkout@v4
-#        with:
-#          submodules: true
-#      - name: Setup build environment
-#        uses: ./.github/actions/setup-build
-#        with:
-#          install-finch: false
-#      - name: Build and Test ${{ env.PACKAGE_NAME }}
-#        run: |
-#          ./gradlew macosX64Test iosX64Test
-#      - name: Save Test Reports
-#        if: failure()
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: test-reports-macos-x64-native
-#          path: '**/build/reports'
-
 
   # test multiple os/architecture combinations for targets: linuxX64, linuxArm64
   # re-use test binaries cross compiled on previous build step

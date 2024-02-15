@@ -13,13 +13,13 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 /**
  * Kotlin/Native Linux and Windows targets are generally enabled on all hosts since
  * the Kotlin toolchain and backend compilers support cross compilation. We
  * are using cinterop and have to compile CRT for those platforms which sometimes
  * requires using docker which isn't always available in CI or setup in users environment.
- *
  *
  * See [KT-30498](https://youtrack.jetbrains.com/issue/KT-30498)
  */
@@ -43,6 +43,7 @@ private val KotlinNativeTarget.isLinux: Boolean
 
 private val KotlinNativeTarget.isApple: Boolean
     get() = konanTarget.family.isAppleFamily
+
 private val KotlinNativeTarget.isWindows: Boolean
     get() = konanTarget.family == Family.MINGW
 
@@ -78,3 +79,9 @@ internal fun Project.disable(knTarget: KotlinNativeTarget) {
         }
     }
 }
+
+// targets that are always cross compiled/ran in docker containers
+internal val crossCompileTargets: List<KonanTarget> = listOf(
+    KonanTarget.LINUX_X64,
+    KonanTarget.LINUX_ARM64,
+)
