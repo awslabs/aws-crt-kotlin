@@ -15,8 +15,8 @@ env:
   OCI_EXE: docker
 
 jobs:
-  # build and test for targets: jvm, macoArm64, iosSimulatorArm64, watchosSimulatorArm65, tvosSimulatorArm64
-  # cross compile native test targets for: linuxArm64, linuxX64, mingwX64
+  # macos-14 build and test for targets: jvm, macoArm64, iosSimulatorArm64, watchosSimulatorArm65, tvosSimulatorArm64
+  # macos-13 build and test for targets: jvm, macoX64, iosX64, tvosX64, watchosX64
   macos:
     strategy:
       fail-fast: false
@@ -103,6 +103,6 @@ jobs:
           RUN_CONTAINER_TEST=./native-test-binaries/.github/scripts/run-container-test.py 
           $RUN_CONTAINER_TEST --distro ${{ matrix.distro }} --arch ${{ matrix.arch }} --test-bin-dir ./native-test-binaries/aws-crt-kotlin/build/bin
 
-# TODO - linux-native test reports
+# TODO - native test reports?
 # TODO - windows jvm, windows native, jvm versions
 
