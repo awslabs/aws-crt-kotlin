@@ -26,7 +26,7 @@ import shutil
 
 VERBOSE = False
 
-DISTRO_TO_IMAGE_NAME= {
+DISTRO_TO_IMAGE_NAME = {
     "ubuntu-22.04": "public.ecr.aws/lts/ubuntu:22.04_stable",
     "al2023": "public.ecr.aws/amazonlinux/amazonlinux:2023",
     "al2": "public.ecr.aws/amazonlinux/amazonlinux:2"
@@ -36,6 +36,7 @@ DOCKER_PLATFORM_BY_ARCH = {
     "x64": "linux/amd64",
     "arm64": "linux/arm64"
 }
+
 
 def vprint(message):
     global VERBOSE
@@ -60,9 +61,6 @@ def shell(command, cwd=None, check=True, capture_output=False):
     thrown if the command exits with a non-zero exit status.
     :returns: the subprocess CompletedProcess output
     """
-    # if type(command) is not list:
-    #     command = shlex.split(command)
-
     vprint(f"running `{command}`")
     return subprocess.run(command, shell=True, check=check, cwd=cwd, capture_output=capture_output)
 
@@ -114,6 +112,7 @@ def run_docker_test(opts):
     cmd = shlex.join(cmd)
     print(cmd)
     shell(cmd)
+
 
 def create_cli():
     parser = argparse.ArgumentParser(
