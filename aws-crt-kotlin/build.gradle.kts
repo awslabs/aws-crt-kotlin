@@ -4,9 +4,11 @@
  */
 import aws.sdk.kotlin.gradle.crt.cmakeInstallDir
 import aws.sdk.kotlin.gradle.crt.configureCrtCMakeBuild
+import aws.sdk.kotlin.gradle.crt.disableCrossCompileTargets
 import aws.sdk.kotlin.gradle.dsl.configurePublishing
 import aws.sdk.kotlin.gradle.kmp.IDEA_ACTIVE
 import aws.sdk.kotlin.gradle.kmp.configureKmpTargets
+import aws.sdk.kotlin.gradle.util.typedProp
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
@@ -29,9 +31,16 @@ configureKmpTargets()
 kotlin {
     explicitApi()
 
-    iosArm64()
+    // FIXME - move to repo-tools plugin
+    macosX64()
+    macosArm64()
     iosSimulatorArm64()
+    iosArm64()
     iosX64()
+    linuxX64()
+    linuxArm64()
+    // FIXME - setup docker files and cmake tasks appropriately
+    // mingwX64()
 
     jvm {
         attributes {
@@ -156,3 +165,40 @@ kotlin {
 
 // Publishing
 configurePublishing("aws-crt-kotlin")
+
+val linuxTargets: List<String> = listOf(
+    "linuxX64",
+    "linuxArm64",
+)
+
+// create a summary task that compiles all cross platform test binaries
+tasks.register("linuxTestBinaries") {
+    linuxTargets.map {
+        tasks.named("${it}TestBinaries")
+    }.forEach { testTask ->
+        dependsOn(testTask)
+    }
+}
+
+val disableCrossCompile = typedProp<Boolean>("aws.sdk.kotlin.crt.disableCrossCompile") == true
+if (disableCrossCompile) {
+    disableCrossCompileTargets()
+}
+
+// run tests on specific JVM version
+val testJavaVersion = typedProp<String>("test.java.version")?.let {
+    JavaLanguageVersion.of(it)
+}?.also {
+    println("configuring tests to run with jdk $it")
+}
+
+if (testJavaVersion != null) {
+    tasks.withType<Test> {
+        val toolchains = project.extensions.getByType<JavaToolchainService>()
+        javaLauncher.set(
+            toolchains.launcherFor {
+                languageVersion.set(testJavaVersion)
+            },
+        )
+    }
+}

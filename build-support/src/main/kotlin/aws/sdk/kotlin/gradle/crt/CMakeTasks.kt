@@ -11,7 +11,6 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
 
 /**
  * See [CMAKE_BUILD_TYPE](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html)
@@ -55,7 +54,6 @@ fun Project.configureCrtCMakeBuild(
     }
 
     // only enable cmake* tasks if that target is enabled
-    // FIXME - fix CI to not use CRT builder (or rationilize why we would keep it)
     val hm = HostManager()
     listOf(cmakeConfigure, cmakeBuild, cmakeInstall).forEach { task ->
         task.configure {
@@ -85,7 +83,7 @@ private fun Project.registerCmakeConfigureTask(
     val relativeInstallDir = installDir.relativeTo(project.rootDir).path
     val cmakeLists = project.rootProject.projectDir.resolve("CMakeLists.txt")
 
-    return project.tasks.register(knTarget.namedSuffix("cmakeConfigure", capitalized = true)) {
+    return project.tasks.register(knTarget.cmakeConfigureTaskName) {
         group = "ffi"
 
         inputs.property("buildType", buildType.toString())
@@ -139,7 +137,7 @@ private fun Project.registerCmakeBuildTask(
     val cmakeBuildDir = project.cmakeBuildDir(knTarget)
     val relativeBuildDir = cmakeBuildDir.relativeTo(project.rootDir).path
 
-    return project.tasks.register(knTarget.namedSuffix("cmakeBuild", capitalized = true)) {
+    return project.tasks.register(knTarget.cmakeBuildTaskName) {
         group = "ffi"
 
         inputs.property("buildType", buildType.toString())
@@ -182,7 +180,7 @@ private fun Project.registerCmakeInstallTask(
     val relativeBuildDir = cmakeBuildDir.relativeTo(project.rootDir).path
     val installDir = project.cmakeInstallDir(knTarget)
 
-    return project.tasks.register(knTarget.namedSuffix("cmakeInstall", capitalized = true)) {
+    return project.tasks.register(knTarget.cmakeInstallTaskName) {
         group = "ffi"
 
         inputs.file(project.cmakeLists)
@@ -204,12 +202,14 @@ private fun runCmake(project: Project, target: KotlinNativeTarget, cmakeArgs: Li
     project.exec {
         workingDir(project.rootDir)
         val exeArgs = cmakeArgs.toMutableList()
-        val exeName = when (target.konanTarget) {
-            KonanTarget.LINUX_X64, KonanTarget.LINUX_ARM64 -> {
+        val exeName = when {
+            target.konanTarget in crossCompileTargets -> {
                 // cross compiling via dockcross - set the docker exe to cmake
-                val containerScriptArgs = listOf("--args", "--pull=never", "--", "cmake")
+                val containerScriptArgs = listOf("--args", "--pull=missing", "--", "cmake")
                 exeArgs.addAll(0, containerScriptArgs)
-                "./dockcross-" + target.konanTarget.name.replace("_", "-")
+                val script = "dockcross-" + target.konanTarget.name.replace("_", "-")
+                validateCrossCompileScriptsAvailable(project, script)
+                "./$script"
             }
             else -> "cmake"
         }
@@ -217,5 +217,20 @@ private fun runCmake(project: Project, target: KotlinNativeTarget, cmakeArgs: Li
         project.logger.info("$exeName ${exeArgs.joinToString(separator = " ")}")
         executable(exeName)
         args(exeArgs)
+    }
+}
+
+private fun validateCrossCompileScriptsAvailable(project: Project, script: String) {
+    val scriptFile = project.rootProject.file(script)
+    if (!scriptFile.exists()) {
+        val message = """
+        dockcross script: `$scriptFile` does not exist! Try re-building the relevant docker image(s) and generating
+        the cross compile scripts.
+        
+        e.g. `./docker-images/build-all.sh`
+        
+        Alternatively disable cross compilation by setting the property `-Paws.sdk.kotlin.crt.disableCrossCompile=true`
+        """.trimIndent()
+        error(message)
     }
 }

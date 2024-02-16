@@ -7,84 +7,149 @@ on:
       - '!main'
 
 env:
-  BUILDER_VERSION: v0.8.22
-  BUILDER_SOURCE: releases
-  BUILDER_HOST: https://d19elf31gohf1l.cloudfront.net
   PACKAGE_NAME: aws-crt-kotlin
   RUN: ${{ github.run_id }}-${{ github.run_number }}
+  # generated dockcross scripts default to `podman` when installed which
+  # has issues when building with docker then executing via dockcross script which
+  # picks up `podman` instead.
+  OCI_EXE: docker
 
 jobs:
-  linux-compat:
+  jvm:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # we build with a specific JDK version but source/target compatibility should ensure the jar is usable by
+        # the target versions we want to support
+        java-version:
+          - 8
+          - 11
+          - 17
+          - 21
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
+      - name: Setup build environment
+        uses: ./.github/actions/setup-build
+      - name: Test with ${{ matrix.java-version }}
+        shell: bash
+        run: |
+          ./gradlew -Ptest.java.version=${{ matrix.java-version }} -Paws.sdk.kotlin.crt.disableCrossCompile=true jvmTest --stacktrace 
+      - name: Save Test Reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-jvm-${{ matrix.java-version }}
+          path: '**/build/reports'
+
+  # macos-14 build and test for targets: jvm, macoArm64, iosSimulatorArm64, watchosSimulatorArm65, tvosSimulatorArm64
+  # macos-13 build and test for targets: jvm, macoX64, iosX64, tvosX64, watchosX64
+  macos:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-14, macos-13]
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
         with:
           submodules: true
-      - name: Configure JDK
-        uses: actions/setup-java@v3
+      - name: Setup build environment
+        uses: ./.github/actions/setup-build
+      - name: Build and Test ${{ env.PACKAGE_NAME }}
+        run: |
+          ./gradlew -Paws.sdk.kotlin.crt.disableCrossCompile=true build
+      - name: Save Test Reports
+        if: failure()
+        uses: actions/upload-artifact@v4
         with:
-          distribution: 'corretto'
-          java-version: 17
-          cache: 'gradle'
-      # Cache the Kotlin/Native toolchain based on the input Kotlin version from version catalog
-      # see https://kotlinlang.org/docs/native-improving-compilation-time.html
-      - uses: actions/cache@v4
+          name: test-reports-macos-${{ matrix.os }}
+          path: '**/build/reports'
+
+  # build and test for targets: jvm, linuxX64
+  # cross compile for: linuxX64, linuxArm64
+  # TODO - add mingw as cross compile target
+  linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
         with:
-          path: |
-            ~/.konan
-          key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-konan-
-      # FIXME - we will need to migrate this to ECR to avoid throttle limits from dockerhub, for now rebuild the images during CI
+          submodules: true
+      - name: Setup build environment
+        uses: ./.github/actions/setup-build
       - name: Configure Docker Images
         run: |
           ./docker-images/build-all.sh
-          docker images
       - name: Build and Test ${{ env.PACKAGE_NAME }}
         run: |
-          docker images
-          ./gradlew apiCheck
-          ./gradlew allTests
+          ./gradlew build
+      - name: Generate cross platform test binaries
+        run: |
+          ./gradlew linuxTestBinaries
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-test-binaries
+          path: |
+            aws-crt-kotlin/build/bin
+            .github/scripts
+          retention-days: 15
+      - name: Save Test Reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-linux
+          path: '**/build/reports'
+          retention-days: 15
 
-#  macos-compat:
-#    runs-on: macos-latest
-#    steps:
-#      - name: Checkout sources
-#        uses: actions/checkout@v4
-#        with:
-#          submodules: true
-#      - name: Configure JDK
-#        uses: actions/setup-java@v3
-#        with:
-#          distribution: 'corretto'
-#          java-version: 17
-#          cache: 'gradle'
-#      - name: Configure Docker Images
-#        run: |
-#          ./docker-images/build-all.sh
-#      - name: Build and Test ${{ env.PACKAGE_NAME }}
-#        run: |
-#          ./gradlew apiCheck
-#          ./gradlew allTests
-#
-#  windows-compat:
-#    runs-on: windows-latest
-#    steps:
-#      - name: Checkout sources
-#        uses: actions/checkout@v4
-#        with:
-#          submodules: true
-#      - name: Configure JDK
-#        uses: actions/setup-java@v3
-#        with:
-#          distribution: 'corretto'
-#          java-version: 17
-#          cache: 'gradle'
-#      - name: Configure Docker Images
-#        run: |
-#          ./docker-images/build-all.sh
-#      - name: Build and Test ${{ env.PACKAGE_NAME }}
-#        run: |
-#          ./gradlew apiCheck
-#          ./gradlew allTests
+  # test multiple os/architecture combinations for targets: linuxX64, linuxArm64
+  # re-use test binaries cross compiled on previous build step
+  linux-native:
+    runs-on: ubuntu-22.04
+    needs: linux
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x64, arm64]
+        distro:
+          - ubuntu-22.04
+          - al2023
+          - al2
+    steps:
+      - name: Download test binaries
+        uses: actions/download-artifact@v4
+        with:
+          name: native-test-binaries
+          path: native-test-binaries
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Test ${{ matrix.os }} on ${{ matrix.arch }}
+        run: |
+          chmod -R 755 native-test-binaries
+          pwd
+          ls -lsaR
+          RUN_CONTAINER_TEST=./native-test-binaries/.github/scripts/run-container-test.py 
+          $RUN_CONTAINER_TEST --distro ${{ matrix.distro }} --arch ${{ matrix.arch }} --test-bin-dir ./native-test-binaries/aws-crt-kotlin/build/bin
+
+  # windows JVM
+  windows:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Setup build environment
+        uses: ./.github/actions/setup-build
+      - name: Build and Test ${{ env.PACKAGE_NAME }}
+        run: |
+          ./gradlew -P"aws.sdk.kotlin.crt.disableCrossCompile"=true build
+      - name: Save Test Reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-windows
+          path: '**/build/reports'
+
+# TODO - native test reports?
+# TODO - windows native
+
