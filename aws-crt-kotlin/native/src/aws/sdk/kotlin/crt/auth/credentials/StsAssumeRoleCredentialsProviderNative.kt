@@ -5,8 +5,8 @@
 
 package aws.sdk.kotlin.crt.auth.credentials
 
-//public actual class StsAssumeRoleCredentialsProvider
-//internal actual constructor(builder: StsAssumeRoleCredentialsProviderBuilder) :
+// public actual class StsAssumeRoleCredentialsProvider
+// internal actual constructor(builder: StsAssumeRoleCredentialsProviderBuilder) :
 //    CredentialsProvider {
 //    public actual companion object {}
 //
@@ -21,4 +21,4 @@ package aws.sdk.kotlin.crt.auth.credentials
 //    override suspend fun waitForShutdown() {
 //        TODO("Not yet implemented")
 //    }
-//}
+// }

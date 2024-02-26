@@ -5,7 +5,7 @@
 
 package aws.sdk.kotlin.crt.auth.credentials
 
-//public actual class DefaultChainCredentialsProvider internal actual constructor(builder: DefaultChainCredentialsProviderBuilder) :
+// public actual class DefaultChainCredentialsProvider internal actual constructor(builder: DefaultChainCredentialsProviderBuilder) :
 //    CredentialsProvider {
 //    public actual companion object {}
 //
@@ -20,4 +20,4 @@ package aws.sdk.kotlin.crt.auth.credentials
 //    override suspend fun waitForShutdown() {
 //        TODO("Not yet implemented")
 //    }
-//}
+// }

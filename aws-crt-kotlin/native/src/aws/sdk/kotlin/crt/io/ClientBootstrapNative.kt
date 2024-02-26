@@ -5,10 +5,7 @@
 
 package aws.sdk.kotlin.crt.io
 
-import aws.sdk.kotlin.crt.AsyncShutdown
-import aws.sdk.kotlin.crt.Closeable
-
-//public actual class ClientBootstrap actual constructor(elg: EventLoopGroup, hr: HostResolver) : Closeable, AsyncShutdown {
+// public actual class ClientBootstrap actual constructor(elg: EventLoopGroup, hr: HostResolver) : Closeable, AsyncShutdown {
 //    override suspend fun waitForShutdown() {
 //        TODO("Not yet implemented")
 //    }
@@ -16,4 +13,4 @@ import aws.sdk.kotlin.crt.Closeable
 //    override fun close() {
 //        TODO("Not yet implemented")
 //    }
-//}
+// }

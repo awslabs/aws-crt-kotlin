@@ -5,10 +5,7 @@
 
 package aws.sdk.kotlin.crt.io
 
-import aws.sdk.kotlin.crt.AsyncShutdown
-import aws.sdk.kotlin.crt.Closeable
-
-///**
+// /**
 // * Creates a new event loop group for the I/O subsystem to use to run blocking I/O requests
 // * This class wraps the aws_event_loop_group from aws-c-io
 // *
@@ -16,7 +13,7 @@ import aws.sdk.kotlin.crt.Closeable
 // * Otherwise, maxThreads will be the number of event loops in the group.
 // * @throws [aws.sdk.kotlin.crt.CrtRuntimeException] If the system is unable to allocate space for a native event loop group
 // */
-//public actual class EventLoopGroup actual constructor(maxThreads: Int) : Closeable, AsyncShutdown {
+// public actual class EventLoopGroup actual constructor(maxThreads: Int) : Closeable, AsyncShutdown {
 //    override suspend fun waitForShutdown() {
 //        TODO("Not yet implemented")
 //    }
@@ -24,4 +21,4 @@ import aws.sdk.kotlin.crt.Closeable
 //    override fun close() {
 //        TODO("Not yet implemented")
 //    }
-//}
+// }

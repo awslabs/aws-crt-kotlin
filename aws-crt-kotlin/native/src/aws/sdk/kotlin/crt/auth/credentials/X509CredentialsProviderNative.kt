@@ -5,7 +5,7 @@
 
 package aws.sdk.kotlin.crt.auth.credentials
 
-//public actual class X509CredentialsProvider internal actual constructor(builder: X509CredentialsProviderBuilder) :
+// public actual class X509CredentialsProvider internal actual constructor(builder: X509CredentialsProviderBuilder) :
 //    CredentialsProvider {
 //
 //    public actual companion object {}
@@ -21,4 +21,4 @@ package aws.sdk.kotlin.crt.auth.credentials
 //    override suspend fun waitForShutdown() {
 //        TODO("Not yet implemented")
 //    }
-//}
+// }

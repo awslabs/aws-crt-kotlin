@@ -4,13 +4,13 @@
  */
 package aws.sdk.kotlin.crt.io
 
-///**
+// /**
 // * Represents a mutable linear range of bytes that can be written to.
 // * Instance of this class has no additional state except the bytes themselves.
 // *
 // * NOTE: Platform implementations should provide direct access to the underlying bytes
 // */
-//public actual class MutableBuffer {
+// public actual class MutableBuffer {
 //    /**
 //     * The amount of remaining write capacity before the buffer is full
 //     */
@@ -33,4 +33,4 @@ package aws.sdk.kotlin.crt.io
 //            TODO("Not yet implemented")
 //        }
 //    }
-//}
+// }

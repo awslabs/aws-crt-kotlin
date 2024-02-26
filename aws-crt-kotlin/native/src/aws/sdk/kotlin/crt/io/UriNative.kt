@@ -5,4 +5,4 @@
 
 package aws.sdk.kotlin.crt.io
 
-//internal actual fun parseUri(uri: String): Uri = TODO("Not yet implemented")
+// internal actual fun parseUri(uri: String): Uri = TODO("Not yet implemented")

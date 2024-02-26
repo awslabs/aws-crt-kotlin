@@ -5,8 +5,8 @@
 
 package aws.sdk.kotlin.crt.auth.credentials
 
-//public actual class EcsCredentialsProvider
-//internal actual constructor(builder: EcsCredentialsProviderBuilder) :
+// public actual class EcsCredentialsProvider
+// internal actual constructor(builder: EcsCredentialsProviderBuilder) :
 //    CredentialsProvider {
 //    public actual companion object {}
 //
@@ -21,4 +21,4 @@ package aws.sdk.kotlin.crt.auth.credentials
 //    override suspend fun waitForShutdown() {
 //        TODO("Not yet implemented")
 //    }
-//}
+// }

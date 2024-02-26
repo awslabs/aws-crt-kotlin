@@ -5,12 +5,9 @@
 
 package aws.sdk.kotlin.crt.http
 
-import aws.sdk.kotlin.crt.AsyncShutdown
-import aws.sdk.kotlin.crt.Closeable
-
-//public actual class HttpClientConnectionManager actual constructor(
+// public actual class HttpClientConnectionManager actual constructor(
 //    public actual val options: HttpClientConnectionManagerOptions,
-//) : Closeable, AsyncShutdown {
+// ) : Closeable, AsyncShutdown {
 //    public actual val managerMetrics: HttpManagerMetrics
 //        get() = TODO("Not yet implemented")
 //
@@ -35,4 +32,4 @@ import aws.sdk.kotlin.crt.Closeable
 //    override fun close() {
 //        TODO("Not yet implemented")
 //    }
-//}
+// }

@@ -5,10 +5,10 @@
 
 package aws.sdk.kotlin.crt.auth.credentials
 
-///**
+// /**
 // * A credentials provider for a fixed set of credentials
 // */
-//public actual class StaticCredentialsProvider internal actual constructor(builder: StaticCredentialsProviderBuilder) :
+// public actual class StaticCredentialsProvider internal actual constructor(builder: StaticCredentialsProviderBuilder) :
 //    CredentialsProvider {
 //    public actual companion object {}
 //
@@ -23,4 +23,4 @@ package aws.sdk.kotlin.crt.auth.credentials
 //    override suspend fun waitForShutdown() {
 //        TODO("Not yet implemented")
 //    }
-//}
+// }

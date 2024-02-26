@@ -10,7 +10,7 @@ import aws.sdk.kotlin.crt.http.*
 /**
  * Static class for a variety of AWS signing APIs.
  */
-//public actual object AwsSigner {
+// public actual object AwsSigner {
 //    public actual suspend fun signRequest(
 //        request: HttpRequest,
 //        config: AwsSigningConfig,
@@ -40,4 +40,4 @@ import aws.sdk.kotlin.crt.http.*
 //    ): AwsSigningResult {
 //        TODO("Not yet implemented")
 //    }
-//}
+// }
