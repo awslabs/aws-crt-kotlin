@@ -4,10 +4,14 @@
  */
 
 package aws.sdk.kotlin.crt
+
 import kotlinx.atomicfu.atomic
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.convert
+import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.toKString
 import libcrt.*
+import platform.posix.atexit
 
 @OptIn(ExperimentalForeignApi::class)
 public actual object CRT {
@@ -24,16 +28,13 @@ public actual object CRT {
         // bootstrap our allocator
         s_crt_kotlin_init_allocator(CrtDebug.traceLevel)
 
-        // aws_common_library_init(Allocator.Default)
-        // aws_cal_library_init(Allocator.Default)
-        // aws_cal_library_init(Allocator.Default)
-        // aws_io_library_init(Allocator.Default);
-        // aws_compression_library_init(Allocator.Default);
-        // aws_http_library_init(Allocator.Default);
-        // aws_auth_library_init(Allocator.Default);
+        aws_common_library_init(Allocator.Default)
+        aws_compression_library_init(Allocator.Default)
+        aws_io_library_init(Allocator.Default)
+        aws_http_library_init(Allocator.Default)
 
-        // TODO - init logging
-        // TODO - cleanup CRT atexti
+        Logging.initialize(config)
+        atexit(staticCFunction(::cleanup))
     }
 
     /**
@@ -83,9 +84,8 @@ public actual object CRT {
      */
     public actual fun nativeMemory(): Long =
         if (CrtDebug.traceLevel > 0) {
-            // aws_mem_tracer_bytes(Allocator.Default).convert()
-            TODO()
-        }else {
+            aws_mem_tracer_bytes(Allocator.Default).convert<Long>()
+        } else {
             0
         }
 }

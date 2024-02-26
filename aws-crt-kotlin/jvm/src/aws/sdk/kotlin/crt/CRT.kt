@@ -8,19 +8,19 @@ package aws.sdk.kotlin.crt
 import software.amazon.awssdk.crt.Log
 import software.amazon.awssdk.crt.http.HttpClientConnection
 import software.amazon.awssdk.crt.http.HttpException
-import java.util.concurrent.atomic.AtomicInteger as AtomicInt
+import java.util.concurrent.atomic.AtomicBoolean
 import software.amazon.awssdk.crt.CRT as crtJni
 
 public actual object CRT {
-    private val initialized: AtomicInt = AtomicInt(0)
+    private val initialized: AtomicBoolean = AtomicBoolean(false)
     public actual fun initRuntime(block: Config.() -> Unit) {
-        if (!initialized.compareAndSet(0, 1)) return
+        if (!initialized.compareAndSet(false, true)) return
 
         System.setProperty("aws.crt.memory.tracing", "${CrtDebug.traceLevel}")
         // load the JNI library
         crtJni()
         val config = Config().apply(block)
-        val logLevel = Log.LogLevel.valueOf(config.logLovel.name)
+        val logLevel = Log.LogLevel.valueOf(config.logLevel.name)
         when (config.logDestination) {
             LogDestination.None -> return
             LogDestination.Stdout -> Log.initLoggingToStdout(logLevel)
