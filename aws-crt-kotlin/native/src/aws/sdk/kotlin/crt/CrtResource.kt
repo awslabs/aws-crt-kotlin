@@ -8,6 +8,7 @@ package aws.sdk.kotlin.crt
 import kotlinx.cinterop.*
 import libcrt.*
 import kotlin.experimental.ExperimentalNativeApi
+import kotlin.native.concurrent.freeze
 import kotlin.native.ref.createCleaner
 
 @OptIn(ExperimentalForeignApi::class)
@@ -27,13 +28,13 @@ public abstract class CrtResource<T: CPointed> : CValuesRef<T>() {
         )
     }
 
-    // FIXME is `ptr` the thing this cleaner should be referencing, or something else?
-    @OptIn(ExperimentalNativeApi::class)
-    internal val cleaner = createCleaner(ptr) {
-        aws_ref_count_release(rc)
-    }
-
-    // FIXME do we need to provide explicit acquire/release if we use a cleaner?
+    /**
+     * Acquire a reference to this resource
+     */
     public fun acquire() { aws_ref_count_acquire(rc) }
+
+    /**
+     * Release a previously-acquired reference to this resource
+     */
     public fun release() { aws_ref_count_release(rc) }
 }
