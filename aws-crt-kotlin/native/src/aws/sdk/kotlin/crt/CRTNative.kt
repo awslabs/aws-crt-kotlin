@@ -61,7 +61,7 @@ public actual object CRT {
 
     public actual fun isHttpErrorRetryable(errorCode: Int): Boolean =
         // see https://github.com/awslabs/aws-crt-java/blob/v0.29.10/src/native/http_request_response.c#L792
-        when(errorCode.toUInt()) {
+        when (errorCode.toUInt()) {
             AWS_ERROR_HTTP_HEADER_NOT_FOUND,
             AWS_ERROR_HTTP_INVALID_HEADER_FIELD,
             AWS_ERROR_HTTP_INVALID_HEADER_NAME,
@@ -74,7 +74,8 @@ public actual object CRT {
             AWS_ERROR_HTTP_OUTGOING_STREAM_LENGTH_INCORRECT,
             AWS_ERROR_HTTP_CALLBACK_FAILURE,
             AWS_ERROR_HTTP_STREAM_MANAGER_SHUTTING_DOWN,
-            AWS_HTTP2_ERR_CANCEL -> false
+            AWS_HTTP2_ERR_CANCEL,
+            -> false
             else -> true
         }
 

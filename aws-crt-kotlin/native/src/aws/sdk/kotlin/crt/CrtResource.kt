@@ -7,12 +7,9 @@ package aws.sdk.kotlin.crt
 
 import kotlinx.cinterop.*
 import libcrt.*
-import kotlin.experimental.ExperimentalNativeApi
-import kotlin.native.concurrent.freeze
-import kotlin.native.ref.createCleaner
 
 @OptIn(ExperimentalForeignApi::class)
-public abstract class CrtResource<T: CPointed> : CValuesRef<T>() {
+public abstract class CrtResource<T : CPointed> : CValuesRef<T>() {
 
     public abstract val ptr: CPointer<T>
 
@@ -24,7 +21,7 @@ public abstract class CrtResource<T: CPointed> : CValuesRef<T>() {
         aws_ref_count_init(
             ref_count = rc,
             `object` = ptr,
-            on_zero_fn = null
+            on_zero_fn = null,
         )
     }
 
