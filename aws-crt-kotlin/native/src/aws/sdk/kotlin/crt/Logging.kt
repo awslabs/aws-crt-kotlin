@@ -22,9 +22,7 @@ internal object Logging {
                     LogDestination.None -> return
                     LogDestination.Stdout -> file = platform.posix.stdout
                     LogDestination.Stderr -> file = platform.posix.stderr
-                    LogDestination.File -> { filename = config.logFile?.cstr?.ptr
-                        ?: throw IllegalArgumentException("LogDestination.File configured without logFile")
-                    }
+                    LogDestination.File -> filename = requireNotNull(config.logFile?.cstr?.ptr) { "LogDestination.File configured without logFile" }
                 }
                 level = config.logLevel.value.convert()
             }
