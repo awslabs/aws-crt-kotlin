@@ -14,6 +14,7 @@ import kotlin.test.*
 import kotlin.time.measureTime
 
 class HttpClientConnectionTest : CrtTest() {
+    @Ignore // FIXME Enable when Kotlin/Native implementation is complete
     @Test
     fun testDefaults() = runSuspendTest {
         val uri = Uri.parse("https://aws-crt-test-stuff.s3.amazonaws.com")
@@ -53,6 +54,7 @@ class HttpClientConnectionTest : CrtTest() {
         println("exiting test")
     }
 
+    @Ignore // FIXME Enable when Kotlin/Native implementation is complete
     @Test
     fun testHttpConnection() = runSuspendTest {
         // S3

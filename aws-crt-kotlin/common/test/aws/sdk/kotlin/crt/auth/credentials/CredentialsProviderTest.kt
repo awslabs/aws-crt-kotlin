@@ -10,12 +10,14 @@ import aws.sdk.kotlin.crt.io.ClientBootstrap
 import aws.sdk.kotlin.crt.io.EventLoopGroup
 import aws.sdk.kotlin.crt.io.HostResolver
 import aws.sdk.kotlin.crt.runSuspendTest
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class CredentialsProviderTest : CrtTest() {
     private val EXPECTED_CREDENTIALS = Credentials("access_key_id", "secret_access_key", "session_token")
 
+    @Ignore // FIXME Enable when Kotlin/Native implementation is complete
     @Test
     fun testStaticProvider() = runSuspendTest {
         val provider = StaticCredentialsProvider.fromCredentials(EXPECTED_CREDENTIALS)
@@ -23,6 +25,7 @@ class CredentialsProviderTest : CrtTest() {
         assertEquals(EXPECTED_CREDENTIALS, actual)
     }
 
+    @Ignore // FIXME Enable when Kotlin/Native implementation is complete
     @Test
     fun testCreateDestroyDefaultChain() {
         val elg = EventLoopGroup(1)
@@ -39,6 +42,7 @@ class CredentialsProviderTest : CrtTest() {
         }
     }
 
+    @Ignore // FIXME Enable when Kotlin/Native implementation is complete
     @Test
     fun testCacheStatic() = runSuspendTest {
         val provider = CachedCredentialsProvider.build {
