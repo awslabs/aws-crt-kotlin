@@ -5,11 +5,11 @@
 
 package aws.sdk.kotlin.crt
 
-import kotlinx.atomicfu.atomic
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
 import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.toKString
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import libcrt.*
@@ -23,8 +23,8 @@ public actual object CRT {
     /**
      * Initialize the CRT libraries if needed
      */
-    public actual suspend fun initRuntime(block: Config.() -> Unit): Unit = initializerMu.withLock {
-        if (initialized) { return }
+    public actual fun initRuntime(block: Config.() -> Unit): Unit = runBlocking { initializerMu.withLock {
+        if (initialized) { return@runBlocking }
 
         val config = Config().apply(block)
 
@@ -40,7 +40,7 @@ public actual object CRT {
         atexit(staticCFunction(::cleanup))
 
         initialized = true
-    }
+    }}
 
     /**
      * Returns the last error on the current thread.

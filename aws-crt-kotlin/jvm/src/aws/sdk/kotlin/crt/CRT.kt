@@ -5,7 +5,7 @@
 
 package aws.sdk.kotlin.crt
 
-import kotlinx.atomicfu.atomic
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import software.amazon.awssdk.crt.Log
@@ -17,8 +17,8 @@ public actual object CRT {
     private var initialized = false
     private val initializerMu = Mutex() // protects `initialized`
 
-    public actual suspend fun initRuntime(block: Config.() -> Unit): Unit = initializerMu.withLock {
-        if (initialized) { return }
+    public actual fun initRuntime(block: Config.() -> Unit): Unit = runBlocking { initializerMu.withLock {
+        if (initialized) { return@runBlocking }
 
         System.setProperty("aws.crt.memory.tracing", "${CrtDebug.traceLevel}")
         // load the JNI library
@@ -26,7 +26,7 @@ public actual object CRT {
         val config = Config().apply(block)
         val logLevel = Log.LogLevel.valueOf(config.logLevel.name)
         when (config.logDestination) {
-            LogDestination.None -> return
+            LogDestination.None -> return@runBlocking
             LogDestination.Stdout -> Log.initLoggingToStdout(logLevel)
             LogDestination.Stderr -> Log.initLoggingToStderr(logLevel)
             LogDestination.File -> {
@@ -36,7 +36,7 @@ public actual object CRT {
             }
         }
         initialized = true
-    }
+    }}
 
     /**
      * Returns the last error on the current thread.

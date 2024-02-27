@@ -5,21 +5,24 @@
 
 package aws.sdk.kotlin.crt
 
-import kotlinx.atomicfu.atomic
 import kotlinx.cinterop.*
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import libcrt.*
 
 @OptIn(ExperimentalForeignApi::class)
 internal object Logging {
-    private val initialized = atomic(false)
+    private var initialized = false
+    private val initializerMu = Mutex() // protects `initialized`
 
-    internal fun initialize(config: Config) {
-        if (!initialized.compareAndSet(false, true)) return
+    internal fun initialize(config: Config): Unit = runBlocking { initializerMu.withLock {
+        if (initialized) { return@runBlocking }
 
         memScoped {
             val options = cValue<aws_logger_standard_options> {
                 when (config.logDestination) {
-                    LogDestination.None -> return
+                    LogDestination.None -> return@runBlocking
                     LogDestination.Stdout -> file = platform.posix.stdout
                     LogDestination.Stderr -> file = platform.posix.stderr
                     LogDestination.File -> filename = requireNotNull(config.logFile?.cstr?.ptr) { "LogDestination.File configured without logFile" }
@@ -39,5 +42,7 @@ internal object Logging {
         }
 
         aws_logger_set(s_crt_kotlin_logger.ptr)
-    }
+
+        initialized = true
+    }}
 }
