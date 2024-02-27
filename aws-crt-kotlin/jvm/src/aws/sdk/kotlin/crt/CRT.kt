@@ -5,14 +5,14 @@
 
 package aws.sdk.kotlin.crt
 
+import kotlinx.atomicfu.atomic
 import software.amazon.awssdk.crt.Log
 import software.amazon.awssdk.crt.http.HttpClientConnection
 import software.amazon.awssdk.crt.http.HttpException
-import java.util.concurrent.atomic.AtomicBoolean
 import software.amazon.awssdk.crt.CRT as crtJni
 
 public actual object CRT {
-    private val initialized: AtomicBoolean = AtomicBoolean(false)
+    private val initialized = atomic(false)
     public actual fun initRuntime(block: Config.() -> Unit) {
         if (!initialized.compareAndSet(false, true)) return
 
