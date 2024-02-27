@@ -25,10 +25,10 @@ public final class aws/sdk/kotlin/crt/Config {
 	public fun <init> ()V
 	public final fun getLogDestination ()Laws/sdk/kotlin/crt/LogDestination;
 	public final fun getLogFile ()Ljava/lang/String;
-	public final fun getLogLovel ()Laws/sdk/kotlin/crt/LogLevel;
+	public final fun getLogLevel ()Laws/sdk/kotlin/crt/LogLevel;
 	public final fun setLogDestination (Laws/sdk/kotlin/crt/LogDestination;)V
 	public final fun setLogFile (Ljava/lang/String;)V
-	public final fun setLogLovel (Laws/sdk/kotlin/crt/LogLevel;)V
+	public final fun setLogLevel (Laws/sdk/kotlin/crt/LogLevel;)V
 }
 
 public class aws/sdk/kotlin/crt/CrtRuntimeException : java/lang/RuntimeException {
