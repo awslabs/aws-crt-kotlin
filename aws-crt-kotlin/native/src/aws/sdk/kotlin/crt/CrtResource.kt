@@ -21,7 +21,7 @@ public abstract class CrtResource<T : CPointed> : CValuesRef<T>() {
         aws_ref_count_init(
             ref_count = rc,
             `object` = ptr,
-            on_zero_fn = null,
+            on_zero_fn = null, // FIXME what should happen on zero?
         )
     }
 
