@@ -31,11 +31,11 @@ internal object Logging {
             }
 
             if (CrtDebug.traceLevel > 0) {
-                aws_logger_init_noalloc(s_crt_kotlin_logger.ptr, Allocator.Default.allocator, options).awsAssertOpSuccess {
+                awsAssertOpSuccess(aws_logger_init_noalloc(s_crt_kotlin_logger.ptr, Allocator.Default.allocator, options)) {
                     "failed to initialize no-alloc logger"
                 }
             } else {
-                aws_logger_init_standard(s_crt_kotlin_logger.ptr, Allocator.Default.allocator, options).awsAssertOpSuccess {
+                awsAssertOpSuccess(aws_logger_init_standard(s_crt_kotlin_logger.ptr, Allocator.Default.allocator, options)) {
                     "failed to initialize standard logger"
                 }
             }
