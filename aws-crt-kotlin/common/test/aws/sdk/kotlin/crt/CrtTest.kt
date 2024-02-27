@@ -5,11 +5,15 @@
 
 package aws.sdk.kotlin.crt
 
+import kotlinx.coroutines.runBlocking
+
 open class CrtTest {
     init {
-        CRT.initRuntime {
-            logDestination = LogDestination.Stdout
-            logLevel = LogLevel.Debug
+        runBlocking {
+            CRT.initRuntime {
+                logDestination = LogDestination.Stdout
+                logLevel = LogLevel.Debug
+            }
         }
     }
 }

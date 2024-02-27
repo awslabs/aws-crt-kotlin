@@ -9,7 +9,7 @@ public expect object CRT {
     /**
      * Initialize the CRT libraries if needed
      */
-    public fun initRuntime(block: Config.() -> Unit = {})
+    public suspend fun initRuntime(block: Config.() -> Unit = {})
 
     /**
      * Returns the last error on the current thread.

@@ -10,18 +10,21 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
 import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.toKString
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import libcrt.*
 import platform.posix.atexit
 
 @OptIn(ExperimentalForeignApi::class)
 public actual object CRT {
-    private val initialized = atomic(false)
+    private var initialized = false
+    private val initializerMu = Mutex() // protects `initialized`
 
     /**
      * Initialize the CRT libraries if needed
      */
-    public actual fun initRuntime(block: Config.() -> Unit) {
-        if (!initialized.compareAndSet(false, true)) return
+    public actual suspend fun initRuntime(block: Config.() -> Unit): Unit = initializerMu.withLock {
+        if (initialized) { return }
 
         val config = Config().apply(block)
 
@@ -35,6 +38,8 @@ public actual object CRT {
 
         Logging.initialize(config)
         atexit(staticCFunction(::cleanup))
+
+        initialized = true
     }
 
     /**

@@ -6,15 +6,19 @@
 package aws.sdk.kotlin.crt
 
 import kotlinx.atomicfu.atomic
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import software.amazon.awssdk.crt.Log
 import software.amazon.awssdk.crt.http.HttpClientConnection
 import software.amazon.awssdk.crt.http.HttpException
 import software.amazon.awssdk.crt.CRT as crtJni
 
 public actual object CRT {
-    private val initialized = atomic(false)
-    public actual fun initRuntime(block: Config.() -> Unit) {
-        if (!initialized.compareAndSet(false, true)) return
+    private var initialized = false
+    private val initializerMu = Mutex() // protects `initialized`
+
+    public actual suspend fun initRuntime(block: Config.() -> Unit): Unit = initializerMu.withLock {
+        if (initialized) { return }
 
         System.setProperty("aws.crt.memory.tracing", "${CrtDebug.traceLevel}")
         // load the JNI library
@@ -31,6 +35,7 @@ public actual object CRT {
                 Log.initLoggingToFile(logLevel, logfile)
             }
         }
+        initialized = true
     }
 
     /**
