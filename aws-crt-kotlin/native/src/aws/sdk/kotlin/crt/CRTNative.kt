@@ -22,6 +22,7 @@ public actual object CRT {
 
     /**
      * Initialize the CRT libraries if needed
+     * @param block used to configure CRT [Config]
      */
     public actual fun initRuntime(block: Config.() -> Unit): Unit = runBlocking { initializerMu.withLock {
         if (initialized) { return@runBlocking }
@@ -49,21 +50,25 @@ public actual object CRT {
     public actual fun lastError(): Int = aws_last_error()
 
     /**
-     * Given an integer error code from an internal operation
+     * Given an integer error code from an internal operation, return the user-friendly description of the error.
      * @param errorCode An error code returned from an exception or other native function call
-     * @return A user-friendly description of the error
+     * @return A user-friendly description of the error, or null if one does not exist
      */
     public actual fun errorString(errorCode: Int): String? = aws_error_str(errorCode)?.toKString()
 
     /**
-     * Given an integer error code from an internal operation
+     * Given an integer error code from an internal operation, return the name for the error.
      *
-     * @param errorCode An error code returned from an exception or other native
-     * function call
+     * @param errorCode An error code returned from an exception or other native function call
      * @return A string identifier for the error
      */
     public actual fun errorName(errorCode: Int): String? = aws_error_name(errorCode)?.toKString()
 
+    /**
+     * Return whether a given [errorCode] is retryable.
+     * @param errorCode An error code returned from an exception or other native call.
+     * @return A boolean representing whether this error is retryable or not.
+     */
     public actual fun isHttpErrorRetryable(errorCode: Int): Boolean =
         // see https://github.com/awslabs/aws-crt-java/blob/v0.29.10/src/native/http_request_response.c#L792
         when (errorCode.toUInt()) {
