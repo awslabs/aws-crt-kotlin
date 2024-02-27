@@ -9,7 +9,7 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import libcrt.AWS_OP_SUCCESS
 
 /**
- * Assert that this [Int] return value is `AWS_OP_SUCCESS`. If not, throw [CrtRuntimeException] with the given evaluated
+ * Assert that the given [errorCode] return value is `AWS_OP_SUCCESS`. If not, throw [CrtRuntimeException] with the given evaluated
  * [lazyMessage].
  */
 @OptIn(ExperimentalForeignApi::class)
