@@ -18,8 +18,3 @@ internal inline fun Int.awsAssertOpSuccess(lazyMessage: () -> String) {
         throw CrtRuntimeException(lazyMessage())
     }
 }
-
-/**
- * Assert that this [T] is non-null. If it is, throw [CrtRuntimeException] with the given evaluated [lazyMessage].
- */
-internal inline fun <T> T?.awsAssertNotNull(lazyMessage: () -> String): T = this ?: throw CrtRuntimeException(lazyMessage())
