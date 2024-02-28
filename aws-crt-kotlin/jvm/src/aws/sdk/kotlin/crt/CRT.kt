@@ -17,26 +17,34 @@ public actual object CRT {
     private var initialized = false
     private val initializerMu = Mutex() // protects `initialized`
 
-    public actual fun initRuntime(block: Config.() -> Unit): Unit = runBlocking { initializerMu.withLock {
-        if (initialized) { return@runBlocking }
+    public actual fun initRuntime(block: Config.() -> Unit) {
+        if (initialized) { return }
 
-        System.setProperty("aws.crt.memory.tracing", "${CrtDebug.traceLevel}")
-        // load the JNI library
-        crtJni()
-        val config = Config().apply(block)
-        val logLevel = Log.LogLevel.valueOf(config.logLevel.name)
-        when (config.logDestination) {
-            LogDestination.None -> return@runBlocking
-            LogDestination.Stdout -> Log.initLoggingToStdout(logLevel)
-            LogDestination.Stderr -> Log.initLoggingToStderr(logLevel)
-            LogDestination.File -> {
-                val logfile = config.logFile
-                requireNotNull(logfile) { "log filename must be specified when LogDestination.File is specified" }
-                Log.initLoggingToFile(logLevel, logfile)
-            }
+        runBlocking {
+            initializerMu.withLock {
+                if (initialized) {
+                    return@runBlocking
+                }
+
+                System.setProperty("aws.crt.memory.tracing", "${CrtDebug.traceLevel}")
+                // load the JNI library
+                crtJni()
+                val config = Config().apply(block)
+                val logLevel = Log.LogLevel.valueOf(config.logLevel.name)
+                when (config.logDestination) {
+                    LogDestination.None -> return@runBlocking
+                    LogDestination.Stdout -> Log.initLoggingToStdout(logLevel)
+                    LogDestination.Stderr -> Log.initLoggingToStderr(logLevel)
+                    LogDestination.File -> {
+                        val logfile = config.logFile
+                        requireNotNull(logfile) { "log filename must be specified when LogDestination.File is specified" }
+                        Log.initLoggingToFile(logLevel, logfile)
+                    }
+                }
+                initialized = true
+            } 
         }
-        initialized = true
-    }}
+    }
 
     /**
      * Returns the last error on the current thread.
