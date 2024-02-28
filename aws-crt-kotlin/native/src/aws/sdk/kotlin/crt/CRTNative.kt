@@ -24,24 +24,26 @@ public actual object CRT {
      * Initialize the CRT libraries if needed
      * @param block used to configure CRT [Config]
      */
-    public actual fun initRuntime(block: Config.() -> Unit): Unit = runBlocking { initializerMu.withLock {
-        if (initialized) { return@runBlocking }
+    public actual fun initRuntime(block: Config.() -> Unit): Unit = runBlocking {
+        initializerMu.withLock {
+            if (initialized) { return@runBlocking }
 
-        val config = Config().apply(block)
+            val config = Config().apply(block)
 
-        // bootstrap our allocator
-        s_crt_kotlin_init_allocator(CrtDebug.traceLevel)
+            // bootstrap our allocator
+            s_crt_kotlin_init_allocator(CrtDebug.traceLevel)
 
-        aws_common_library_init(Allocator.Default)
-        aws_compression_library_init(Allocator.Default)
-        aws_io_library_init(Allocator.Default)
-        aws_http_library_init(Allocator.Default)
+            aws_common_library_init(Allocator.Default)
+            aws_compression_library_init(Allocator.Default)
+            aws_io_library_init(Allocator.Default)
+            aws_http_library_init(Allocator.Default)
 
-        Logging.initialize(config)
-        atexit(staticCFunction(::cleanup))
+            Logging.initialize(config)
+            atexit(staticCFunction(::cleanup))
 
-        initialized = true
-    }}
+            initialized = true
+        } 
+    }
 
     /**
      * Returns the last error on the current thread.
