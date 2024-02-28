@@ -15,7 +15,7 @@ fun main(args: Array<String>) {
     val opts = CliOpts.from(args)
 
     CRT.initRuntime {
-        logLovel = opts.logLevel
+        logLevel = opts.logLevel
         logDestination = LogDestination.Stderr
         if (opts.traceFile != null) {
             logDestination = LogDestination.File
