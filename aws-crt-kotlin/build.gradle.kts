@@ -2,6 +2,7 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
+import aws.sdk.kotlin.gradle.crt.CMakeBuildType
 import aws.sdk.kotlin.gradle.crt.cmakeInstallDir
 import aws.sdk.kotlin.gradle.crt.configureCrtCMakeBuild
 import aws.sdk.kotlin.gradle.crt.disableCrossCompileTargets
@@ -136,7 +137,7 @@ kotlin {
     targets.withType<KotlinNativeTarget> {
         val knTarget = this
         logger.info("configuring $knTarget: ${knTarget.name}")
-        val cmakeInstallTask = configureCrtCMakeBuild(knTarget)
+        val cmakeInstallTask = configureCrtCMakeBuild(knTarget, CMakeBuildType.Release)
         val targetInstallDir = project.cmakeInstallDir(knTarget)
         val headerDir = targetInstallDir.resolve("include")
         val libDir = targetInstallDir.resolve("lib")
@@ -148,6 +149,7 @@ kotlin {
                 defFile("$interopDir/crt.def")
                 includeDirs(headerDir)
                 compilerOpts("-L${libDir.absolutePath}")
+                extraOpts("-libraryPath", libDir.absolutePath)
             }
 
             // cinterop tasks processes header files which requires the corresponding CMake build/install to run
@@ -158,6 +160,7 @@ kotlin {
         }
 
         compilations["test"].compilerOptions.configure {
+            // TODO - can we remove this if we are bundling the static libs
             freeCompilerArgs.addAll(listOf("-linker-options", "-L${libDir.absolutePath}"))
         }
     }

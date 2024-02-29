@@ -8,6 +8,15 @@ headers = aws/common/allocator.h aws/common/error.h \
         aws/compression/compression.h
 headerFilter = aws/common/* aws/io/* aws/http/* aws/compression/*
 
+staticLibraries = libaws-c-common.a \
+        libaws-c-cal.a \
+        libaws-c-io.a \
+        libaws-c-compression.a \
+        libaws-c-sdkutils.a \
+        libaws-c-http.a \
+        libaws-c-auth.a \
+        libaws-checksums.a
+staticLibraries.linux = libs2n.a
 linkerOpts = -laws-c-common -laws-c-cal -laws-c-io -laws-c-http -laws-c-compression
 linkerOpts.osx = -framework Security
 linkerOpts.linux = -ls2n -lcrypto
