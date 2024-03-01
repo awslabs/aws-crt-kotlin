@@ -6,14 +6,13 @@
 package aws.sdk.kotlin.crt.io
 
 import aws.sdk.kotlin.crt.CrtTest
-import aws.sdk.kotlin.crt.runSuspendTest
-import kotlin.test.Ignore
+
+import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
 class ClientBootstrapTest : CrtTest() {
-    @Ignore // FIXME Enable when Kotlin/Native implementation is complete
     @Test
-    fun createDestroy() = runSuspendTest {
+    fun createDestroy() = runTest {
         val elg = EventLoopGroup()
         val hr = HostResolver(elg)
         val bootstrap = ClientBootstrap(elg, hr)
