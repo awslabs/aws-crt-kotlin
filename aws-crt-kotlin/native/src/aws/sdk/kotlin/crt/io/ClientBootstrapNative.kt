@@ -40,7 +40,8 @@ public actual class ClientBootstrap actual constructor(
     }
 
     override suspend fun waitForShutdown() {
-        // FIXME What needs to happen here? Does anything need to happen?
+        shutdownCompleteChannel.receive()
+        channelStableRef.dispose()
     }
 
     override fun close() {

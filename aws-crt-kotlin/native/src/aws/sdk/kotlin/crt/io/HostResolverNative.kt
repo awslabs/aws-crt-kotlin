@@ -42,7 +42,8 @@ public actual class HostResolver actual constructor(elg: EventLoopGroup, maxEntr
     }
 
     override suspend fun waitForShutdown() {
-        // FIXME What needs to happen here
+        shutdownCompleteChannel.receive()
+        channelStableRef.dispose()
     }
 
     override fun close() {

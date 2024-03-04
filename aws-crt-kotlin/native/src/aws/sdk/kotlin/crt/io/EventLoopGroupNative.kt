@@ -41,7 +41,8 @@ public actual class EventLoopGroup actual constructor(maxThreads: Int) : CrtReso
     }
 
     override suspend fun waitForShutdown() {
-        // FIXME What needs to happen here
+        shutdownCompleteChannel.receive()
+        channelStableRef.dispose()
     }
 
     override fun close() {
