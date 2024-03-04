@@ -25,7 +25,7 @@ version = sdkVersion
 description = "Kotlin Multiplatform bindings for AWS SDK Common Runtime"
 
 // See: https://kotlinlang.org/docs/reference/opt-in-requirements.html#opting-in-to-using-api
-val optinAnnotations = listOf("kotlin.RequiresOptIn")
+val optinAnnotations = listOf("kotlin.RequiresOptIn", "kotlinx.cinterop.ExperimentalForeignApi")
 
 // KMP configuration from build plugin
 configureKmpTargets()
