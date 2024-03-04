@@ -14,7 +14,7 @@ import libcrt.*
  * Instance of this class has no additional state except the bytes themselves.
  */
 @OptIn(ExperimentalForeignApi::class)
-public actual class MutableBuffer(buffer: aws_byte_buf? = null, private val capacity: Int) : Closeable { // TODO implement CrtResource?
+public actual class MutableBuffer(private val buffer: aws_byte_buf? = null, private val capacity: Int) : Closeable { // TODO implement CrtResource?
     private val buf = buffer ?: Allocator.Default.alloc<aws_byte_buf>()
 
     public val bytes: ByteArray
@@ -48,7 +48,9 @@ public actual class MutableBuffer(buffer: aws_byte_buf? = null, private val capa
     }
 
     public override fun close() {
-        aws_byte_buf_clean_up(buf.ptr)
+        if (buffer == null) {
+            aws_byte_buf_clean_up(buf.ptr)
+        }
     }
 
     public actual companion object {
