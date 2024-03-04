@@ -29,7 +29,7 @@ public fun CPointer<aws_string>.asAwsByteCursor(): CValue<aws_byte_cursor> = aws
  * Free the aws_string instance
  */
 @OptIn(ExperimentalForeignApi::class)
-public fun CPointer<aws_string>.free() = aws_string_destroy(this)
+public fun CPointer<aws_string>.free(): Unit = aws_string_destroy(this)
 
 /**
  * Interpret a byte cursor as a Kotlin string
