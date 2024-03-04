@@ -46,7 +46,6 @@ public actual class EventLoopGroup actual constructor(maxThreads: Int) : CrtReso
     }
 
     override fun close() {
-        println("in close()")
         aws_event_loop_group_release(elg)
     }
 }
