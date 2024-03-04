@@ -20,7 +20,6 @@ class MutableBufferTest : CrtTest() {
         buffer.write(data.encodeToByteArray())
         assertEquals(capacity - data.length, buffer.writeRemaining)
 
-
         assertContentEquals(data.encodeToByteArray(), buffer.bytes.copyOfRange(0, data.length))
     }
 

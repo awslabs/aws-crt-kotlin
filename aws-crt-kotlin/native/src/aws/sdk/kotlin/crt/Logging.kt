@@ -64,7 +64,7 @@ internal object Logging {
                 aws_logger_set(s_crt_kotlin_logger.ptr)
 
                 initialized = true
-            } 
+            }
         }
     }
 }

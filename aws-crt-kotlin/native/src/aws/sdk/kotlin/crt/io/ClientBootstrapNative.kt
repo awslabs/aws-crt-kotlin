@@ -17,7 +17,7 @@ import libcrt.aws_client_bootstrap_release
 @OptIn(ExperimentalForeignApi::class)
 public actual class ClientBootstrap actual constructor(
     elg: EventLoopGroup,
-    hr: HostResolver
+    hr: HostResolver,
 ) : CrtResource<aws_client_bootstrap>(), Closeable, AsyncShutdown {
     private val bootstrap: CPointer<aws_client_bootstrap>
     private val shutdownCompleteChannel = Channel<Unit>(Channel.RENDEZVOUS)

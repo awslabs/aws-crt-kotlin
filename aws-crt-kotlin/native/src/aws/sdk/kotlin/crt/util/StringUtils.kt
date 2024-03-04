@@ -23,31 +23,20 @@ public fun CPointer<aws_string>.toKString(): String? {
  * Get a byte cursor from the current aws_string instance
  */
 @OptIn(ExperimentalForeignApi::class)
-public fun CPointer<aws_string>.asAwsByteCursor(): CValue<aws_byte_cursor> {
-    return aws_byte_cursor_from_string(this)
-}
+public fun CPointer<aws_string>.asAwsByteCursor(): CValue<aws_byte_cursor> = aws_byte_cursor_from_string(this)
 
 /**
  * Free the aws_string instance
  */
 @OptIn(ExperimentalForeignApi::class)
-public fun CPointer<aws_string>.free() {
-    aws_string_destroy(this)
-}
+public fun CPointer<aws_string>.free() = aws_string_destroy(this)
 
 /**
  * Interpret a byte cursor as a Kotlin string
  */
 @OptIn(ExperimentalForeignApi::class)
-public inline fun aws_byte_cursor.toKString(): String {
-    return ptr?.readBytes(len.convert())?.decodeToString() ?: ""
-}
+public inline fun aws_byte_cursor.toKString(): String = ptr?.readBytes(len.convert())?.decodeToString() ?: ""
 
-
-// NOTE - we can't use aws_byte_cursor_from_c_str() (which takes a Kotlin string). The way Kotlin
-// manages memory through this bridge is incompatible. I'm fairly certain it's because they encode the String to
-// a null-terminated ByteArray, pin it, and pass the address of the starting element. This is a temporary that
-// is no longer valid after the call though.
 /**
  * Initialize an aws_byte_cursor from a (pinned) Kotlin [ByteArray].
  * NOTE: the cursor is only valid while the array is pinned
@@ -63,8 +52,8 @@ public fun Pinned<ByteArray>.asAwsByteCursor(): CValue<aws_byte_cursor> {
 }
 
 /**
- * Decode the kotlin [String] as an aws_string instance
- * Caller is responsible for freeing
+ * Decode the Kotlin [String] as an aws_string instance
+ * Caller is responsible for freeing.
  */
 @OptIn(ExperimentalForeignApi::class)
 public fun String.toAwsString(): CPointer<aws_string> = checkNotNull(aws_string_new_from_c_str(Allocator.Default, this)) {

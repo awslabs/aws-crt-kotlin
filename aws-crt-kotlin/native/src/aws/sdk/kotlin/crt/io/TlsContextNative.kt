@@ -85,7 +85,7 @@ public actual class TlsContext actual constructor(options: TlsContextOptions?) :
     // aws_tls_ctx_options_init_client_mtls_from_path()
     private fun initClientMtlsFromPath(certificatePath: String, privateKeyPath: String) {
         awsAssertOpSuccess(
-            aws_tls_ctx_options_init_client_mtls_from_path(tlsCtxOpts.ptr, Allocator.Default, certificatePath, privateKeyPath)
+            aws_tls_ctx_options_init_client_mtls_from_path(tlsCtxOpts.ptr, Allocator.Default, certificatePath, privateKeyPath),
         ) { "aws_tls_ctx_options_init_client_mtls_from_path(): certificatePath: `$certificatePath`; privateKeyPath: $privateKeyPath" }
     }
 

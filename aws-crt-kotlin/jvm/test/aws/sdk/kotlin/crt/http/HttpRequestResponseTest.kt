@@ -5,7 +5,6 @@
 
 package aws.sdk.kotlin.crt.http
 
-
 import aws.sdk.kotlin.crt.util.Digest
 import aws.sdk.kotlin.crt.util.encodeToHex
 import kotlinx.coroutines.test.runTest

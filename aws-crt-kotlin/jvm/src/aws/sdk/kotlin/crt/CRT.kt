@@ -42,7 +42,7 @@ public actual object CRT {
                     }
                 }
                 initialized = true
-            } 
+            }
         }
     }
 

@@ -6,7 +6,6 @@
 package aws.sdk.kotlin.crt.io
 
 import aws.sdk.kotlin.crt.CrtTest
-
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 

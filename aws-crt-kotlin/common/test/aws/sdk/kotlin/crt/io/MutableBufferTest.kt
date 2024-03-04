@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 import aws.sdk.kotlin.crt.CrtTest
 import aws.sdk.kotlin.crt.io.MutableBuffer
 import kotlin.test.Test
