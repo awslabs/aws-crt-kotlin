@@ -8,9 +8,6 @@ headers = aws/common/allocator.h aws/common/error.h \
         aws/compression/compression.h
 headerFilter = aws/common/* aws/io/* aws/http/* aws/compression/*
 
-# FIXME - not supported?
-#compilerOpts.linux_arm64 = -moutline-atomics
-
 linkerOpts = -laws-c-common -laws-c-cal -laws-c-io -laws-c-http -laws-c-compression
 linkerOpts.osx = -framework Security
 linkerOpts.linux = -ls2n -lcrypto
