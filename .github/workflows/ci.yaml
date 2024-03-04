@@ -142,7 +142,7 @@ jobs:
         uses: ./.github/actions/setup-build
       - name: Build and Test ${{ env.PACKAGE_NAME }}
         run: |
-          ./gradlew -P"aws.sdk.kotlin.crt.disableCrossCompile"=true -Paws.kotlin.native=false build
+          ./gradlew -P"aws.sdk.kotlin.crt.disableCrossCompile"=true build
       - name: Save Test Reports
         if: failure()
         uses: actions/upload-artifact@v4
