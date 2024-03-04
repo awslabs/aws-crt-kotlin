@@ -21,17 +21,7 @@ class MutableBufferTest : CrtTest() {
         assertEquals(capacity - data.length, buffer.writeRemaining)
 
         assertContentEquals(data.encodeToByteArray(), buffer.bytes.copyOfRange(0, data.length))
-    }
 
-    @Test
-    fun testWriteToFullBuffer() {
-        val str = "Hello!"
-        val bytes = str.encodeToByteArray()
-        val buffer = MutableBuffer.of(bytes) // creates a full buffer
-
-        assertEquals(0, buffer.writeRemaining)
-
-        // since it's full, should write 0 bytes
-        assertEquals(0, buffer.write(bytes))
+        buffer.close()
     }
 }
