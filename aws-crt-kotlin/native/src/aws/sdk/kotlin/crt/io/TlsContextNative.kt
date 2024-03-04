@@ -49,7 +49,7 @@ public actual class TlsContext actual constructor(options: TlsContextOptions?) :
 
             if (kopts.alpn.isNotBlank()) {
                 awsAssertOpSuccess(aws_tls_ctx_options_set_alpn_list(tlsCtxOpts.ptr, kopts.alpn)) {
-                    "aws_tls_ctx_options_set_alpn_list() failed"
+                    "aws_tls_ctx_options_set_alpn_list()"
                 }
             }
         } catch (ex: CrtRuntimeException) {
@@ -60,7 +60,7 @@ public actual class TlsContext actual constructor(options: TlsContextOptions?) :
         ctx = aws_tls_client_ctx_new(Allocator.Default, tlsCtxOpts.ptr) ?: run {
             aws_tls_ctx_options_clean_up(tlsCtxOpts.ptr)
             Allocator.Default.free(tlsCtxOpts.rawPtr)
-            throw CrtRuntimeException("aws_tls_client_ctx_new() failed")
+            throw CrtRuntimeException("aws_tls_client_ctx_new()")
         }
     }
 
@@ -74,7 +74,7 @@ public actual class TlsContext actual constructor(options: TlsContextOptions?) :
             val pkeyCursor = pkey.asAwsByteCursor()
 
             awsAssertOpSuccess(aws_tls_ctx_options_init_client_mtls(tlsCtxOpts.ptr, Allocator.Default, certCursor, pkeyCursor)) {
-                "aws_tls_ctx_options_init_client_mtls() failed"
+                "aws_tls_ctx_options_init_client_mtls()"
             }
         } finally {
             cert.free()

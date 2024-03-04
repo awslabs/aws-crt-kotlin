@@ -21,7 +21,7 @@ internal actual fun parseUri(uri: String): Uri = memScoped {
         val awsUri = alloc<aws_uri>()
 
         awsAssertOpSuccess(aws_uri_init_parse(awsUri.ptr, Allocator.Default, uriCursor)) {
-            "aws_uri_init_parse() failed with ur: $uri"
+            "aws_uri_init_parse()"
         }
 
         Uri.build {

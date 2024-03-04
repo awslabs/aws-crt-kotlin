@@ -36,7 +36,7 @@ public actual class HostResolver actual constructor(elg: EventLoopGroup, maxEntr
             }
 
             checkNotNull(aws_host_resolver_new_default(Allocator.Default, resolverOpts)) {
-                "aws_host_resolver_new_default() failed"
+                "aws_host_resolver_new_default()"
             }
         }
     }

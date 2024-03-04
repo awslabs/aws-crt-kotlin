@@ -36,7 +36,7 @@ public actual class EventLoopGroup actual constructor(maxThreads: Int) : CrtReso
         }
 
         elg = checkNotNull(aws_event_loop_group_new_default(Allocator.Default, maxThreads.toUShort(), shutdownOpts)) {
-            "aws_event_loop_group_new_default() failed"
+            "aws_event_loop_group_new_default()"
         }
     }
 

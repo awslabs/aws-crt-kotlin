@@ -57,5 +57,5 @@ public fun Pinned<ByteArray>.asAwsByteCursor(): CValue<aws_byte_cursor> {
  */
 @OptIn(ExperimentalForeignApi::class)
 public fun String.toAwsString(): CPointer<aws_string> = checkNotNull(aws_string_new_from_c_str(Allocator.Default, this)) {
-    "aws_string_new_from_c_string() failed using: $this"
+    "aws_string_new_from_c_string()"
 }

@@ -35,7 +35,7 @@ public actual class ClientBootstrap actual constructor(
         }
 
         bootstrap = checkNotNull(aws_client_bootstrap_new(Allocator.Default, opts)) {
-            "aws_client_bootstrap_new() failed"
+            "aws_client_bootstrap_new()"
         }
     }
 
