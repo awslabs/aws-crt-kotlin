@@ -25,7 +25,7 @@ public actual class HttpClientConnectionManager actual constructor(
     public actual val managerMetrics: HttpManagerMetrics
         get() = TODO("Not yet implemented")
 
-    private val manager: CPointer<aws_http_connection_manager> = TODO()
+    private val manager: CPointer<aws_http_connection_manager>
 
     private val shutdownComplete = shutdownChannel()
     private val shutdownCompleteStableRef = StableRef.create(shutdownComplete)
