@@ -70,10 +70,10 @@ public actual class HttpClientConnectionManager actual constructor(
                 opts.host.initFromCursor(proxyHost.asAwsByteCursor())
                 opts.port = (proxyOptions.port ?: options.uri.scheme.defaultPort).convert()
 
-                val proxyTlsConnOpts: aws_tls_connection_options? = proxyOptions.tlsContext?.let { tlsctx ->
+                val proxyTlsConnOpts: aws_tls_connection_options? = proxyOptions.tlsContext?.let { tlsCtx ->
                     val tlsOpts = alloc<aws_tls_connection_options>()
                     val proxyEndpoint = proxyHost.asAwsByteCursor()
-                    aws_tls_connection_options_init_from_ctx(tlsOpts.ptr, tlsctx)
+                    aws_tls_connection_options_init_from_ctx(tlsOpts.ptr, tlsCtx.ptr)
                     aws_tls_connection_options_set_server_name(tlsOpts.ptr, Allocator.Default, proxyEndpoint)
 
                     defer { aws_tls_connection_options_clean_up(tlsOpts.ptr) }

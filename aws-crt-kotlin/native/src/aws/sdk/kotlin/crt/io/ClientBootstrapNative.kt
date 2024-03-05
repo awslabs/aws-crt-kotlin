@@ -19,13 +19,10 @@ import libcrt.aws_client_bootstrap_release
 public actual class ClientBootstrap actual constructor(
     elg: EventLoopGroup,
     hr: HostResolver,
-) : CrtResource<aws_client_bootstrap>(), Closeable, AsyncShutdown {
-    private val bootstrap: CPointer<aws_client_bootstrap>
+) : NativeHandle<aws_client_bootstrap>, Closeable, AsyncShutdown {
     private val shutdownCompleteChannel = shutdownChannel()
     private val channelStableRef = StableRef.create(shutdownCompleteChannel)
-
     override val ptr: CPointer<aws_client_bootstrap>
-        get() = bootstrap
 
     init {
         val opts = cValue<aws_client_bootstrap_options> {
@@ -35,7 +32,7 @@ public actual class ClientBootstrap actual constructor(
             user_data = channelStableRef.asCPointer()
         }
 
-        bootstrap = checkNotNull(aws_client_bootstrap_new(Allocator.Default, opts)) {
+        ptr = checkNotNull(aws_client_bootstrap_new(Allocator.Default, opts)) {
             "aws_client_bootstrap_new()"
         }
     }
@@ -45,7 +42,7 @@ public actual class ClientBootstrap actual constructor(
     }
 
     override fun close() {
-        aws_client_bootstrap_release(bootstrap)
+        aws_client_bootstrap_release(ptr)
     }
 }
 

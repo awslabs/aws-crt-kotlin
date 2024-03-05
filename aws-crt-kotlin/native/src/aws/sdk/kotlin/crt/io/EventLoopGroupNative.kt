@@ -21,11 +21,9 @@ import libcrt.*
  * @throws [aws.sdk.kotlin.crt.CrtRuntimeException] If the system is unable to allocate space for a native event loop group
  */
 @OptIn(ExperimentalForeignApi::class)
-public actual class EventLoopGroup actual constructor(maxThreads: Int) : CrtResource<aws_event_loop_group>(), Closeable, AsyncShutdown {
-    private val elg: CPointer<aws_event_loop_group>
+public actual class EventLoopGroup actual constructor(maxThreads: Int) : NativeHandle<aws_event_loop_group>, Closeable, AsyncShutdown {
 
     override val ptr: CPointer<aws_event_loop_group>
-        get() = elg
 
     private val shutdownCompleteChannel = shutdownChannel()
     private val channelStableRef = StableRef.create(shutdownCompleteChannel)
@@ -36,7 +34,7 @@ public actual class EventLoopGroup actual constructor(maxThreads: Int) : CrtReso
             shutdown_callback_user_data = channelStableRef.asCPointer()
         }
 
-        elg = checkNotNull(aws_event_loop_group_new_default(Allocator.Default, maxThreads.toUShort(), shutdownOpts)) {
+        ptr = checkNotNull(aws_event_loop_group_new_default(Allocator.Default, maxThreads.toUShort(), shutdownOpts)) {
             "aws_event_loop_group_new_default()"
         }
     }
@@ -46,7 +44,7 @@ public actual class EventLoopGroup actual constructor(maxThreads: Int) : CrtReso
     }
 
     override fun close() {
-        aws_event_loop_group_release(elg)
+        aws_event_loop_group_release(ptr)
     }
 }
 

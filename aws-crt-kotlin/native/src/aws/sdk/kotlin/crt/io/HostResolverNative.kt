@@ -13,18 +13,16 @@ import kotlinx.cinterop.*
 import libcrt.*
 
 @OptIn(ExperimentalForeignApi::class)
-public actual class HostResolver actual constructor(elg: EventLoopGroup, maxEntries: Int) : CrtResource<aws_host_resolver>(), Closeable, AsyncShutdown {
+public actual class HostResolver actual constructor(elg: EventLoopGroup, maxEntries: Int) : NativeHandle<aws_host_resolver>, Closeable, AsyncShutdown {
     public actual constructor(elg: EventLoopGroup) : this(elg, DEFAULT_MAX_ENTRIES)
 
-    private val resolver: CPointer<aws_host_resolver>
     override val ptr: CPointer<aws_host_resolver>
-        get() = resolver
 
     private val shutdownCompleteChannel = shutdownChannel()
     private val channelStableRef = StableRef.create(shutdownCompleteChannel)
 
     init {
-        resolver = memScoped {
+        ptr = memScoped {
             val shutdownOpts = cValue<aws_shutdown_callback_options> {
                 shutdown_callback_fn = staticCFunction(::onShutdownComplete)
                 shutdown_callback_user_data = channelStableRef.asCPointer()
@@ -47,7 +45,7 @@ public actual class HostResolver actual constructor(elg: EventLoopGroup, maxEntr
     }
 
     override fun close() {
-        aws_host_resolver_release(resolver)
+        aws_host_resolver_release(ptr)
     }
 }
 
