@@ -40,11 +40,7 @@ public actual class MutableBuffer(private val buffer: aws_byte_buf? = null, priv
         src.usePinned { pinnedSrc ->
             val offsetPinnedSrc = pinnedSrc.addressOf(offset).reinterpret<UByteVar>()
             val numBytesToWrite = minOf(length, writeRemaining)
-            if (aws_byte_buf_write(buf.ptr, offsetPinnedSrc, numBytesToWrite.toULong())) {
-                return numBytesToWrite
-            } else {
-                return 0
-            }
+            return if (aws_byte_buf_write(buf.ptr, offsetPinnedSrc, numBytesToWrite.toULong())) numBytesToWrite else 0
         }
     }
 
