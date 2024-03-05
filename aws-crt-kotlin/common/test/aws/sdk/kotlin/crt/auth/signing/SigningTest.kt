@@ -13,6 +13,7 @@ import aws.sdk.kotlin.crt.http.HttpRequest
 import aws.sdk.kotlin.crt.http.HttpRequestBodyStream
 import aws.sdk.kotlin.crt.http.headers
 import aws.sdk.kotlin.crt.io.Uri
+import kotlinx.coroutines.test.runTest
 import kotlin.test.*
 
 // ported over from crt-java
@@ -56,7 +57,7 @@ class SigningTest : CrtTest() {
 
     @Ignore // FIXME Enable when Kotlin/Native implementation is complete
     @Test
-    fun testSigningSuccess() = runSuspendTest {
+    fun testSigningSuccess() = runTest {
         StaticCredentialsProvider.build {
             accessKeyId = TEST_ACCESS_KEY_ID
             secretAccessKey = TEST_SECRET_ACCESS_KEY
@@ -82,7 +83,7 @@ class SigningTest : CrtTest() {
 
     @Ignore // FIXME Enable when Kotlin/Native implementation is complete
     @Test
-    fun testQuerySigningSuccess() = runSuspendTest {
+    fun testQuerySigningSuccess() = runTest {
         StaticCredentialsProvider.build {
             accessKeyId = TEST_ACCESS_KEY_ID
             secretAccessKey = TEST_SECRET_ACCESS_KEY
@@ -114,7 +115,7 @@ class SigningTest : CrtTest() {
 
     @Ignore // FIXME Enable when Kotlin/Native implementation is complete
     @Test
-    fun testSigningBasicSigV4() = runSuspendTest {
+    fun testSigningBasicSigV4() = runTest {
         StaticCredentialsProvider.build {
             accessKeyId = TEST_ACCESS_KEY_ID
             secretAccessKey = TEST_SECRET_ACCESS_KEY
@@ -147,7 +148,7 @@ class SigningTest : CrtTest() {
 
     @Ignore // FIXME Enable when Kotlin/Native implementation is complete
     @Test
-    fun testSigningFailureBadRequest() = runSuspendTest {
+    fun testSigningFailureBadRequest() = runTest {
         StaticCredentialsProvider.build {
             accessKeyId = TEST_ACCESS_KEY_ID
             secretAccessKey = TEST_SECRET_ACCESS_KEY
@@ -174,7 +175,7 @@ class SigningTest : CrtTest() {
 
     @Ignore // FIXME Enable when Kotlin/Native implementation is complete
     @Test
-    fun testSigningSigV4Asymmetric() = runSuspendTest {
+    fun testSigningSigV4Asymmetric() = runTest {
         StaticCredentialsProvider.build {
             accessKeyId = TEST_ACCESS_KEY_ID
             secretAccessKey = TEST_SECRET_ACCESS_KEY
@@ -202,7 +203,7 @@ class SigningTest : CrtTest() {
 
     @Ignore // FIXME Enable when Kotlin/Native implementation is complete
     @Test
-    fun testSigningChunkTrailingHeaders() = runSuspendTest {
+    fun testSigningChunkTrailingHeaders() = runTest {
         StaticCredentialsProvider.build {
             accessKeyId = "AKID"
             secretAccessKey = "SECRET"
