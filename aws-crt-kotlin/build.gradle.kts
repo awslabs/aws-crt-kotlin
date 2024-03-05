@@ -2,6 +2,7 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
+import aws.sdk.kotlin.gradle.crt.CMakeBuildType
 import aws.sdk.kotlin.gradle.crt.cmakeInstallDir
 import aws.sdk.kotlin.gradle.crt.configureCrtCMakeBuild
 import aws.sdk.kotlin.gradle.crt.disableCrossCompileTargets
@@ -10,6 +11,7 @@ import aws.sdk.kotlin.gradle.kmp.IDEA_ACTIVE
 import aws.sdk.kotlin.gradle.kmp.configureKmpTargets
 import aws.sdk.kotlin.gradle.util.typedProp
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -23,7 +25,7 @@ version = sdkVersion
 description = "Kotlin Multiplatform bindings for AWS SDK Common Runtime"
 
 // See: https://kotlinlang.org/docs/reference/opt-in-requirements.html#opting-in-to-using-api
-val optinAnnotations = listOf("kotlin.RequiresOptIn")
+val optinAnnotations = listOf("kotlin.RequiresOptIn", "kotlinx.cinterop.ExperimentalForeignApi")
 
 // KMP configuration from build plugin
 configureKmpTargets()
@@ -142,7 +144,7 @@ kotlin {
     targets.withType<KotlinNativeTarget> {
         val knTarget = this
         logger.info("configuring $knTarget: ${knTarget.name}")
-        val cmakeInstallTask = configureCrtCMakeBuild(knTarget)
+        val cmakeInstallTask = configureCrtCMakeBuild(knTarget, CMakeBuildType.Release)
         val targetInstallDir = project.cmakeInstallDir(knTarget)
         val headerDir = targetInstallDir.resolve("include")
         val libDir = targetInstallDir.resolve("lib")
@@ -154,6 +156,7 @@ kotlin {
                 defFile("$interopDir/crt.def")
                 includeDirs(headerDir)
                 compilerOpts("-L${libDir.absolutePath}")
+                extraOpts("-libraryPath", libDir.absolutePath)
             }
 
             // cinterop tasks processes header files which requires the corresponding CMake build/install to run
@@ -164,6 +167,7 @@ kotlin {
         }
 
         compilations["test"].compilerOptions.configure {
+            // TODO - can we remove this if we are bundling the static libs
             freeCompilerArgs.addAll(listOf("-linker-options", "-L${libDir.absolutePath}"))
         }
     }

@@ -13,6 +13,17 @@ linkerOpts.osx = -framework Security
 linkerOpts.ios = -framework Security
 linkerOpts.linux = -ls2n -lcrypto
 
+staticLibraries = libaws-c-common.a \
+        libaws-c-cal.a \
+        libaws-c-io.a \
+        libaws-c-compression.a \
+        libaws-c-sdkutils.a \
+        libaws-c-http.a \
+        libaws-c-auth.a \
+        libaws-checksums.a
+
+staticLibraries.linux = libs2n.a libcrypto.a
+
 ---
 
 // prototypes
