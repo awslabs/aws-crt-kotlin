@@ -23,7 +23,15 @@ public actual class HttpClientConnectionManager actual constructor(
     public actual val options: HttpClientConnectionManagerOptions,
 ) : Closeable, AsyncShutdown {
     public actual val managerMetrics: HttpManagerMetrics
-        get() = TODO("Not yet implemented")
+        get() = memScoped {
+            val metrics = alloc<aws_http_manager_metrics>()
+            aws_http_connection_manager_fetch_metrics(manager, metrics.ptr)
+            HttpManagerMetrics(
+                availableConcurrency = metrics.available_concurrency.convert(),
+                pendingConcurrencyAcquires = metrics.pending_concurrency_acquires.convert(),
+                leasedConcurrency = metrics.leased_concurrency.convert(),
+            )
+        }
 
     private val manager: CPointer<aws_http_connection_manager>
 
