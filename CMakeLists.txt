@@ -103,3 +103,7 @@ aws_use_package(aws-c-http)
 aws_use_package(aws-c-auth)
 aws_use_package(aws-checksums)
 
+# TODO - bundling static libraries into single static library composed of all the static libraries
+# to enable IPO/LTO. See also:
+# * https://cristianadam.eu/20190501/bundling-together-static-libraries-with-cmake/
+# * https://cmake.org/cmake/help/latest/module/CheckIPOSupported.html
