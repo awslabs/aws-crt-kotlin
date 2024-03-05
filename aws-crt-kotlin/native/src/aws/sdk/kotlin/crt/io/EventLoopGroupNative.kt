@@ -7,8 +7,9 @@ package aws.sdk.kotlin.crt.io
 
 import aws.sdk.kotlin.crt.*
 import aws.sdk.kotlin.crt.Allocator
+import aws.sdk.kotlin.crt.util.ShutdownChannel
+import aws.sdk.kotlin.crt.util.shutdownChannel
 import kotlinx.cinterop.*
-import kotlinx.coroutines.channels.Channel
 import libcrt.*
 
 /**
@@ -26,7 +27,7 @@ public actual class EventLoopGroup actual constructor(maxThreads: Int) : CrtReso
     override val ptr: CPointer<aws_event_loop_group>
         get() = elg
 
-    private val shutdownCompleteChannel = Channel<Unit>(Channel.RENDEZVOUS)
+    private val shutdownCompleteChannel = shutdownChannel()
     private val channelStableRef = StableRef.create(shutdownCompleteChannel)
 
     init {
@@ -42,7 +43,6 @@ public actual class EventLoopGroup actual constructor(maxThreads: Int) : CrtReso
 
     override suspend fun waitForShutdown() {
         shutdownCompleteChannel.receive()
-        channelStableRef.dispose()
     }
 
     override fun close() {
@@ -52,9 +52,10 @@ public actual class EventLoopGroup actual constructor(maxThreads: Int) : CrtReso
 
 @OptIn(ExperimentalForeignApi::class)
 private fun onShutdownComplete(userData: COpaquePointer?) {
-    if (userData != null) {
-        val shutdownCompleteChannel = userData.asStableRef<Channel<Unit>>().get()
-        shutdownCompleteChannel.trySend(Unit)
-        shutdownCompleteChannel.close()
-    }
+    if (userData == null) return
+    val stableRef = userData.asStableRef<ShutdownChannel>()
+    val ch = stableRef.get()
+    ch.trySend(Unit)
+    ch.close()
+    stableRef.dispose()
 }

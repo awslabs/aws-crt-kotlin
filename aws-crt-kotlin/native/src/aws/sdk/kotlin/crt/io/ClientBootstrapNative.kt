@@ -7,8 +7,9 @@ package aws.sdk.kotlin.crt.io
 
 import aws.sdk.kotlin.crt.*
 import aws.sdk.kotlin.crt.Allocator
+import aws.sdk.kotlin.crt.util.ShutdownChannel
+import aws.sdk.kotlin.crt.util.shutdownChannel
 import kotlinx.cinterop.*
-import kotlinx.coroutines.channels.Channel
 import libcrt.aws_client_bootstrap
 import libcrt.aws_client_bootstrap_new
 import libcrt.aws_client_bootstrap_options
@@ -20,7 +21,7 @@ public actual class ClientBootstrap actual constructor(
     hr: HostResolver,
 ) : CrtResource<aws_client_bootstrap>(), Closeable, AsyncShutdown {
     private val bootstrap: CPointer<aws_client_bootstrap>
-    private val shutdownCompleteChannel = Channel<Unit>(Channel.RENDEZVOUS)
+    private val shutdownCompleteChannel = shutdownChannel()
     private val channelStableRef = StableRef.create(shutdownCompleteChannel)
 
     override val ptr: CPointer<aws_client_bootstrap>
@@ -41,7 +42,6 @@ public actual class ClientBootstrap actual constructor(
 
     override suspend fun waitForShutdown() {
         shutdownCompleteChannel.receive()
-        channelStableRef.dispose()
     }
 
     override fun close() {
@@ -51,9 +51,10 @@ public actual class ClientBootstrap actual constructor(
 
 @OptIn(ExperimentalForeignApi::class)
 private fun onShutdownComplete(userData: COpaquePointer?) {
-    if (userData != null) {
-        val shutdownCompleteChannel = userData.asStableRef<Channel<Unit>>().get()
-        shutdownCompleteChannel.trySend(Unit)
-        shutdownCompleteChannel.close()
-    }
+    if (userData == null) return
+    val stableRef = userData.asStableRef<ShutdownChannel>()
+    val ch = stableRef.get()
+    ch.trySend(Unit)
+    ch.close()
+    stableRef.dispose()
 }
