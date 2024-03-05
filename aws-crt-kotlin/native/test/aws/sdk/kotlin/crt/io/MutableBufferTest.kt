@@ -35,6 +35,7 @@ class MutableBufferTest : CrtTest() {
 
         val data = "Hello, this data won't fit!"
         assertEquals(5, buffer.write(data.encodeToByteArray()))
+        buffer.close()
     }
 
     @Test
@@ -47,5 +48,6 @@ class MutableBufferTest : CrtTest() {
 
         // since it's full, should write 0 bytes
         assertEquals(0, buffer.write(bytes))
+        buffer.close()
     }
 }
