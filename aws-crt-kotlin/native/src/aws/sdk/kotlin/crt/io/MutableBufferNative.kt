@@ -12,6 +12,8 @@ import libcrt.*
 /**
  * Represents a mutable linear range of bytes that can be written to.
  * Instance of this class has no additional state except the bytes themselves.
+ *
+ * NOTE: Platform implementations should provide direct access to the underlying bytes
  */
 @OptIn(ExperimentalForeignApi::class)
 public actual class MutableBuffer(private val buffer: aws_byte_buf? = null, private val capacity: Int) : Closeable { // TODO implement CrtResource?
