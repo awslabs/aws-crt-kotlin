@@ -42,7 +42,7 @@ public actual object CRT {
             atexit(staticCFunction(::cleanup))
 
             initialized = true
-        } 
+        }
     }
 
     /**

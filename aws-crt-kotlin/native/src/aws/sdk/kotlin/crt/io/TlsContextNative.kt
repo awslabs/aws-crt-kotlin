@@ -6,8 +6,15 @@
 package aws.sdk.kotlin.crt.io
 
 import aws.sdk.kotlin.crt.Closeable
+import aws.sdk.kotlin.crt.NativeHandle
+import kotlinx.cinterop.CPointer
+import libcrt.aws_tls_ctx
 
-public actual class TlsContext actual constructor(options: TlsContextOptions?) : Closeable {
+public actual class TlsContext actual constructor(
+    options: TlsContextOptions?,
+) : Closeable, NativeHandle<aws_tls_ctx> {
+    override val ptr: CPointer<aws_tls_ctx>
+        get() = TODO("Not yet implemented")
     public actual companion object {}
 
     override fun close() {
