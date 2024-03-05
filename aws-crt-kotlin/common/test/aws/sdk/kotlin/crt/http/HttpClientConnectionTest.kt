@@ -7,8 +7,8 @@ package aws.sdk.kotlin.crt.http
 
 import aws.sdk.kotlin.crt.CrtTest
 import aws.sdk.kotlin.crt.io.*
-import aws.sdk.kotlin.crt.runSuspendTest
 import aws.sdk.kotlin.crt.use
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
 import kotlin.test.*
 import kotlin.time.measureTime
@@ -16,7 +16,7 @@ import kotlin.time.measureTime
 class HttpClientConnectionTest : CrtTest() {
     @Ignore // FIXME Enable when Kotlin/Native implementation is complete
     @Test
-    fun testDefaults() = runSuspendTest {
+    fun testDefaults() = runTest {
         val uri = Uri.parse("https://aws-crt-test-stuff.s3.amazonaws.com")
         val socketOpts = SocketOptions()
         val elg = EventLoopGroup()
@@ -56,7 +56,7 @@ class HttpClientConnectionTest : CrtTest() {
 
     @Ignore // FIXME Enable when Kotlin/Native implementation is complete
     @Test
-    fun testHttpConnection() = runSuspendTest {
+    fun testHttpConnection() = runTest {
         // S3
         assertConnect("https://aws-crt-test-stuff.s3.amazonaws.com")
         assertConnect("http://aws-crt-test-stuff.s3.amazonaws.com")

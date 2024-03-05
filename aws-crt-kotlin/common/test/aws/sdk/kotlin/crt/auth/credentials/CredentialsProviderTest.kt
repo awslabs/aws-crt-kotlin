@@ -9,7 +9,7 @@ import aws.sdk.kotlin.crt.CrtTest
 import aws.sdk.kotlin.crt.io.ClientBootstrap
 import aws.sdk.kotlin.crt.io.EventLoopGroup
 import aws.sdk.kotlin.crt.io.HostResolver
-import aws.sdk.kotlin.crt.runSuspendTest
+import kotlinx.coroutines.test.runTest
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -19,7 +19,7 @@ class CredentialsProviderTest : CrtTest() {
 
     @Ignore // FIXME Enable when Kotlin/Native implementation is complete
     @Test
-    fun testStaticProvider() = runSuspendTest {
+    fun testStaticProvider() = runTest {
         val provider = StaticCredentialsProvider.fromCredentials(EXPECTED_CREDENTIALS)
         val actual = provider.getCredentials()
         assertEquals(EXPECTED_CREDENTIALS, actual)
@@ -44,7 +44,7 @@ class CredentialsProviderTest : CrtTest() {
 
     @Ignore // FIXME Enable when Kotlin/Native implementation is complete
     @Test
-    fun testCacheStatic() = runSuspendTest {
+    fun testCacheStatic() = runTest {
         val provider = CachedCredentialsProvider.build {
             source = StaticCredentialsProvider.fromCredentials(EXPECTED_CREDENTIALS)
             refreshTimeInMilliseconds = 900
