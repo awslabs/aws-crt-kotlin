@@ -41,8 +41,8 @@ private fun streamRead(
     if (handler.bodyDone) return AWS_OP_SUCCESS
 
     try {
-        // AwsByteBuf handles updating the dest->len
-        val buffer: MutableBuffer = TODO("not implemented")
+        // MutableBuffer handles updating dest->len
+        val buffer = MutableBuffer(dest)
         handler.khandler.sendRequestBody(buffer)
     } catch (ex: Exception) {
         return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())

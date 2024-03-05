@@ -53,66 +53,65 @@ public actual class HttpClientConnectionManager actual constructor(
                 opts
             }
 
-            // val proxyOpts: aws_http_proxy_options? = options.proxyOptions?.let { proxyOptions ->
-            //     val opts = alloc<aws_http_proxy_options>()
-            //     val proxyHost = proxyOptions.host.toAwsString()
-            //     defer { proxyHost.free() }
-            //
-            //     opts.host.initFromCursor(proxyHost.asAwsByteCursor())
-            //     opts.port = (proxyOptions.port ?: options.uri.scheme.defaultPort).convert()
-            //
-            //     val proxyTlsConnOpts: aws_tls_connection_options? = proxyOptions.tlsContext?.let { tlsCtx ->
-            //         val tlsOpts = alloc<aws_tls_connection_options>()
-            //         val proxyEndpoint = proxyHost.asAwsByteCursor()
-            //         aws_tls_connection_options_init_from_ctx(tlsOpts.ptr, tlsCtx)
-            //         aws_tls_connection_options_set_server_name(tlsOpts.ptr, Allocator.Default, proxyEndpoint)
-            //
-            //         defer { aws_tls_connection_options_clean_up(tlsOpts.ptr) }
-            //
-            //         tlsOpts
-            //     }
-            //
-            //     opts.tls_options = proxyTlsConnOpts?.ptr
-            //
-            //     proxyOptions.authType.value.convert().also { opts.auth_type = it }
-            //     proxyOptions.authUsername?.let {
-            //         val username = it.toAwsString()
-            //         defer { username.free() }
-            //         opts.auth_username.initFromCursor(username.asAwsByteCursor())
-            //     }
-            //     proxyOptions.authPassword?.let {
-            //         val pwd = it.toAwsString()
-            //         defer { pwd.free() }
-            //         opts.auth_password.initFromCursor(pwd.asAwsByteCursor())
-            //     }
-            //     opts
-            // }
-            //
-            // val socketOpts = alloc<aws_socket_options>()
-            // socketOpts.kinit(options.socketOptions)
-            //
-            // val managerOpts = cValue<aws_http_connection_manager_options> {
-            //     bootstrap = options.clientBootstrap.ptr
-            //     initial_window_size = options.initialWindowSize.convert()
-            //     host.initFromCursor(endpoint)
-            //     port = options.uri.port.convert()
-            //
-            //     max_connections = options.maxConnections.convert()
-            //     enable_read_back_pressure = options.manualWindowManagement
-            //     max_connection_idle_in_milliseconds = options.maxConnectionIdleMs.convert()
-            //
-            //     // FIXME - setup
-            //     // shutdown_complete_callback = staticCFunction(::onShutdownComplete)
-            //     // shutdown_complete_user_data = shutdownCompleteStableRef.asCPointer()
-            //
-            //     tls_connection_options = tlsConnOpts?.ptr
-            //     monitoring_options = monitoringOpts?.ptr
-            //     proxy_options = proxyOpts?.ptr
-            //     socket_options = socketOpts.ptr
-            // }
-            //
-            // aws_http_connection_manager_new(Allocator.Default, managerOpts)
-            TODO()
+            val proxyOpts: aws_http_proxy_options? = options.proxyOptions?.let { proxyOptions ->
+                val opts = alloc<aws_http_proxy_options>()
+
+                val proxyHost = proxyOptions.host.toAwsString()
+                defer { proxyHost.free() }
+
+                opts.host.initFromCursor(proxyHost.asAwsByteCursor())
+                opts.port = (proxyOptions.port ?: options.uri.scheme.defaultPort).convert()
+
+                val proxyTlsConnOpts: aws_tls_connection_options? = proxyOptions.tlsContext?.let { tlsctx ->
+                    val tlsOpts = alloc<aws_tls_connection_options>()
+                    val proxyEndpoint = proxyHost.asAwsByteCursor()
+                    aws_tls_connection_options_init_from_ctx(tlsOpts.ptr, tlsctx)
+                    aws_tls_connection_options_set_server_name(tlsOpts.ptr, Allocator.Default, proxyEndpoint)
+
+                    defer { aws_tls_connection_options_clean_up(tlsOpts.ptr) }
+
+                    tlsOpts
+                }
+
+                opts.tls_options = proxyTlsConnOpts?.ptr
+
+                proxyOptions.authType.value.also { opts.auth_type = it.convert() }
+                proxyOptions.authUsername?.let {
+                    val username = it.toAwsString()
+                    defer { username.free() }
+                    opts.auth_username.initFromCursor(username.asAwsByteCursor())
+                }
+                proxyOptions.authPassword?.let {
+                    val pwd = it.toAwsString()
+                    defer { pwd.free() }
+                    opts.auth_password.initFromCursor(pwd.asAwsByteCursor())
+                }
+                opts
+            }
+
+            val socketOpts = alloc<aws_socket_options>()
+            socketOpts.kinit(options.socketOptions)
+
+            val managerOpts = cValue<aws_http_connection_manager_options> {
+                bootstrap = options.clientBootstrap.ptr
+                initial_window_size = options.initialWindowSize.convert()
+                host.initFromCursor(endpoint)
+                port = options.uri.port.convert()
+
+                max_connections = options.maxConnections.convert()
+                enable_read_back_pressure = options.manualWindowManagement
+                max_connection_idle_in_milliseconds = options.maxConnectionIdleMs.convert()
+
+                shutdown_complete_callback = staticCFunction(::onShutdownComplete)
+                shutdown_complete_user_data = shutdownCompleteStableRef.asCPointer()
+
+                tls_connection_options = tlsConnOpts?.ptr
+                monitoring_options = monitoringOpts?.ptr
+                proxy_options = proxyOpts?.ptr
+                socket_options = socketOpts.ptr
+            }
+
+            aws_http_connection_manager_new(Allocator.Default, managerOpts)
         } ?: throw CrtRuntimeException("aws_http_connection_manager_new()")
     }
 
