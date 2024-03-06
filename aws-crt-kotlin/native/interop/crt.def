@@ -5,10 +5,12 @@ headers = aws/common/allocator.h aws/common/error.h \
         aws/io/channel_bootstrap.h aws/io/tls_channel_handler.h aws/io/socket.h \
         aws/io/uri.h \
         aws/http/http.h aws/http/connection.h aws/http/connection_manager.h aws/http/request_response.h \
-        aws/compression/compression.h
-headerFilter = aws/common/* aws/io/* aws/http/* aws/compression/*
+        aws/compression/compression.h \
+        aws/auth/credentials.h
 
-linkerOpts = -laws-c-common -laws-c-cal -laws-c-io -laws-c-http -laws-c-compression
+headerFilter = aws/common/* aws/io/* aws/http/* aws/compression/* aws/auth/*
+
+linkerOpts = -laws-c-auth -laws-c-common -laws-c-cal -laws-c-io -laws-c-http -laws-c-compression
 linkerOpts.osx = -framework Security
 linkerOpts.ios = -framework Security
 linkerOpts.linux = -ls2n -lcrypto
