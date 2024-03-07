@@ -31,6 +31,28 @@ yum install openssl-devel
 Set the path to `libcrypto.a` either as a command line argument to gradle `-PlibcryptoPath=PATH` or in your `local.properties` file.
 
 
+#### Testing Different Linux Distros and Architectures
+
+1. Build the test executable(s) for the architecture(s) you want to test. 
+
+```sh
+# build everything
+./gradlew linuxTestBinaries
+
+# build specific arch
+./gradlew linuxX64TestBinaries
+```
+
+2. Use the `run-container-test.py` helper script to execute tests locally
+
+```sh
+OCI_EXE=docker python3 .github/scripts/run-container-test.py --distro al2 --arch x64 --test-bin-dir ./aws-crt-kotlin/build/bin
+```
+
+
+See the usage/help for different distributions provided: `python3 .github/scripts/run-container.py -h`
+
+
 ### OSX
 
 #### Debugging simulator test issues

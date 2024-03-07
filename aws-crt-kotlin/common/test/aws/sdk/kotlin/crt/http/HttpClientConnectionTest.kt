@@ -130,6 +130,7 @@ class HttpClientConnectionTest : CrtTest() {
                 .forEach { pref ->
                     TlsContext.build {
                         tlsCipherPreference = pref
+                        println("connecting to $url with $pref")
                     }.use { tlsContext ->
                         val elapsed = measureTime {
                             connect(url, clientBootstrap, tlsContext)

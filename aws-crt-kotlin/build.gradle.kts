@@ -191,6 +191,7 @@ tasks.register("linuxTestBinaries") {
 
 val disableCrossCompile = typedProp<Boolean>("aws.sdk.kotlin.crt.disableCrossCompile") == true
 if (disableCrossCompile) {
+    logger.warn("aws.sdk.kotlin.crt.disableCrossCompile=true: Cross compilation is disabled.")
     disableCrossCompileTargets()
 }
 
