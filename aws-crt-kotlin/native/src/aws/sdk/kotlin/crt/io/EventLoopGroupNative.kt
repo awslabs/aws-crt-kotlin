@@ -7,8 +7,9 @@ package aws.sdk.kotlin.crt.io
 
 import aws.sdk.kotlin.crt.*
 import aws.sdk.kotlin.crt.Allocator
+import aws.sdk.kotlin.crt.util.ShutdownChannel
+import aws.sdk.kotlin.crt.util.shutdownChannel
 import kotlinx.cinterop.*
-import kotlinx.coroutines.channels.Channel
 import libcrt.*
 
 /**
@@ -20,13 +21,11 @@ import libcrt.*
  * @throws [aws.sdk.kotlin.crt.CrtRuntimeException] If the system is unable to allocate space for a native event loop group
  */
 @OptIn(ExperimentalForeignApi::class)
-public actual class EventLoopGroup actual constructor(maxThreads: Int) : CrtResource<aws_event_loop_group>(), Closeable, AsyncShutdown {
-    private val elg: CPointer<aws_event_loop_group>
+public actual class EventLoopGroup actual constructor(maxThreads: Int) : NativeHandle<aws_event_loop_group>, Closeable, AsyncShutdown {
 
     override val ptr: CPointer<aws_event_loop_group>
-        get() = elg
 
-    private val shutdownCompleteChannel = Channel<Unit>(Channel.RENDEZVOUS)
+    private val shutdownCompleteChannel = shutdownChannel()
     private val channelStableRef = StableRef.create(shutdownCompleteChannel)
 
     init {
@@ -35,26 +34,26 @@ public actual class EventLoopGroup actual constructor(maxThreads: Int) : CrtReso
             shutdown_callback_user_data = channelStableRef.asCPointer()
         }
 
-        elg = checkNotNull(aws_event_loop_group_new_default(Allocator.Default, maxThreads.toUShort(), shutdownOpts)) {
+        ptr = checkNotNull(aws_event_loop_group_new_default(Allocator.Default, maxThreads.toUShort(), shutdownOpts)) {
             "aws_event_loop_group_new_default()"
         }
     }
 
     override suspend fun waitForShutdown() {
         shutdownCompleteChannel.receive()
-        channelStableRef.dispose()
     }
 
     override fun close() {
-        aws_event_loop_group_release(elg)
+        aws_event_loop_group_release(ptr)
     }
 }
 
 @OptIn(ExperimentalForeignApi::class)
 private fun onShutdownComplete(userData: COpaquePointer?) {
-    if (userData != null) {
-        val shutdownCompleteChannel = userData.asStableRef<Channel<Unit>>().get()
-        shutdownCompleteChannel.trySend(Unit)
-        shutdownCompleteChannel.close()
-    }
+    if (userData == null) return
+    val stableRef = userData.asStableRef<ShutdownChannel>()
+    val ch = stableRef.get()
+    ch.trySend(Unit)
+    ch.close()
+    stableRef.dispose()
 }

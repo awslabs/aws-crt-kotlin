@@ -2,9 +2,16 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-import kotlinx.coroutines.CoroutineScope
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
+import kotlinx.io.Buffer
+import kotlinx.io.RawSink
+import kotlinx.io.files.Path
+import kotlinx.io.files.SystemFileSystem
+import kotlinx.io.readByteArray
+
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 internal fun headerPair(raw: String): Pair<String, String> {
     val parts = raw.split(":", limit = 2)
@@ -12,32 +19,14 @@ internal fun headerPair(raw: String): Pair<String, String> {
     return parts[0] to parts[1]
 }
 
-/**
- * MPP compatible runBlocking to run suspend functions from common
- */
-internal expect fun <T> runBlocking(context: CoroutineContext = EmptyCoroutineContext, block: suspend CoroutineScope.() -> T): T
+fun createFileSink(path: String): RawSink = SystemFileSystem.sink(Path(path))
 
-/**
- * Platform specific initialization steps
- */
-internal expect fun platformInit()
+class StdoutSink : RawSink {
 
-/**
- * Output sink
- */
-interface Sink {
-    fun write(data: ByteArray)
-    fun close()
-}
-
-internal expect fun createFileSink(filename: String): Sink
-
-/**
- * Sink that just echoes the data to stdout
- */
-internal class StdoutSink : Sink {
-    override fun write(data: ByteArray) {
+    override fun write(source: Buffer, byteCount: Long) {
+        val data = source.readByteArray()
         println(data.decodeToString())
     }
-    override fun close() {}
+    override fun flush() {}
+    override fun close() { }
 }

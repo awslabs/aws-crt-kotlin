@@ -6,6 +6,7 @@ package aws.sdk.kotlin.crt.io
 
 import aws.sdk.kotlin.crt.Allocator
 import aws.sdk.kotlin.crt.Closeable
+import aws.sdk.kotlin.crt.CrtRuntimeException
 import kotlinx.cinterop.*
 import libcrt.*
 
@@ -16,23 +17,16 @@ import libcrt.*
  * NOTE: Platform implementations should provide direct access to the underlying bytes
  */
 @OptIn(ExperimentalForeignApi::class)
-public actual class MutableBuffer(private val buffer: aws_byte_buf? = null, private val capacity: Int) : Closeable { // TODO implement CrtResource?
-    private val buf = buffer ?: Allocator.Default.alloc<aws_byte_buf>()
-
-    public val bytes: ByteArray
-        get() = buf.buffer!!.readBytes(buf.capacity.toInt())
-
-    init {
-        if (buffer == null) {
-            aws_byte_buf_init(buf = buf.ptr, allocator = Allocator.Default.allocator, capacity = capacity.toULong())
-        }
-    }
+public actual class MutableBuffer private constructor(
+    private val buffer: InnerBuffer,
+) : Closeable {
+    internal constructor(borrowed: CPointer<aws_byte_buf>) : this(InnerBuffer.Borrowed(borrowed))
 
     /**
      * The amount of remaining write capacity before the buffer is full
      */
     public actual val writeRemaining: Int
-        get() = buf.capacity.toInt() - buf.len.toInt()
+        get() = (buffer.capacity - buffer.len).toInt()
 
     /**
      * Write as much of [length] bytes from [src] as possible starting at [offset].
@@ -41,29 +35,67 @@ public actual class MutableBuffer(private val buffer: aws_byte_buf? = null, priv
     public actual fun write(src: ByteArray, offset: Int, length: Int): Int {
         src.usePinned { pinnedSrc ->
             val offsetPinnedSrc = pinnedSrc.addressOf(offset).reinterpret<UByteVar>()
-            val numBytesToWrite = minOf(length, writeRemaining)
-            return if (aws_byte_buf_write(buf.ptr, offsetPinnedSrc, numBytesToWrite.toULong())) numBytesToWrite else 0
+            val wc = minOf(length, writeRemaining)
+            return if (aws_byte_buf_write(buffer.pointer, offsetPinnedSrc, wc.convert())) wc else 0
         }
     }
 
     public override fun close() {
-        if (buffer == null) {
-            aws_byte_buf_clean_up(buf.ptr)
-        }
+        buffer.release()
     }
 
     public actual companion object {
         /**
          * Create a buffer instance backed by [src]
          */
-        public actual fun of(src: ByteArray): MutableBuffer = src.usePinned { pinnedSrc ->
-            val tempBuf: CValue<aws_byte_buf> = aws_byte_buf_from_array(pinnedSrc.addressOf(0), src.size.toULong())
+        public actual fun of(src: ByteArray): MutableBuffer =
+            MutableBuffer(InnerBuffer.KBuffer(src))
+    }
+}
 
-            val buf = Allocator.Default.alloc<aws_byte_buf>()
-            // initialize the buf->buffer
-            aws_byte_buf_init_copy(dest = buf.ptr, allocator = Allocator.Default.allocator, src = tempBuf)
+private sealed interface InnerBuffer {
+    val pointer: CPointer<aws_byte_buf>
+    fun release() {}
 
-            MutableBuffer(buf, buf.capacity.toInt())
+    val capacity: ULong
+        get() = pointer.pointed.capacity
+
+    val len: ULong
+        get() = pointer.pointed.len
+
+    /**
+     * A buffer we don't own
+     */
+    data class Borrowed(
+        override val pointer: CPointer<aws_byte_buf>,
+    ) : InnerBuffer
+
+    /**
+     * A buffer that is backed by a Kotlin [ByteArray]. All write operations are reflected in the
+     * given [dest] array.
+     */
+    data class KBuffer(
+        private val dest: ByteArray,
+    ) : InnerBuffer {
+        private val pinned = dest.pin()
+
+        override val pointer: CPointer<aws_byte_buf> =
+            aws_mem_calloc(
+                Allocator.Default,
+                1.convert(),
+                sizeOf<aws_byte_buf>().convert(),
+            )
+                ?.reinterpret() ?: throw CrtRuntimeException("aws_mem_calloc() aws_byte_buf")
+
+        init {
+            pointer.pointed.len = 0.convert()
+            pointer.pointed.capacity = dest.size.convert()
+            pointer.pointed.buffer = pinned.addressOf(0).reinterpret()
+        }
+
+        override fun release() {
+            pinned.unpin()
+            Allocator.Default.free(pointer)
         }
     }
 }
