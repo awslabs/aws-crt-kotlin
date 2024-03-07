@@ -16,20 +16,6 @@ This project is licensed under the Apache-2.0 License.
 CRT interfaces are subject to change.
 
 ### Linux/Unix
-Install some version of libcrypto on which s2n depends. See the [s2n](https://github.com/awslabs/s2n) documentation.
-
-```sh
-apt-get install libssl-dev
-```
-
-OR
-
-```sh
-yum install openssl-devel
-```
-
-Set the path to `libcrypto.a` either as a command line argument to gradle `-PlibcryptoPath=PATH` or in your `local.properties` file.
-
 
 #### Testing Different Linux Distros and Architectures
 
