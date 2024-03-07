@@ -9,10 +9,10 @@ plugins {
 }
 
 kotlin {
-    applyDefaultHierarchyTemplate()
-    macosX64()
-    macosArm64()
-    linuxX64()
+    // applyDefaultHierarchyTemplate()
+    // macosX64()
+    // macosArm64()
+    // linuxX64()
     // FIXME - not supported by kotlinx-cli
     // linuxArm64()
 
