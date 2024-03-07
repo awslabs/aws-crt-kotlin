@@ -59,3 +59,14 @@ public fun Pinned<ByteArray>.asAwsByteCursor(): CValue<aws_byte_cursor> {
 public fun String.toAwsString(): CPointer<aws_string> = checkNotNull(aws_string_new_from_c_str(Allocator.Default, this)) {
     "aws_string_new_from_c_string()"
 }
+
+/**
+ * Initialize an aws_byte_cursor instance from an existing cursor
+ */
+public inline fun aws_byte_cursor.initFromCursor(cur: CValue<aws_byte_cursor>) {
+    val dest = this
+    cur.useContents {
+        dest.len = len
+        dest.ptr = ptr
+    }
+}
