@@ -8,7 +8,7 @@ import kotlinx.cinterop.CPointed
 import kotlinx.cinterop.CPointer
 
 /**
- * Marker interface for a type that provides a native handle (pointer) to a CRT type
+ * Interface for a type that provides a native handle (pointer) to a CRT type
  */
 internal interface NativeHandle<T : CPointed> {
     val ptr: CPointer<T>

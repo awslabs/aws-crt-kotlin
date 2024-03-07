@@ -83,7 +83,7 @@ public actual class HttpClientConnectionManager actual constructor(
 
                 opts.tls_options = proxyTlsConnOpts?.ptr
 
-                proxyOptions.authType.value.also { opts.auth_type = it.convert() }
+                opts.auth_type = proxyOptions.authType.value.convert()
                 proxyOptions.authUsername?.let {
                     val username = it.toAwsString()
                     defer { username.free() }

@@ -1,6 +1,9 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 import kotlinx.io.Buffer
 import kotlinx.io.RawSink
-import kotlinx.io.Sink
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.readByteArray
@@ -16,11 +19,9 @@ internal fun headerPair(raw: String): Pair<String, String> {
     return parts[0] to parts[1]
 }
 
-
 fun createFileSink(path: String): RawSink = SystemFileSystem.sink(Path(path))
 
-
-class StdoutSink: RawSink {
+class StdoutSink : RawSink {
 
     override fun write(source: Buffer, byteCount: Long) {
         val data = source.readByteArray()
@@ -29,5 +30,3 @@ class StdoutSink: RawSink {
     override fun flush() {}
     override fun close() { }
 }
-
-

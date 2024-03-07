@@ -19,9 +19,13 @@ public open class CrtRuntimeException(
                 append(super.message)
                 append(" ")
             }
-            append("ErrorCode: $errorCode; ")
-            append("ErrorName: $errorName; ")
-            append("ErrorDescription: $errorDescription")
+            append("ErrorCode: $errorCode")
+            errorName?.let {
+                append("; ErrorName: $it")
+            }
+            errorDescription?.let {
+                append("; ErrorDescription: $it")
+            }
         }
 
     public val errorName: String?
