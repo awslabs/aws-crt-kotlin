@@ -164,11 +164,6 @@ kotlin {
                 dependsOn(cmakeInstallTask)
             }
         }
-
-        compilations["test"].compilerOptions.configure {
-            // TODO - can we remove this if we are bundling the static libs
-            freeCompilerArgs.addAll(listOf("-linker-options", "-L${libDir.absolutePath}"))
-        }
     }
 }
 

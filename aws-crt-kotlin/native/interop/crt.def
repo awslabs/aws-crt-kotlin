@@ -21,11 +21,11 @@ headers = aws/common/allocator.h \
         aws/compression/compression.h
 headerFilter = aws/common/* aws/io/* aws/http/* aws/compression/*
 
-linkerOpts = -laws-c-common -laws-c-cal -laws-c-io -laws-c-http -laws-c-compression
 linkerOpts.osx = -framework Security
 linkerOpts.ios = -framework Security
-linkerOpts.linux = -ls2n -lcrypto
 
+# included libs are linked automatically, adding linkerOpts like `-laws-c-common` causes
+# issues downstream as it will search for that library still.
 staticLibraries = libaws-c-common.a \
         libaws-c-cal.a \
         libaws-c-io.a \
