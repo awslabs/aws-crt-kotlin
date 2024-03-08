@@ -1,5 +1,6 @@
 package = libcrt
 headers = aws/common/allocator.h \
+        aws/common/common.h \
         aws/common/error.h \
         aws/common/byte_buf.h \
         aws/common/string.h \
@@ -48,6 +49,25 @@ static void s_crt_kotlin_log(enum aws_log_level level, aws_log_subject_t subject
 // definitions
 static struct aws_allocator *s_crt_kotlin_allocator = NULL;
 int g_memtrace_level = 0;
+
+// FIXME - should be 16
+#define AWS_CRT_KOTLIN_PACKAGE_ID 15
+
+enum aws_kotlin_crt_log_subject {
+    AWS_LS_KOTLIN_CRT_GENERAL = AWS_LOG_SUBJECT_BEGIN_RANGE(AWS_CRT_KOTLIN_PACKAGE_ID),
+    AWS_LS_KOTLIN_CRT_LAST = AWS_LOG_SUBJECT_END_RANGE(AWS_CRT_KOTLIN_PACKAGE_ID)
+};
+
+static struct aws_log_subject_info s_crt_log_subject_infos[] = {
+    DEFINE_LOG_SUBJECT_INFO(
+        AWS_LS_KOTLIN_CRT_GENERAL, "kotlin-crt-general", "Subject for aws-crt-kotlin logging that defies categorization"),
+};
+
+static struct aws_log_subject_info_list s_crt_log_subject_list = {
+    .subject_list = s_crt_log_subject_infos,
+    .count = AWS_ARRAY_SIZE(s_crt_log_subject_infos),
+};
+
 
 static void s_crt_kotlin_init_allocator(int trace_level) {
     if (trace_level > 0) {

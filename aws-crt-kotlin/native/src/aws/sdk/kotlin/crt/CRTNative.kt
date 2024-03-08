@@ -5,10 +5,7 @@
 
 package aws.sdk.kotlin.crt
 
-import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.convert
-import kotlinx.cinterop.staticCFunction
-import kotlinx.cinterop.toKString
+import kotlinx.cinterop.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -39,6 +36,7 @@ public actual object CRT {
             aws_http_library_init(Allocator.Default)
 
             Logging.initialize(config)
+            aws_register_log_subject_info_list(s_crt_log_subject_list.ptr)
             atexit(staticCFunction(::cleanup))
 
             initialized = true
@@ -101,4 +99,17 @@ public actual object CRT {
         } else {
             0
         }
+}
+
+/**
+ * Clean up CRT resources after K/N runtime has been released.
+ */
+private fun cleanup() {
+    aws_unregister_log_subject_info_list(s_crt_log_subject_list.ptr)
+    aws_http_library_clean_up()
+    aws_compression_library_clean_up()
+    aws_io_library_clean_up()
+    aws_common_library_clean_up()
+
+    s_crt_kotlin_clean_up()
 }

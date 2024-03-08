@@ -28,16 +28,3 @@ internal class AwsAllocator : NativeFreeablePlacement, CValuesRef<aws_allocator>
 
     override fun getPointer(scope: AutofreeScope): CPointer<aws_allocator> = allocator
 }
-
-/**
- * Clean up CRT resources after K/N runtime has been released.
- */
-@OptIn(ExperimentalForeignApi::class)
-internal fun cleanup() {
-    aws_http_library_clean_up()
-    aws_compression_library_clean_up()
-    aws_io_library_clean_up()
-    aws_common_library_clean_up()
-
-    s_crt_kotlin_clean_up()
-}
