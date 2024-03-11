@@ -50,8 +50,7 @@ static void s_crt_kotlin_log(enum aws_log_level level, aws_log_subject_t subject
 static struct aws_allocator *s_crt_kotlin_allocator = NULL;
 int g_memtrace_level = 0;
 
-// FIXME - should be 16
-#define AWS_CRT_KOTLIN_PACKAGE_ID 15
+#define AWS_CRT_KOTLIN_PACKAGE_ID 16
 
 enum aws_kotlin_crt_log_subject {
     AWS_LS_KOTLIN_CRT_GENERAL = AWS_LOG_SUBJECT_BEGIN_RANGE(AWS_CRT_KOTLIN_PACKAGE_ID),
