@@ -7,7 +7,7 @@ package aws.sdk.kotlin.crt.http
 import aws.sdk.kotlin.crt.Allocator
 import aws.sdk.kotlin.crt.LogLevel
 import aws.sdk.kotlin.crt.io.MutableBuffer
-import aws.sdk.kotlin.crt.klog
+import aws.sdk.kotlin.crt.log
 import kotlinx.cinterop.*
 import libcrt.*
 
@@ -25,7 +25,7 @@ private fun streamSeek(
             result = AWS_OP_ERR
         }
     } catch (ex: Exception) {
-        klog(LogLevel.Error, "streamSeek: $ex")
+        log(LogLevel.Error, "streamSeek: $ex")
         return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
     }
 
@@ -48,7 +48,7 @@ private fun streamRead(
         val buffer = MutableBuffer(dest)
         handler.khandler.sendRequestBody(buffer)
     } catch (ex: Exception) {
-        klog(LogLevel.Error, "streamRead: $ex")
+        log(LogLevel.Error, "streamRead: $ex")
         return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
     }
 
@@ -84,7 +84,7 @@ private fun streamRelease(
     if (stream == null) return
     val refCnt = aws_ref_count_release(stream.pointed.ref_count.ptr)
     if (refCnt.toInt() == 0) {
-        klog(LogLevel.Trace, "releasing RequestBodyStream")
+        log(LogLevel.Trace, "releasing RequestBodyStream")
         val stableRef = stream.pointed.impl?.asStableRef<RequestBodyStream>() ?: return
         stableRef.dispose()
         Allocator.Default.free(stream)

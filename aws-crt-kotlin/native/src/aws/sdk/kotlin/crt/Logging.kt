@@ -69,6 +69,6 @@ internal object Logging {
     }
 }
 
-internal inline fun klog(level: LogLevel, message: String, subject: aws_log_subject_t = AWS_LS_KOTLIN_CRT_GENERAL) {
+internal inline fun log(level: LogLevel, message: String, subject: aws_log_subject_t = AWS_LS_KOTLIN_CRT_GENERAL) {
     s_crt_kotlin_log(level.value.convert(), subject, message)
 }
