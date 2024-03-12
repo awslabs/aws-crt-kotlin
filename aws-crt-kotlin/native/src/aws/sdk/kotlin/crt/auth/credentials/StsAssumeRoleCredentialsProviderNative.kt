@@ -6,13 +6,12 @@ package aws.sdk.kotlin.crt.auth.credentials
 
 import aws.sdk.kotlin.crt.Allocator
 import aws.sdk.kotlin.crt.util.asAwsByteCursor
-import aws.sdk.kotlin.crt.util.free
+import aws.sdk.kotlin.crt.util.initFromCursor
 import aws.sdk.kotlin.crt.util.toAwsString
 import kotlinx.cinterop.*
 import kotlinx.coroutines.channels.Channel
 import libcrt.*
 
-@OptIn(ExperimentalForeignApi::class)
 public actual class StsAssumeRoleCredentialsProvider
 internal actual constructor(builder: StsAssumeRoleCredentialsProviderBuilder) : CredentialsProvider {
     public actual companion object {}
@@ -20,32 +19,34 @@ internal actual constructor(builder: StsAssumeRoleCredentialsProviderBuilder) : 
     private val shutdownCompleteChannel = Channel<Unit>(Channel.RENDEZVOUS)
     private val channelStableRef = StableRef.create(shutdownCompleteChannel)
 
-//    private val provider: cnames.structs.aws_credentials_provider
+//    private val provider: aws_credentials_provider
 
     init {
-        memScoped {
-            val shutdownOpts = cValue<aws_credentials_provider_shutdown_options>().apply {
-                shutdown_callback = staticCFunction(::onShutdownComplete)
-                shutdown_user_data = channelStableRef.asCPointer()
-            }
-        }
-//        val roleArn = builder.roleArn!!.toAwsString()
-//        val sessionName = builder.sessionName!!.toAwsString()
+//        provider = memScoped {
+////            val bootstrapProvider: CPointer<aws_credentials_provider> = builder.credentialsProvider.toAwsCredentialsProvider()
 //
-//        val opts = cValue<aws_credentials_provider_sts_options> {
-//            aws_client_bootstrap = builder.clientBootstrap?.ptr
-//            aws_tls_ctx = builder.tlsContext?.ptr
-//            aws_credentials_provider = builder.credentialsProvider?.ptr
-//            role_arn = roleArn.asAwsByteCursor()
-//            session_name = sessionName.asAwsByteCursor()
-//            duration_seconds = builder.durationSeconds?.convert()
-//            shutdown_options = shutdownOpts
+//            val opts = cValue<aws_credentials_provider_sts_options> {
+//                bootstrap = builder.clientBootstrap?.ptr
+//                creds_provider = builder.credentialsProvider.provider
+//                /**
+//                 * FIXME. To set the creds_provider, write a Kotlin function that takes a [CredentialsProvider] and
+//                 * converts it into the aws_credentials_provider struct. This includes setting up things like
+//                 * the vtable and allocator correctly.
+//                 */
+//                duration_seconds = builder.durationSeconds!!.convert()
+//                role_arn.initFromCursor(builder.roleArn!!.toAwsString().asAwsByteCursor())
+//                session_name.initFromCursor(builder.sessionName!!.toAwsString().asAwsByteCursor())
+//                shutdown_options.apply {
+//                    shutdown_callback = staticCFunction(::onShutdownComplete)
+//                    shutdown_user_data = channelStableRef.asCPointer()
+//                }
+//                tls_ctx = builder.tlsContext?.ptr
+//            }
+//
+//            checkNotNull(aws_credentials_provider_new_sts(Allocator.Default.allocator, opts.ptr)) {
+//                "aws_credentials_provider_new_sts()"
+//            }.pointed
 //        }
-//
-//        provider = aws_credentials_provider_new_sts(Allocator.Default.allocator, opts)
-//
-//        roleArn.free()
-//        sessionName.free()
     }
 
 
@@ -59,14 +60,5 @@ internal actual constructor(builder: StsAssumeRoleCredentialsProviderBuilder) : 
 
     override suspend fun waitForShutdown() {
         TODO("Not yet implemented")
-    }
-}
-
-@OptIn(ExperimentalForeignApi::class)
-private fun onShutdownComplete(userData: COpaquePointer?) {
-    if (userData != null) {
-        val shutdownCompleteChannel = userData.asStableRef<Channel<Unit>>().get()
-        shutdownCompleteChannel.trySend(Unit)
-        shutdownCompleteChannel.close()
     }
 }

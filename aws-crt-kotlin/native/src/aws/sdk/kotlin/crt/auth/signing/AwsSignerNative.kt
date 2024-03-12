@@ -41,3 +41,5 @@ public actual object AwsSigner {
         TODO("Not yet implemented")
     }
 }
+
+//private fun AwsSigningConfig.toCrtAwsSigningConfig(): aws_signing_config_aws {}
