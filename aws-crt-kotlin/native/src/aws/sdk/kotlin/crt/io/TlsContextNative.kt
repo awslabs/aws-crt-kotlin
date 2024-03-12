@@ -14,16 +14,12 @@ import aws.sdk.kotlin.crt.util.toAwsString
 import kotlinx.cinterop.*
 import libcrt.*
 
-@OptIn(ExperimentalForeignApi::class)
-public actual class TlsContext actual constructor(options: TlsContextOptions?) : CrtResource<aws_tls_ctx>(), Closeable {
-    private val ctx: CPointer<aws_tls_ctx>
+public actual class TlsContext actual constructor(options: TlsContextOptions?) : NativeHandle<aws_tls_ctx>, Closeable {
     private val tlsCtxOpts: aws_tls_ctx_options = Allocator.Default.alloc()
 
     public actual companion object {}
 
-    @OptIn(ExperimentalForeignApi::class)
     override val ptr: CPointer<aws_tls_ctx>
-        get() = ctx
 
     init {
         aws_tls_ctx_options_init_default_client(tlsCtxOpts.ptr, Allocator.Default)
@@ -57,7 +53,7 @@ public actual class TlsContext actual constructor(options: TlsContextOptions?) :
             throw ex
         }
 
-        ctx = aws_tls_client_ctx_new(Allocator.Default, tlsCtxOpts.ptr) ?: run {
+        ptr = aws_tls_client_ctx_new(Allocator.Default, tlsCtxOpts.ptr) ?: run {
             aws_tls_ctx_options_clean_up(tlsCtxOpts.ptr)
             Allocator.Default.free(tlsCtxOpts.rawPtr)
             throw CrtRuntimeException("aws_tls_client_ctx_new()")
@@ -110,7 +106,7 @@ public actual class TlsContext actual constructor(options: TlsContextOptions?) :
     }
 
     override fun close() {
-        aws_tls_ctx_release(ctx)
+        aws_tls_ctx_release(ptr)
         aws_tls_ctx_options_clean_up(tlsCtxOpts.ptr)
         Allocator.Default.free(tlsCtxOpts.rawPtr)
     }

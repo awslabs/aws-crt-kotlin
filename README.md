@@ -16,19 +16,27 @@ This project is licensed under the Apache-2.0 License.
 CRT interfaces are subject to change.
 
 ### Linux/Unix
-Install some version of libcrypto on which s2n depends. See the [s2n](https://github.com/awslabs/s2n) documentation.
+
+#### Testing Different Linux Distros and Architectures
+
+1. Build the test executable(s) for the architecture(s) you want to test. 
 
 ```sh
-apt-get install libssl-dev
+# build everything
+./gradlew linuxTestBinaries
+
+# build specific arch
+./gradlew linuxX64TestBinaries
 ```
 
-OR
+2. Use the `run-container-test.py` helper script to execute tests locally
 
 ```sh
-yum install openssl-devel
+OCI_EXE=docker python3 .github/scripts/run-container-test.py --distro al2 --arch x64 --test-bin-dir ./aws-crt-kotlin/build/bin
 ```
 
-Set the path to `libcrypto.a` either as a command line argument to gradle `-PlibcryptoPath=PATH` or in your `local.properties` file.
+
+See the usage/help for different distributions provided: `python3 .github/scripts/run-container.py -h`
 
 
 ### OSX

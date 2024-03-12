@@ -8,10 +8,11 @@ import aws.sdk.kotlin.crt.LogDestination
 import aws.sdk.kotlin.crt.http.*
 import aws.sdk.kotlin.crt.io.*
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.runBlocking
+import kotlinx.io.Sink
+import kotlinx.io.buffered
 
 fun main(args: Array<String>) {
-    platformInit()
-
     val opts = CliOpts.from(args)
 
     CRT.initRuntime {
@@ -28,7 +29,8 @@ fun main(args: Array<String>) {
     println("parsed uri: $uri")
     println("headers: ${opts.headers}")
 
-    val sink = if (opts.outputFile != null) createFileSink(opts.outputFile!!) else StdoutSink()
+    val rawSink = if (opts.outputFile != null) createFileSink(opts.outputFile!!) else StdoutSink()
+    val sink = rawSink.buffered()
 
     val tlsContextBuilder = TlsContextOptionsBuilder()
 
@@ -131,7 +133,6 @@ private suspend fun HttpClientConnection.roundTrip(request: HttpRequest, sink: S
         override fun onResponseBody(stream: HttpStream, bodyBytesIn: Buffer): Int {
             println("onResponseBody -- recv'd ${bodyBytesIn.len} bytes")
             val contents = bodyBytesIn.readAll()
-            // println(contents.decodeToString())
             sink.write(contents)
 
             return contents.size

@@ -9,6 +9,13 @@ plugins {
 }
 
 kotlin {
+    // applyDefaultHierarchyTemplate()
+    // macosX64()
+    // macosArm64()
+    // linuxX64()
+    // FIXME - not supported by kotlinx-cli
+    // linuxArm64()
+
     jvm {
         val jvmJar by tasks.getting(org.gradle.jvm.tasks.Jar::class) {
             doFirst {
@@ -29,19 +36,19 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                val kotlinxCliVersion: String by project
-                val coroutinesVersion: String by project
-
                 implementation(libs.kotlin.stdlib)
                 implementation(libs.kotlinx.cli)
                 implementation(project(":aws-crt-kotlin"))
                 implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.kotlinx.io)
             }
         }
+    }
 
-        val jvmMain by getting {
-            dependencies {
-                implementation(libs.kotlin.stdlib)
+    targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
+        binaries {
+            executable("elasticurl", listOf(DEBUG)) {
+                // entryPoint = "software.amazon.awssdk.kotlin.crt.elasticurl.ApplicationKt"
             }
         }
     }

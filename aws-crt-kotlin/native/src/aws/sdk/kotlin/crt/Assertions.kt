@@ -15,6 +15,6 @@ import libcrt.AWS_OP_SUCCESS
 @OptIn(ExperimentalForeignApi::class)
 internal inline fun awsAssertOpSuccess(errorCode: Int, lazyMessage: () -> String) {
     if (errorCode != AWS_OP_SUCCESS) {
-        throw CrtRuntimeException(lazyMessage())
+        throw CrtRuntimeException(lazyMessage(), ec = errorCode)
     }
 }

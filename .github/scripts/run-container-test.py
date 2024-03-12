@@ -101,13 +101,20 @@ def run_docker_test(opts):
         'run',
         '--rm',
         f'-v{test_bin_dir}:/test',
-        '-w/test',
-        '-e DEBIAN_FRONTEND=noninteractive',
-        '--platform',
-        platform,
-        image_name,
-        path_to_exe,
     ]
+    if not opts.no_system_certs:
+        cmd.append(f'-v/etc/ssl:/etc/ssl')
+
+    cmd.extend(
+        [
+            '-w/test',
+            '-e DEBIAN_FRONTEND=noninteractive',
+            '--platform',
+            platform,
+            image_name,
+            path_to_exe,
+        ]
+    )
 
     cmd = shlex.join(cmd)
     print(cmd)
@@ -126,6 +133,7 @@ def create_cli():
     parser.add_argument("--distro", required=True, choices=DISTRO_TO_IMAGE_NAME.keys(), help="the distribution name to run the task on")
     parser.add_argument("--arch", required=True, choices=DOCKER_PLATFORM_BY_ARCH.keys(), help="the architecture to use")
     parser.add_argument("--test-bin-dir", required=True, help="the path to the test binary directory root")
+    parser.add_argument("--no-system-certs", action='store_true', help="disable mounting system certificates into the container")
 
     return parser
 
