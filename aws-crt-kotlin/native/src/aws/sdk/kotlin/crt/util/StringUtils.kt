@@ -89,14 +89,3 @@ public inline fun <reified T> withAwsByteCursor(str: String, block: (cursor: CVa
         block(cursor)
     }
 }
-
-/**
- * Initialize an aws_byte_cursor instance from an existing cursor
- */
-public inline fun aws_byte_cursor.initFromCursor(cur: CValue<aws_byte_cursor>) {
-    val dest = this
-    cur.useContents {
-        dest.len = len
-        dest.ptr = ptr
-    }
-}
