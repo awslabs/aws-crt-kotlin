@@ -33,6 +33,7 @@ string(REPLACE ";" "${AWS_MODULE_DIR};" AWS_MODULE_PATH "${CMAKE_PREFIX_PATH}${A
 # Append that generated list to the module search path
 list(APPEND CMAKE_MODULE_PATH ${AWS_MODULE_PATH})
 
+set(ADDITIONAL_DEPS "")
 
 if (BUILD_DEPS)
     list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/crt/aws-c-common/cmake")
@@ -66,6 +67,7 @@ if (BUILD_DEPS)
             set(DISABLE_GO ON)
             set(SEARCH_LIBCRYPTO OFF)
             set(BUILD_LIBSSL OFF)
+            list(APPEND ADDITIONAL_DEPS crypto)
             add_subdirectory(crt/aws-lc)
         else()
             set(SEARCH_LIBCRYPTO ON)
@@ -80,6 +82,7 @@ if (BUILD_DEPS)
             endif()
         endif()
         add_subdirectory(crt/s2n)
+        list(APPEND ADDITIONAL_DEPS s2n)
     endif()
     add_subdirectory(crt/aws-c-sdkutils)
     add_subdirectory(crt/aws-c-io)
@@ -106,6 +109,11 @@ aws_use_package(aws-c-http)
 aws_use_package(aws-c-auth)
 aws_use_package(aws-checksums)
 
+# FIXME - not working?
+# we only ever build for a single device/simulator and turning this on leaks into generator expressions like `$<TARGET_FILE:${tgt}>`
+# and breaks for ios/tvos/watchos builds
+#set(XCODE_EMIT_EFFECTIVE_PLATFORM_NAME OFF)
+
 # Create a single static library that combines all the individual libs
 # We do this to work around issues with link order when including multiple
 # `staticLibraries` in the cinterop file.
@@ -119,10 +127,14 @@ function(bundle_static_library name deps)
         endforeach()
 
         add_custom_command(
-            COMMAND ${lib_tool} -static -o ${tgt_full_name} ${static_libs_full_names}
-            OUTPUT ${tgt_full_name}
-            COMMENT "Bundling ${name}"
+            COMMAND 
+                ${lib_tool} -static -o ${tgt_full_name} ${static_libs_full_names}
+            OUTPUT 
+                ${tgt_full_name}
+            COMMENT 
+                "Bundling ${name}"
             VERBATIM
+            COMMAND_EXPAND_LISTS
         )
 
     elseif (CMAKE_C_COMPILER_ID MATCHES "^(Clang|GNU)$")
@@ -169,6 +181,7 @@ function(bundle_static_library name deps)
   install(FILES ${tgt_full_name} TYPE LIB)
 endfunction()
 
-bundle_static_library(aws-crt-kotlin "${DEP_AWS_LIBS}")
+list(APPEND STATIC_LIBS ${DEP_AWS_LIBS} ${ADDITIONAL_DEPS})
+bundle_static_library(aws-crt-kotlin "${STATIC_LIBS}")
 
 message("CMAKE_C_COMPILER_ID=${CMAKE_C_COMPILER_ID}")
