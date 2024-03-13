@@ -55,7 +55,6 @@ class SigningTest : CrtTest() {
         headers.append("Authorization", "example.amazonaws.com")
     }
 
-    @Ignore // FIXME Enable when Kotlin/Native implementation is complete
     @Test
     fun testSigningSuccess() = runTest {
         StaticCredentialsProvider.build {
@@ -81,7 +80,6 @@ class SigningTest : CrtTest() {
         }
     }
 
-    @Ignore // FIXME Enable when Kotlin/Native implementation is complete
     @Test
     fun testQuerySigningSuccess() = runTest {
         StaticCredentialsProvider.build {
@@ -113,7 +111,6 @@ class SigningTest : CrtTest() {
         }
     }
 
-    @Ignore // FIXME Enable when Kotlin/Native implementation is complete
     @Test
     fun testSigningBasicSigV4() = runTest {
         StaticCredentialsProvider.build {
@@ -146,7 +143,6 @@ class SigningTest : CrtTest() {
         }
     }
 
-    @Ignore // FIXME Enable when Kotlin/Native implementation is complete
     @Test
     fun testSigningFailureBadRequest() = runTest {
         StaticCredentialsProvider.build {
@@ -173,7 +169,6 @@ class SigningTest : CrtTest() {
         }
     }
 
-    @Ignore // FIXME Enable when Kotlin/Native implementation is complete
     @Test
     fun testSigningSigV4Asymmetric() = runTest {
         StaticCredentialsProvider.build {
@@ -201,7 +196,6 @@ class SigningTest : CrtTest() {
         }
     }
 
-    @Ignore // FIXME Enable when Kotlin/Native implementation is complete
     @Test
     fun testSigningChunkTrailingHeaders() = runTest {
         StaticCredentialsProvider.build {

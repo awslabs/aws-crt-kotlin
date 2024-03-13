@@ -8,12 +8,14 @@ package aws.sdk.kotlin.crt.auth.credentials
 import aws.sdk.kotlin.crt.Allocator
 import aws.sdk.kotlin.crt.CRT
 import aws.sdk.kotlin.crt.awsAssertOpSuccess
+import aws.sdk.kotlin.crt.util.toAwsString
 import aws.sdk.kotlin.crt.util.toKString
 import cnames.structs.aws_credentials
 import kotlinx.cinterop.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.runBlocking
 import libcrt.*
+import platform.posix.UINT64_MAX
 
 /**
  * Callback function used in asynchronous getCredentials requests.
@@ -47,14 +49,10 @@ internal fun onShutdownComplete(userData: COpaquePointer?) {
     }
 }
 
-//internal fun CredentialsProvider.toAwsCredentialsProvider(): aws_credentials_provider {
-//    val vTable = Allocator.Default.alloc<aws_credentials_provider_vtable>()
-//
-//    val getCredentialsFunction: CPointer<aws_credentials_provider_get_credentials_fn> = staticCFunction(::getCredentials)
-//    vTable.get_credentials = getCredentialsFunction
-//
-//    val provider = Allocator.Default.alloc<aws_credentials_provider>()
-//    provider.vtable = vTable.ptr
-//    provider.allocator = Allocator.Default.allocator
-//    provider.impl
-//}
+internal fun Credentials.toNativeCredentials(): CPointer<aws_credentials>? = aws_credentials_new_from_string(
+    Allocator.Default.allocator,
+    access_key_id = accessKeyId.toAwsString(),
+    secret_access_key = secretAccessKey.toAwsString(),
+    session_token = sessionToken?.toAwsString(),
+    expiration_timepoint_seconds = UINT64_MAX // FIXME: Credentials do not have an expiration field
+)

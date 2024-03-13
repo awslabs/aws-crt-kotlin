@@ -109,6 +109,11 @@ internal fun inputStream(khandler: HttpRequestBodyStream): CPointer<aws_input_st
     return stream.ptr
 }
 
+internal fun CPointer<aws_input_stream>.toHttpRequestBodyStream(): HttpRequestBodyStream {
+    val stableRef = checkNotNull(this.pointed.impl?.asStableRef<RequestBodyStream>()) { "toHttpRequestBodyStream() expected non-null `impl`" }
+    return stableRef.get().khandler
+}
+
 // wrapper around the actual implementation
 private class RequestBodyStream(
     val khandler: HttpRequestBodyStream,

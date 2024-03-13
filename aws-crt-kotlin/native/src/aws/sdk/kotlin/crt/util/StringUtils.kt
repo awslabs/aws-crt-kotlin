@@ -19,6 +19,15 @@ public fun CPointer<aws_string>.toKString(): String? {
 }
 
 /**
+ * Decode an aws_string as to a kotlin [String] assuming UTF-8 bytes
+ * This does NOT free the aws_string instance
+ */
+public fun CPointerVar<aws_string>.toKString(): String? {
+    val bytes = aws_string_c_str(this.value)
+    return bytes?.toKString()
+}
+
+/**
  * Get a byte cursor from the current aws_string instance
  */
 public fun CPointer<aws_string>.asAwsByteCursor(): CValue<aws_byte_cursor> =
