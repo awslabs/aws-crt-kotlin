@@ -49,10 +49,10 @@ public fun String.toAwsString(): CPointer<aws_string> =
  */
 public fun Pinned<ByteArray>.asAwsByteCursor(): CValue<aws_byte_cursor> {
     val arr = get()
-    val addr = addressOf(0)
+    val addr = if (arr.isNotEmpty()) addressOf(0) else null
     return cValue<aws_byte_cursor> {
         len = arr.size.convert()
-        ptr = addr.reinterpret()
+        ptr = addr?.reinterpret()
     }
 }
 
