@@ -109,10 +109,11 @@ aws_use_package(aws-c-http)
 aws_use_package(aws-c-auth)
 aws_use_package(aws-checksums)
 
-# FIXME - not working?
-# we only ever build for a single device/simulator and turning this on leaks into generator expressions like `$<TARGET_FILE:${tgt}>`
-# and breaks for ios/tvos/watchos builds
-#set(XCODE_EMIT_EFFECTIVE_PLATFORM_NAME OFF)
+if (XCODE)
+    # we only ever build for a single device/simulator and turning this on leaks into generator expressions like `$<TARGET_FILE:${tgt}>`
+    # and breaks for ios/tvos/watchos builds
+    set_property(GLOBAL PROPERTY XCODE_EMIT_EFFECTIVE_PLATFORM_NAME OFF)
+endif()
 
 # Create a single static library that combines all the individual libs
 # We do this to work around issues with link order when including multiple
