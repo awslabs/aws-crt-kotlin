@@ -1,9 +1,8 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.21)
 project(aws-crt-kotlin C)
 message(STATUS "CMake ${CMAKE_VERSION}")
-
 option(BUILD_DEPS "Builds aws common runtime dependencies as part of build. Turn off if you want to control your dependency chain." ON)
-option(BUILD_SHARED_LIBS "Build shared library for FFI: default: ON" ON)
+option(BUILD_SHARED_LIBS "Build shared library for FFI: default: OFF" OFF)
 
 if (POLICY CMP0069)
     cmake_policy(SET CMP0069 NEW) # Enable LTO/IPO if available in the compiler
@@ -19,6 +18,13 @@ endif()
 
 if (UNIX AND NOT APPLE)
     set(FIND_LIBRARY_USE_LIB64_PATHS true)
+endif()
+
+# Multi-config generators like Xcode, Visual Studio, and Ninja don't always respect
+# CMAKE_BUILD_TYPE. Set the available configuration to the build type.
+if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    set(CMAKE_CONFIGURATION_TYPES ${CMAKE_BUILD_TYPE})
+    message(STATUS "Setting CMAKE_CONFIGURATION_TYPES = ${CMAKE_CONFIGURATION_TYPES}")
 endif()
 
 # This is required in order to append /lib/cmake to each element in CMAKE_PREFIX_PATH
@@ -87,9 +93,6 @@ else()
     set(IN_SOURCE_BUILD OFF)
 endif()
 
-# Restore BUILD_SHARED_LIBS for this project
-set(BUILD_SHARED_LIBS ${SHARED_FFI_LIB})
-
 include(AwsCFlags)
 include(AwsSharedLibSetup)
 include(AwsSanitizers)
@@ -103,7 +106,69 @@ aws_use_package(aws-c-http)
 aws_use_package(aws-c-auth)
 aws_use_package(aws-checksums)
 
-# TODO - bundling static libraries into single static library composed of all the static libraries
-# to enable IPO/LTO. See also:
-# * https://cristianadam.eu/20190501/bundling-together-static-libraries-with-cmake/
-# * https://cmake.org/cmake/help/latest/module/CheckIPOSupported.html
+# Create a single static library that combines all the individual libs
+# We do this to work around issues with link order when including multiple
+# `staticLibraries` in the cinterop file.
+function(bundle_static_library name deps)
+    set(tgt_full_name ${CMAKE_BINARY_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}${name}${CMAKE_STATIC_LIBRARY_SUFFIX})
+
+    if(XCODE)
+        find_program(lib_tool libtool)
+        foreach(tgt IN LISTS deps)
+            list(APPEND static_libs_full_names $<TARGET_FILE:${tgt}>)
+        endforeach()
+
+        add_custom_command(
+            COMMAND ${lib_tool} -static -o ${tgt_full_name} ${static_libs_full_names}
+            OUTPUT ${tgt_full_name}
+            COMMENT "Bundling ${name}"
+            VERBATIM
+        )
+
+    elseif (CMAKE_C_COMPILER_ID MATCHES "^(Clang|GNU)$")
+        # archive tool needs to support -M flag 
+        file(WRITE ${CMAKE_BINARY_DIR}/${name}.ar.in "CREATE ${tgt_full_name}\n")
+
+        foreach(tgt IN LISTS deps)
+            message("tgt=${tgt}")
+            file(APPEND ${CMAKE_BINARY_DIR}/${name}.ar.in "ADDLIB $<TARGET_FILE:${tgt}>\n")
+        endforeach()
+
+        file(APPEND ${CMAKE_BINARY_DIR}/${name}.ar.in "SAVE\n")
+        file(APPEND ${CMAKE_BINARY_DIR}/${name}.ar.in "END\n")
+
+        file(
+            GENERATE
+            OUTPUT ${CMAKE_BINARY_DIR}/${name}.ar
+            INPUT ${CMAKE_BINARY_DIR}/${name}.ar.in
+        )
+
+        add_custom_command(
+            COMMAND ${CMAKE_AR} -M < ${CMAKE_BINARY_DIR}/${name}.ar
+            OUTPUT ${tgt_full_name}
+            COMMENT "Bundling ${name}"
+            VERBATIM
+        )
+    else()
+        message(FATAL_ERROR "Unknown bundling!")
+    endif()
+
+    add_custom_target(bundling_target ALL DEPENDS ${tgt_full_name})
+    foreach(tgt IN LISTS deps)
+        message("adding dependency on ${tgt}")
+        add_dependencies(bundling_target ${tgt})
+    endforeach()
+
+  add_library(${name} STATIC IMPORTED)
+  set_target_properties(${name}
+    PROPERTIES
+      IMPORTED_LOCATION ${tgt_full_name}
+      INTERFACE_INCLUDE_DIRECTORIES $<TARGET_PROPERTY:${name},INTERFACE_INCLUDE_DIRECTORIES>)
+  add_dependencies(${name} bundling_target)
+
+  install(FILES ${tgt_full_name} TYPE LIB)
+endfunction()
+
+bundle_static_library(aws-crt-kotlin "${DEP_AWS_LIBS}")
+
+message("CMAKE_C_COMPILER_ID=${CMAKE_C_COMPILER_ID}")
