@@ -54,5 +54,25 @@ internal fun Credentials.toNativeCredentials(): CPointer<aws_credentials>? = aws
     access_key_id = accessKeyId.toAwsString(),
     secret_access_key = secretAccessKey.toAwsString(),
     session_token = sessionToken?.toAwsString(),
-    expiration_timepoint_seconds = UINT64_MAX // FIXME: Credentials do not have an expiration field
+    expiration_timepoint_seconds = UINT64_MAX // FIXME?: Our Credentials do not have an expiration field
 )
+
+internal fun CredentialsProvider.toNativeCredentialsProvider(): CValue<aws_credentials_provider>? {
+//    val getCredentialsFn = staticCFunction(this::getCredentials)
+//    val destroyFn = this.close()
+
+    val vtable = cValue<s_crt_kotlin_aws_credentials_provider_vtable> {
+         this.get_credentials = staticCFunction(::s_crt_kotlin_aws_credentials_provider_get_credentials)
+        // this.destroy =
+    }
+
+    val nativeProvider = cValue<aws_credentials_provider> {
+        // this.vtable =
+        this.allocator = Allocator.Default.allocator
+        // this.shutdown_options =
+        // this.impl =
+        // this.ref_count =
+    }
+
+    return null
+}

@@ -107,8 +107,15 @@ static void s_crt_kotlin_logger_cleanup(void) {
     }
 }
 
+// Modification of aws_credentials_provider_get_credentials_fn, taking a pointer to a `callback` function instead of a value.
+typedef int(s_crt_kotlin_aws_credentials_provider_get_credentials_fn)(
+    struct aws_credentials_provider *provider,
+    aws_on_get_credentials_callback_fn *callback, // Modified to take a pointer to the callback
+    void *user_data);
+
+
 /**
- * Modification of `aws_credentials_provider_get_credentials`, taking a pointer to a `callback` function instead of a value.
+ * An implementation of `s_crt_kotlin_aws_credentials_provider_get_credentials_fn`
  */
 int s_crt_kotlin_aws_credentials_provider_get_credentials(
     struct aws_credentials_provider *provider,
@@ -117,3 +124,23 @@ int s_crt_kotlin_aws_credentials_provider_get_credentials(
 ) {
     return aws_credentials_provider_get_credentials(provider, &callback, user_data);
 }
+
+/*
+ * Modification of `aws_credentials_provider_vtable`, using `s_crt_kotlin_aws_credentials_provider_get_credentials_fn`
+ * as the `get_credentials` function.
+ */
+struct s_crt_kotlin_aws_credentials_provider_vtable {
+    s_crt_kotlin_aws_credentials_provider_get_credentials_fn *get_credentials;
+    aws_credentials_provider_destroy_fn *destroy;
+};
+
+/**
+ * Modification of `aws_credentials_provider`, taking our custom vtable struct.
+ */
+struct s_crt_kotlin_aws_credentials_provider {
+    struct s_crt_kotlin_aws_credentials_provider_vtable *vtable;
+    struct aws_allocator *allocator;
+    struct aws_credentials_provider_shutdown_options shutdown_options;
+    void *impl;
+    struct aws_atomic_var ref_count;
+};

@@ -19,34 +19,34 @@ internal actual constructor(builder: StsAssumeRoleCredentialsProviderBuilder) : 
     private val shutdownCompleteChannel = Channel<Unit>(Channel.RENDEZVOUS)
     private val channelStableRef = StableRef.create(shutdownCompleteChannel)
 
-//    private val provider: aws_credentials_provider
+    private val provider: aws_credentials_provider
 
     init {
-//        provider = memScoped {
-////            val bootstrapProvider: CPointer<aws_credentials_provider> = builder.credentialsProvider.toAwsCredentialsProvider()
-//
-//            val opts = cValue<aws_credentials_provider_sts_options> {
-//                bootstrap = builder.clientBootstrap?.ptr
+        provider = memScoped {
+//            val bootstrapProvider: CPointer<aws_credentials_provider> = builder.credentialsProvider.toAwsCredentialsProvider()
+
+            val opts = cValue<aws_credentials_provider_sts_options> {
+                bootstrap = builder.clientBootstrap?.ptr
 //                creds_provider = builder.credentialsProvider.provider
-//                /**
-//                 * FIXME. To set the creds_provider, write a Kotlin function that takes a [CredentialsProvider] and
-//                 * converts it into the aws_credentials_provider struct. This includes setting up things like
-//                 * the vtable and allocator correctly.
-//                 */
-//                duration_seconds = builder.durationSeconds!!.convert()
-//                role_arn.initFromCursor(builder.roleArn!!.toAwsString().asAwsByteCursor())
-//                session_name.initFromCursor(builder.sessionName!!.toAwsString().asAwsByteCursor())
-//                shutdown_options.apply {
-//                    shutdown_callback = staticCFunction(::onShutdownComplete)
-//                    shutdown_user_data = channelStableRef.asCPointer()
-//                }
-//                tls_ctx = builder.tlsContext?.ptr
-//            }
-//
-//            checkNotNull(aws_credentials_provider_new_sts(Allocator.Default.allocator, opts.ptr)) {
-//                "aws_credentials_provider_new_sts()"
-//            }.pointed
-//        }
+                /**
+                 * FIXME. To set the creds_provider, write a Kotlin function that takes a [CredentialsProvider] and
+                 * converts it into the aws_credentials_provider struct. This includes setting up things like
+                 * the vtable and allocator correctly.
+                 */
+                duration_seconds = builder.durationSeconds!!.convert()
+                role_arn.initFromCursor(builder.roleArn!!.toAwsString().asAwsByteCursor())
+                session_name.initFromCursor(builder.sessionName!!.toAwsString().asAwsByteCursor())
+                shutdown_options.apply {
+                    shutdown_callback = staticCFunction(::onShutdownComplete)
+                    shutdown_user_data = channelStableRef.asCPointer()
+                }
+                tls_ctx = builder.tlsContext?.ptr
+            }
+
+            checkNotNull(aws_credentials_provider_new_sts(Allocator.Default.allocator, opts.ptr)) {
+                "aws_credentials_provider_new_sts()"
+            }.pointed
+        }
     }
 
 
