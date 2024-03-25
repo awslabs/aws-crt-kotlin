@@ -57,22 +57,96 @@ internal fun Credentials.toNativeCredentials(): CPointer<aws_credentials>? = aws
     expiration_timepoint_seconds = UINT64_MAX // FIXME?: Our Credentials do not have an expiration field
 )
 
-internal fun CredentialsProvider.toNativeCredentialsProvider(): CValue<aws_credentials_provider>? {
-//    val getCredentialsFn = staticCFunction(this::getCredentials)
-//    val destroyFn = this.close()
+/**
+ * Convert a Kotlin [CredentialsProvider] to a delegate [aws_credentials_provider]
+ */
+internal fun CredentialsProvider.toNativeCredentialsProvider(): CValue<aws_credentials_provider> {
+//    fun nativeGetCredentialsFn(
+//        provider: CPointer<aws_credentials_provider>?,
+//        callback: CPointer<aws_on_get_credentials_callback_fn>?,
+//        userData: COpaquePointer?
+//    ): Int {
+//        val kProvider = this
+//        val kCredentials = runBlocking { kProvider.getCredentials() }
+//        val nativeCredentials = kCredentials.toNativeCredentials()
+//        callback?.invoke(nativeCredentials, 0, userData)
+//        return 0
+//    }
 
-    val vtable = cValue<s_crt_kotlin_aws_credentials_provider_vtable> {
-         this.get_credentials = staticCFunction(::s_crt_kotlin_aws_credentials_provider_get_credentials)
-        // this.destroy =
+//    fun nativeDestroyFn(provider: CPointer<aws_credentials_provider>?) { close() }
+
+//    val vTable = Allocator.Default.alloc<s_crt_kotlin_aws_credentials_provider_vtable> {
+//        this.get_credentials = staticCFunction(::nativeGetCredentialsFn)
+//        this.destroy = staticCFunction(::nativeDestroyFn)
+//    }
+
+//    val provider = cValue<s_crt_kotlin_aws_credentials_provider> {
+//        this.vtable = vTable.ptr
+//        this.allocator = Allocator.Default.allocator
+//        this.
+//    }
+
+//    return provider
+
+    // START delegate implementation
+
+    // TODO Need shutdown options?
+//    val shutdownOptions = cValue<aws_credentials_provider_shutdown_options> {
+//        this.shutdown_callback = staticCFunction(::onShutdownComplete)
+//        this.shutdown_user_data = channelStableRef.asCPointer()
+//    }
+
+    fun cValueGetCredentialsDelegate(
+        delegateUserData: COpaquePointer?,
+        callback: CValue<aws_on_get_credentials_callback_fn>,
+        callbackUserData: COpaquePointer?
+    ): Int {
+        return 0
     }
 
-    val nativeProvider = cValue<aws_credentials_provider> {
-        // this.vtable =
-        this.allocator = Allocator.Default.allocator
-        // this.shutdown_options =
-        // this.impl =
-        // this.ref_count =
+    fun getCredentialsDelegate(
+        delegateUserData: COpaquePointer?,
+        callback: CPointer<aws_on_get_credentials_callback_fn>,
+        callbackUserData: COpaquePointer?
+    ): Int {
+        return 0
     }
 
-    return null
+    val providerStableRef = StableRef.create(this)
+
+    val myOptions = cValue<aws_credentials_provider_delegate_options> {
+        this.get_credentials = staticCFunction(::getCredentialsDelegate)
+        this.delegate_user_data = providerStableRef.asCPointer()
+//        this.shutdown_options =
+    }
+
+//
+//    val options = cValue<aws_credentials_provider_delegate_options> {
+//        this.get_credentials = staticCFunction(::getCredentialsDelegate)
+////        this.delegate_user_data =
+////        this.shutdown_options =
+//    }
+
+    val provider = aws_credentials_provider_new_delegate()
+
 }
+
+
+//    val getCredentialsFn = staticCFunction(s_crt_kotlin_aws_credentials_provider_get_credentials)
+//
+////    val vtable = cValue<s_crt_kotlin_aws_credentials_provider_vtable> {}
+//
+////    val nativeProvider = cValue<aws_credentials_provider> {
+//        // this.vtable =
+////        this.allocator = Allocator.Default.allocator
+//        // this.shutdown_options =
+//        // this.impl =
+//        // this.ref_count =
+////    }
+//
+//    return null
+//}
+//
+//internal fun nativeGetCredentials(kGetCredentials: suspend () -> Credentials): CPointer<CFunction<*>> {
+//
+//}

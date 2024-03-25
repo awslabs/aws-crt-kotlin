@@ -53,7 +53,7 @@ internal actual constructor(builder: ProfileCredentialsProviderBuilder) :
             provider = provider.ptr,
             callback = staticCFunction(::getCredentialsCallback),
             user_data = credentialsStableRef.asCPointer()
-        )) { "aws_credentials_provider_get_credentials()" }
+        )) { "aws_credentials_provider_profile->aws_credentials_provider_get_credentials()" }
 
         return credentialsStableRef.get().receive()
     }
@@ -63,7 +63,7 @@ internal actual constructor(builder: ProfileCredentialsProviderBuilder) :
     }
 
     override suspend fun waitForShutdown() {
-        shutdownCompleteChannel.receive()
+        shutdownCompleteChannel.tryReceive()
         shutdownCompleteChannel.close()
         channelStableRef.dispose()
     }

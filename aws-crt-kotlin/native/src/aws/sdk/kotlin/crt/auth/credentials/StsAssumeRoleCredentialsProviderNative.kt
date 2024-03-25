@@ -5,6 +5,7 @@
 package aws.sdk.kotlin.crt.auth.credentials
 
 import aws.sdk.kotlin.crt.Allocator
+import aws.sdk.kotlin.crt.awsAssertOpSuccess
 import aws.sdk.kotlin.crt.util.asAwsByteCursor
 import aws.sdk.kotlin.crt.util.initFromCursor
 import aws.sdk.kotlin.crt.util.toAwsString
@@ -23,16 +24,9 @@ internal actual constructor(builder: StsAssumeRoleCredentialsProviderBuilder) : 
 
     init {
         provider = memScoped {
-//            val bootstrapProvider: CPointer<aws_credentials_provider> = builder.credentialsProvider.toAwsCredentialsProvider()
-
             val opts = cValue<aws_credentials_provider_sts_options> {
                 bootstrap = builder.clientBootstrap?.ptr
-//                creds_provider = builder.credentialsProvider.provider
-                /**
-                 * FIXME. To set the creds_provider, write a Kotlin function that takes a [CredentialsProvider] and
-                 * converts it into the aws_credentials_provider struct. This includes setting up things like
-                 * the vtable and allocator correctly.
-                 */
+                creds_provider = builder.credentialsProvider?.toNativeCredentialsProvider()?.ptr?.reinterpret() // FIXME is this .reinterpret() correct?
                 duration_seconds = builder.durationSeconds!!.convert()
                 role_arn.initFromCursor(builder.roleArn!!.toAwsString().asAwsByteCursor())
                 session_name.initFromCursor(builder.sessionName!!.toAwsString().asAwsByteCursor())
@@ -51,14 +45,25 @@ internal actual constructor(builder: StsAssumeRoleCredentialsProviderBuilder) : 
 
 
     override suspend fun getCredentials(): Credentials {
-        TODO("Not yet implemented")
+        val credentialsStableRef = StableRef.create(Channel<Credentials>(Channel.RENDEZVOUS))
+
+        awsAssertOpSuccess(s_crt_kotlin_aws_credentials_provider_get_credentials(
+            provider = provider.ptr,
+            callback = staticCFunction(::getCredentialsCallback),
+            user_data = credentialsStableRef.asCPointer()
+
+        )) { "aws_credentials_provider_sts->aws_credentials_provider_get_credentials()" }
+
+        return credentialsStableRef.get().receive()
     }
 
     override fun close() {
-        TODO("Not yet implemented")
+        aws_credentials_provider_release(provider.ptr)
     }
 
     override suspend fun waitForShutdown() {
-        TODO("Not yet implemented")
+        shutdownCompleteChannel.tryReceive()
+        shutdownCompleteChannel.close()
+        channelStableRef.dispose()
     }
 }
