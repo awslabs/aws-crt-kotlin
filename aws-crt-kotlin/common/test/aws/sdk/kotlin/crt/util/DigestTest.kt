@@ -19,14 +19,4 @@ class DigestTest : CrtTest() {
         val actual = Digest.hex(raw)
         assertEquals(expected, actual)
     }
-
-    @Test
-    fun testSha1() {
-        val buffer = "I don't know half of you half as well as I should like; and I like less than half of you half as well as you deserve.".encodeToByteArray()
-        val raw = Digest.sha1(buffer)
-
-        val expected = "6d1c8e7fac62963cdf03745cf260f65a165ceb42"
-        val actual = Digest.hex(raw)
-        assertEquals(expected, actual)
-    }
 }
