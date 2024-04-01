@@ -49,16 +49,18 @@ private operator fun NativeComputeHashFn.invoke(input: ByteArray): ByteArray = m
     val output: CPointer<aws_byte_buf> = aws_mem_calloc(
         Allocator.Default,
         1.convert(),
-        sizeOf<aws_byte_buf>().convert()
+        sizeOf<aws_byte_buf>().convert(),
     )?.reinterpret() ?: throw CrtRuntimeException("aws_mem_calloc() aws_byte_buf")
-    aws_byte_buf_init(output, Allocator.Default.allocator, 32U)
+    aws_byte_buf_init(output, Allocator.Default.allocator, 10_000U)
 
-    awsAssertOpSuccess(this@invoke.invoke(
-        Allocator.Default.allocator,
-        inputCursor,
-        output,
-        0U
-    )) { "failed to invoke hash function" }
+    awsAssertOpSuccess(
+        this@invoke.invoke(
+            Allocator.Default.allocator,
+            inputCursor,
+            output,
+            0U,
+        ),
+    ) { "failed to invoke hash function" }
 
     checkNotNull(output.pointed.buffer) { "expected output buffer to be non-null" }
     return output.pointed.buffer!!.readBytes(output.pointed.len.toInt())
