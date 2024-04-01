@@ -988,7 +988,6 @@ public final class aws/sdk/kotlin/crt/io/UserInfo {
 
 public final class aws/sdk/kotlin/crt/util/Digest {
 	public static final field INSTANCE Laws/sdk/kotlin/crt/util/Digest;
-	public final fun sha1 ([B)[B
 	public final fun sha256 ([B)[B
 }
 
