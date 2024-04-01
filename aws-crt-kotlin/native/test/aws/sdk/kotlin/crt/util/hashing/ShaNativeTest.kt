@@ -29,7 +29,7 @@ class ShaNativeTest {
 
     @Test
     fun testMultipleUpdatesWithOffset() {
-        // algorithm -> hash("uh") + hash("huh")
+        // algorithm -> hash("uh" + "huh")
         val tests = listOf(
             (Sha1Native() to "c093098e7a1a8ec547e82a399d63f331760e9a57"),
             (Sha256Native() to "b474fb57f69c1b5aa00aa27ad0b36c03fe9915cc497344d6a55a86b2e9bd1b72"),
