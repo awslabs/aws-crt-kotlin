@@ -17,13 +17,4 @@ public actual object Digest {
         digest.update(buffer)
         return digest.digest()
     }
-
-    /**
-     * Calculate the SHA-1 hash of the input [buffer]
-     */
-    public actual fun sha1(buffer: ByteArray): ByteArray {
-        val digest = MessageDigest.getInstance("SHA-1")
-        digest.update(buffer)
-        return digest.digest()
-    }
 }

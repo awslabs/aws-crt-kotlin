@@ -14,11 +14,6 @@ public expect object Digest {
      * Calculate the SHA-256 hash of the input [buffer]
      */
     public fun sha256(buffer: ByteArray): ByteArray
-
-    /**
-     * Calculate the SHA-1 hash of the input [buffer]
-     */
-    public fun sha1(buffer: ByteArray): ByteArray
 }
 
 /**
