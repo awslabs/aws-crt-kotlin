@@ -41,7 +41,7 @@ public open class ShaNative(
             1.convert(),
             sizeOf<aws_byte_buf>().convert(),
         )?.reinterpret() ?: throw CrtRuntimeException("aws_mem_calloc() aws_byte_buf")
-        aws_byte_buf_init(output, Allocator.Default.allocator, 10_000U)
+        aws_byte_buf_init(output, Allocator.Default.allocator, 32U)
 
         awsAssertOpSuccess(aws_hash_finalize(hash, output, 0U)) {
             "aws_hash_finalize"
