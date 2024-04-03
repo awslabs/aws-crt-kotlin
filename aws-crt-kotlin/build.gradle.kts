@@ -186,6 +186,7 @@ kotlin {
     }
 
     tasks.register<Exec>("shutdownIosSimulatorDevice") {
+        mustRunAfter(tasks.withType<KotlinNativeSimulatorTest>())
         commandLine("xcrun", "simctl", "shutdown", simulatorDeviceName)
 
         doLast {
@@ -195,7 +196,7 @@ kotlin {
 
     tasks.withType<KotlinNativeSimulatorTest>().configureEach {
         dependsOn("bootIosSimulatorDevice")
-//        finalizedBy("shutdownIosSimulatorDevice")
+        finalizedBy("shutdownIosSimulatorDevice")
 
         standalone = false
         device = simulatorDeviceName
