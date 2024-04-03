@@ -195,7 +195,7 @@ kotlin {
 
     tasks.withType<KotlinNativeSimulatorTest>().configureEach {
         dependsOn("bootIosSimulatorDevice")
-        finalizedBy("shutdownIosSimulatorDevice")
+//        finalizedBy("shutdownIosSimulatorDevice")
 
         standalone = false
         device = simulatorDeviceName
