@@ -172,6 +172,7 @@ kotlin {
 // ourselves (booting / shutting down). FIXME: https://youtrack.jetbrains.com/issue/KT-38317
 kotlin {
     val simulatorDeviceName = project.findProperty("iosSimulatorDevice") as? String ?: "iPhone 15"
+
     tasks.register<Exec>("bootIosSimulatorDevice") {
         commandLine("xcrun", "simctl", "boot", simulatorDeviceName)
 
