@@ -173,8 +173,10 @@ kotlin {
 kotlin {
     val simulatorDeviceName = project.findProperty("iosSimulatorDevice") as? String ?: "iPhone 15"
 
+    val xcrun = "/usr/bin/xcrun"
+
     tasks.register<Exec>("bootIosSimulatorDevice") {
-        commandLine("xcrun", "simctl", "boot", simulatorDeviceName)
+        commandLine(xcrun, "simctl", "boot", simulatorDeviceName)
 
         doLast {
             val result = executionResult.get()
@@ -187,7 +189,7 @@ kotlin {
 
     tasks.register<Exec>("shutdownIosSimulatorDevice") {
         mustRunAfter(tasks.withType<KotlinNativeSimulatorTest>())
-        commandLine("xcrun", "simctl", "shutdown", simulatorDeviceName)
+        commandLine(xcrun, "simctl", "shutdown", simulatorDeviceName)
 
         doLast {
             executionResult.get().assertNormalExitValue()
@@ -195,6 +197,10 @@ kotlin {
     }
 
     tasks.withType<KotlinNativeSimulatorTest>().configureEach {
+        if (targetName?.startsWith("ios") == false) {
+            return@configureEach
+        }
+
         dependsOn("bootIosSimulatorDevice")
         finalizedBy("shutdownIosSimulatorDevice")
 
