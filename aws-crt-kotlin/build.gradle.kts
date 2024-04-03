@@ -201,6 +201,8 @@ kotlin {
             return@configureEach
         }
 
+        println("configuring standalone=false for task with targetName $targetName")
+
         dependsOn("bootIosSimulatorDevice")
         finalizedBy("shutdownIosSimulatorDevice")
 
