@@ -178,7 +178,7 @@ kotlin {
         doLast {
             val result = executionResult.get()
             val code = result.exitValue
-            if (code != 148 && code != 149) {
+            if (code != 148 && code != 149) { // ignore "simulator already running" errors
                 result.assertNormalExitValue()
             }
         }
