@@ -12,6 +12,7 @@ import aws.sdk.kotlin.gradle.kmp.configureKmpTargets
 import aws.sdk.kotlin.gradle.util.typedProp
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest
+import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -197,11 +198,7 @@ kotlin {
     }
 
     tasks.withType<KotlinNativeSimulatorTest>().configureEach {
-        if (targetName?.startsWith("ios") == false) {
-            return@configureEach
-        }
-
-        println("configuring standalone=false for task with targetName $targetName")
+        if (!HostManager.hostIsMac) { return@configureEach }
 
         dependsOn("bootIosSimulatorDevice")
         finalizedBy("shutdownIosSimulatorDevice")
