@@ -2,19 +2,27 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
+import aws.sdk.kotlin.gradle.util.typedProp
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     application
 }
 
+val disableCrossCompile = typedProp<Boolean>("aws.sdk.kotlin.crt.disableCrossCompile") == true
+
 kotlin {
-    // applyDefaultHierarchyTemplate()
-    // macosX64()
-    // macosArm64()
-    // linuxX64()
-    // FIXME - not supported by kotlinx-cli
-    // linuxArm64()
+    applyDefaultHierarchyTemplate()
+    macosX64()
+    macosArm64()
+
+    if (disableCrossCompile) {
+        logger.warn("aws.sdk.kotlin.crt.disableCrossCompile=true: Cross compilation is disabled.")
+    } else {
+        linuxX64()
+        // FIXME - not supported by kotlinx-cli
+        // linuxArm64()
+    }
 
     jvm {
         val jvmJar by tasks.getting(org.gradle.jvm.tasks.Jar::class) {
@@ -22,7 +30,7 @@ kotlin {
                 manifest {
                     attributes["Main-Class"] = "ApplicationKt"
                 }
-                from(configurations.getByName("runtimeClasspath").map { if (it.isDirectory) it else zipTree(it) })
+                from(configurations.getByName("jvmRuntimeClasspath").map { if (it.isDirectory) it else zipTree(it) })
             }
 
             duplicatesStrategy = DuplicatesStrategy.WARN

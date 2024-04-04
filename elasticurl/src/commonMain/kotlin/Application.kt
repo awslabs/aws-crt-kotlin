@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import aws.sdk.kotlin.crt.CRT
-import aws.sdk.kotlin.crt.CrtRuntimeException
 import aws.sdk.kotlin.crt.LogDestination
 import aws.sdk.kotlin.crt.http.*
 import aws.sdk.kotlin.crt.io.*
@@ -81,10 +80,8 @@ fun main(args: Array<String>) {
         try {
             conn.roundTrip(request, sink)
         } catch (ex: Exception) {
-            println("failed to round trip request: ${ex.message}")
-            if (ex is CrtRuntimeException) {
-                println("CrtException: name: ${ex.errorName}; code: ${ex.errorCode}; desc: ${ex.errorDescription}")
-            }
+            println("failed to round trip request: $ex")
+            ex.printStackTrace()
         } finally {
             // ... fixme - need to define the resource management story
             println("closing http connection")

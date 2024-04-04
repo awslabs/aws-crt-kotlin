@@ -11,6 +11,8 @@ import aws.sdk.kotlin.gradle.kmp.IDEA_ACTIVE
 import aws.sdk.kotlin.gradle.kmp.configureKmpTargets
 import aws.sdk.kotlin.gradle.util.typedProp
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest
+import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -164,11 +166,45 @@ kotlin {
                 dependsOn(cmakeInstallTask)
             }
         }
+    }
+}
 
-        compilations["test"].compilerOptions.configure {
-            // TODO - can we remove this if we are bundling the static libs
-            freeCompilerArgs.addAll(listOf("-linker-options", "-L${libDir.absolutePath}"))
+// disable "standalone" mode in simulator tests since it causes TLS issues. this means we need to manage the simulator
+// ourselves (booting / shutting down). FIXME: https://youtrack.jetbrains.com/issue/KT-38317
+kotlin {
+    val simulatorDeviceName = project.findProperty("iosSimulatorDevice") as? String ?: "iPhone 15"
+
+    val xcrun = "/usr/bin/xcrun"
+
+    tasks.register<Exec>("bootIosSimulatorDevice") {
+        commandLine(xcrun, "simctl", "boot", simulatorDeviceName)
+
+        doLast {
+            val result = executionResult.get()
+            val code = result.exitValue
+            if (code != 148 && code != 149) { // ignore "simulator already running" errors
+                result.assertNormalExitValue()
+            }
         }
+    }
+
+    tasks.register<Exec>("shutdownIosSimulatorDevice") {
+        mustRunAfter(tasks.withType<KotlinNativeSimulatorTest>())
+        commandLine(xcrun, "simctl", "shutdown", simulatorDeviceName)
+
+        doLast {
+            executionResult.get().assertNormalExitValue()
+        }
+    }
+
+    tasks.withType<KotlinNativeSimulatorTest>().configureEach {
+        if (!HostManager.hostIsMac) { return@configureEach }
+
+        dependsOn("bootIosSimulatorDevice")
+        finalizedBy("shutdownIosSimulatorDevice")
+
+        standalone = false
+        device = simulatorDeviceName
     }
 }
 

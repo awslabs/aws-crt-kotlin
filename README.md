@@ -84,7 +84,7 @@ The `elasticurl` project contains an MPP (JVM and Native only) executable that p
 ```
 # replace "PLATFORM" with the target platform you want to run (e.g. macosX64, linuxX64, etc)
 
-./elasticurl/bin/PLATFORM/elasticurl.kexe [OPTIONS] URL
+./elasticurl/bin/PLATFORM/elasticurlDebugExecutable/elasticurl.kexe [OPTIONS] URL
 ```
 
 
@@ -99,7 +99,7 @@ To enable memory tracing specify the environment variable `CRTDEBUG=trace=N` and
 
 e.g.
 ```
-CRTDEBUG=trace=2 ./elasticurl/bin/macosX64/elasticurl.kexe -v trace https://aws.amazon.com
+CRTDEBUG=trace=2 ./elasticurl/bin/macosX64/elasticurlDebugExecutable/elasticurl.kexe -v trace https://aws.amazon.com
 ```
 
 

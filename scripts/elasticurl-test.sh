@@ -2,6 +2,8 @@
 
 TEST_SCRIPT=/tmp/http_client_test.py
 SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+
+# TODO - expand to support selecting target platform
 JVM_EXE=$SCRIPTPATH/elasticurlJvm.sh
 
 ROOT_PATH=$(dirname $SCRIPTPATH)

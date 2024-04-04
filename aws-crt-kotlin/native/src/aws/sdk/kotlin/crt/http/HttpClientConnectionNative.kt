@@ -101,6 +101,7 @@ private fun onResponseHeaders(
     try {
         ctx.handler.onResponseHeaders(stream, stream.responseStatusCode, blockType.value.toInt(), headers)
     } catch (ex: Exception) {
+        log(LogLevel.Error, "onResponseHeaders: $ex")
         return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
     }
     return AWS_OP_SUCCESS
@@ -116,6 +117,7 @@ private fun onResponseHeaderBlockDone(
     try {
         ctx.handler.onResponseHeadersDone(stream, blockType.value.toInt())
     } catch (ex: Exception) {
+        log(LogLevel.Error, "onResponseHeaderBlockDone: $ex")
         return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
     }
 
@@ -141,7 +143,7 @@ private fun onIncomingBody(
             aws_http_stream_update_window(nativeStream, windowIncrement.convert())
         }
     } catch (ex: Exception) {
-        // FIXME - we need our own logging block so we can log exceptions and errors from FFI layer
+        log(LogLevel.Error, "onIncomingBody: $ex")
         return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
     }
 
@@ -159,6 +161,7 @@ private fun onStreamComplete(
     try {
         ctx.handler.onResponseComplete(stream, errorCode)
     } catch (ex: Exception) {
+        log(LogLevel.Error, "onStreamComplete: $ex")
         // close connection if callback throws an exception
         aws_http_connection_close(aws_http_stream_get_connection(nativeStream))
     } finally {
