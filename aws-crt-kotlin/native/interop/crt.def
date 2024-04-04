@@ -20,8 +20,9 @@ headers = aws/common/allocator.h \
         aws/http/request_response.h \
         aws/http/proxy.h \
         aws/compression/compression.h \
-        aws/cal/hash.h
-headerFilter = aws/common/* aws/io/* aws/http/* aws/compression/* aws/cal/*
+        aws/cal/hash.h \
+        aws/checksums/crc.h
+headerFilter = aws/common/* aws/io/* aws/http/* aws/compression/* aws/cal/* aws/checksums/*
 
 linkerOpts.osx = -framework Security
 linkerOpts.ios = -framework Security

@@ -9,15 +9,33 @@ import kotlinx.cinterop.*
 import libcrt.*
 
 /**
- * A typealias to CRT's aws_<checksum_algorithm>_new functions (i.e aws_sha1_new, aws_sha256_new))
+ * A typealias to CRT's aws_<checksum_algorithm>_new functions (i.e. aws_sha1_new, aws_sha256_new))
  */
 internal typealias InitializeHashFn = (
     allocator: CValuesRef<aws_allocator>?,
 ) -> CPointer<aws_hash>?
 
-public open class ShaNative(
-    public val initializeFn: InitializeHashFn,
-) {
+/**
+ * SHA-1 hash function implemented using bindings to CRT
+ */
+public class Sha1 : HashFunction {
+    private val sha1 = Sha(::aws_sha1_new)
+    override fun update(input: ByteArray, offset: Int, length: Int) { sha1.update(input, offset, length) }
+    override fun digest(): ByteArray = sha1.digest()
+    override fun reset() { sha1.reset() }
+}
+
+/**
+ * SHA-256 hash function implemented using bindings to CRT
+ */
+public class Sha256 : HashFunction {
+    private val sha256 = Sha(::aws_sha256_new)
+    override fun update(input: ByteArray, offset: Int, length: Int) { sha256.update(input, offset, length) }
+    override fun digest(): ByteArray = sha256.digest()
+    override fun reset() { sha256.reset() }
+}
+
+internal class Sha(val initializeFn: InitializeHashFn) : HashFunction {
     private var hash: CPointer<aws_hash>
 
     init {
@@ -25,7 +43,7 @@ public open class ShaNative(
     }
 
     // aws_hash_update
-    public fun update(input: ByteArray, offset: Int, length: Int) {
+    override fun update(input: ByteArray, offset: Int, length: Int) {
         val inputCursor = input.usePinned {
             aws_byte_cursor_from_array(it.addressOf(offset), length.convert())
         }
@@ -35,7 +53,7 @@ public open class ShaNative(
     }
 
     // aws_hash_finalize
-    public fun digest(): ByteArray {
+    override fun digest(): ByteArray {
         val output: CPointer<aws_byte_buf> = aws_mem_calloc(
             Allocator.Default,
             1.convert(),
@@ -52,7 +70,7 @@ public open class ShaNative(
     }
 
     // aws_hash_destroy
-    public fun reset() {
+    override fun reset() {
         aws_hash_destroy(hash)
         hash = initializeHash()
     }
@@ -61,13 +79,3 @@ public open class ShaNative(
         "failed to initialize hash"
     }
 }
-
-/**
- * SHA-1 hash function implemented using bindings to CRT
- */
-public class Sha1Native : ShaNative(::aws_sha1_new)
-
-/**
- * SHA-256 hash function implemented using bindings to CRT
- */
-public class Sha256Native : ShaNative(::aws_sha256_new)
