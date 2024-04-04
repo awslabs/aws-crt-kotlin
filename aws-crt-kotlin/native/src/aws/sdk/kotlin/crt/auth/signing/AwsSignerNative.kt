@@ -6,7 +6,7 @@
 package aws.sdk.kotlin.crt.auth.signing
 
 import aws.sdk.kotlin.crt.Allocator
-import aws.sdk.kotlin.crt.auth.credentials.toNativeCredentials
+import aws.sdk.kotlin.crt.auth.credentials.Credentials
 import aws.sdk.kotlin.crt.awsAssertOpSuccess
 import aws.sdk.kotlin.crt.http.*
 import aws.sdk.kotlin.crt.util.asAwsByteCursor
@@ -17,6 +17,7 @@ import kotlinx.cinterop.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.runBlocking
 import libcrt.*
+import platform.posix.UINT64_MAX
 
 /**
  * Static class for a variety of AWS signing APIs.
@@ -245,3 +246,10 @@ private fun signCallback(signingResult: CPointer<aws_signing_result>?, errorCode
     runBlocking { channel.send(signingResult) }
 }
 
+internal fun Credentials.toNativeCredentials(): CPointer<cnames.structs.aws_credentials>? = aws_credentials_new_from_string(
+    Allocator.Default.allocator,
+    access_key_id = accessKeyId.toAwsString(),
+    secret_access_key = secretAccessKey.toAwsString(),
+    session_token = sessionToken?.toAwsString(),
+    expiration_timepoint_seconds = UINT64_MAX // FIXME?: Our Credentials do not have an expiration field
+)
