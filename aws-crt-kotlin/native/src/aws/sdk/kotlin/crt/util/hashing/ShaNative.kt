@@ -54,19 +54,19 @@ internal class Sha(val initializeFn: InitializeHashFn) : HashFunction {
 
     // aws_hash_finalize
     override fun digest(): ByteArray {
-        val output: CPointer<aws_byte_buf> = aws_mem_calloc(
-            Allocator.Default,
-            1.convert(),
-            sizeOf<aws_byte_buf>().convert(),
-        )?.reinterpret() ?: throw CrtRuntimeException("aws_mem_calloc() aws_byte_buf")
-        aws_byte_buf_init(output, Allocator.Default.allocator, 32U)
+        val output = ByteArray(hash.pointed.digest_size.toInt())
 
-        awsAssertOpSuccess(aws_hash_finalize(hash, output, 0U)) {
-            "aws_hash_finalize"
+        val byteBuf = output.usePinned {
+            cValue<aws_byte_buf> {
+                capacity = output.size.convert()
+                len = 0U
+                buffer = it.addressOf(0).reinterpret()
+            }
         }
 
-        checkNotNull(output.pointed.buffer) { "expected output buffer to be non-null" }
-        return output.pointed.buffer!!.readBytes(output.pointed.len.toInt()).also { reset() }
+        awsAssertOpSuccess(aws_hash_finalize(hash, byteBuf, 0U)) { "aws_hash_finalize" }
+
+        return output.also { reset() }
     }
 
     // aws_hash_destroy
