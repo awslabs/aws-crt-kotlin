@@ -31,6 +31,8 @@ jobs:
           REPOSITORY=$(echo ${{ github.repository }} | cut -d '/' -f 2) 
           aws s3 cp artifact-size-metrics.csv s3://${{ secrets.ARTIFACT_METRICS_BUCKET }}/$REPOSITORY-${{ github.event.release.tag_name }}.csv # TODO: USE ACTUAL BUCKET NAME
           aws s3 cp artifact-size-metrics.csv s3://${{ secrets.ARTIFACT_METRICS_BUCKET }}/$REPOSITORY-latest-release.csv # TODO: USE ACTUAL BUCKET NAME
+      - name: Put Artifact Size Metrics in CloudWatch
+        run: ./gradlew putArtifactSizeMetricsInCloudWatch -Prelease ${{ github.event.release.tag_name }}
   size-check:
     if: ${{ github.event_name }} == 'pull_request'
     runs-on: ubuntu-latest
