@@ -8,7 +8,9 @@ package aws.sdk.kotlin.crt.http
 import aws.sdk.kotlin.crt.*
 import aws.sdk.kotlin.crt.Allocator
 import aws.sdk.kotlin.crt.awsAssertOpSuccess
+import aws.sdk.kotlin.crt.io.SocketDomain
 import aws.sdk.kotlin.crt.io.SocketOptions
+import aws.sdk.kotlin.crt.io.SocketType
 import aws.sdk.kotlin.crt.io.requiresTls
 import aws.sdk.kotlin.crt.util.*
 import cnames.structs.aws_http_connection_manager
@@ -155,11 +157,22 @@ public actual class HttpClientConnectionManager actual constructor(
 
 // initialize from Kotlin equivalent
 private fun aws_socket_options.kinit(opts: SocketOptions) {
-    type = aws_socket_type.byValue(opts.type.value.convert())
-    domain = aws_socket_domain.byValue(opts.domain.value.convert())
+    type = opts.type.toNativeSocketType()
+    domain = opts.domain.toNativeSocketDomain()
     connect_timeout_ms = opts.connectTimeoutMs.convert()
     keep_alive_interval_sec = opts.keepAliveIntervalSecs.convert()
     keep_alive_timeout_sec = opts.keepAliveTimeoutSecs.convert()
+}
+
+private fun SocketType.toNativeSocketType() = when(this) {
+    SocketType.STREAM -> aws_socket_type.AWS_SOCKET_STREAM
+    SocketType.DGRAM -> aws_socket_type.AWS_SOCKET_DGRAM
+}
+
+private fun SocketDomain.toNativeSocketDomain() = when(this) {
+    SocketDomain.IPv4 -> aws_socket_domain.AWS_SOCKET_IPV4
+    SocketDomain.IPv6 -> aws_socket_domain.AWS_SOCKET_IPV6
+    SocketDomain.LOCAL -> aws_socket_domain.AWS_SOCKET_LOCAL
 }
 
 private fun onShutdownComplete(userdata: COpaquePointer?) {
