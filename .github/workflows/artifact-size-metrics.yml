@@ -1,8 +1,8 @@
 name: Artifact Size Metrics
 on:
   pull_request:
-    branches:
-      - main
+    types: [ opened, synchronize, reopened, labeled, unlabeled ]
+    branches: [ main ]
   release:
     types: [published]
 
@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   release-metrics:
-    if: ${{ github.event_name }} == 'release'
+    if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Sources
@@ -24,21 +24,26 @@ jobs:
           role-to-assume: ${{ secrets.CI_AWS_ROLE_ARN }}
           aws-region: us-west-2
       - name: Generate Artifact Size Metrics
-        run: ./gradlew artifactMetrics
+        run: ./gradlew artifactSizeMetrics
       - name: Save Artifact Size Metrics
         run: |
-          cd build/reports/metrics/
-          REPOSITORY=$(echo ${{ github.repository }} | cut -d '/' -f 2) 
-          aws s3 cp artifact-size-metrics.csv s3://${{ secrets.ARTIFACT_METRICS_BUCKET }}/$REPOSITORY-${{ github.event.release.tag_name }}.csv # TODO: USE ACTUAL BUCKET NAME
-          aws s3 cp artifact-size-metrics.csv s3://${{ secrets.ARTIFACT_METRICS_BUCKET }}/$REPOSITORY-latest-release.csv # TODO: USE ACTUAL BUCKET NAME
+          cd build/reports/metrics
+          REPOSITORY=$(echo ${{ github.repository }} | cut -d '/' -f 2)
+          aws s3 cp artifact-size-metrics.csv s3://${{ secrets.ARTIFACT_METRICS_BUCKET }}/$REPOSITORY-${{ github.event.release.tag_name }}-release.csv
+          aws s3 cp artifact-size-metrics.csv s3://${{ secrets.ARTIFACT_METRICS_BUCKET }}/$REPOSITORY-latest-release.csv
       - name: Put Artifact Size Metrics in CloudWatch
-        run: ./gradlew putArtifactSizeMetricsInCloudWatch -Prelease ${{ github.event.release.tag_name }}
+        run: ./gradlew putArtifactSizeMetricsInCloudWatch -Prelease=${{ github.event.release.tag_name }}
   size-check:
-    if: ${{ github.event_name }} == 'pull_request'
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Sources
         uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.CI_AWS_ROLE_ARN }}
+          aws-region: us-west-2
       - name: Generate Artifact Size Metrics
         run: ./gradlew artifactSizeMetrics
       - name: Analyze Artifact Size Metrics
@@ -52,7 +57,7 @@ jobs:
                 repository(owner:"${context.repo.owner}", name:"${context.repo.repo}"){
                   pullRequest(number: ${context.issue.number}) {
                     id
-                    comments(last:200) {
+                    comments(last:100) {
                       nodes {
                         id
                         body
@@ -70,7 +75,7 @@ jobs:
             const comments = response.repository.pullRequest.comments.nodes
 
             for (const i in comments) {
-              if (comments[i].author.login == 'github-actions' && !comments[i].isMinimized && comments[i].body.startsWith('Affected Artifacts') {
+              if (comments[i].author.login == 'github-actions' && !comments[i].isMinimized && comments[i].body.startsWith('Affected Artifacts')) {
                 const hideComment = 
                   `mutation { 
                     minimizeComment(input:{subjectId:"${comments[i].id}", classifier:OUTDATED}){
@@ -83,7 +88,7 @@ jobs:
             }
 
             const fs = require('node:fs')
-            const comment = fs.readFileSync('/build/reports/metrics/artifact-analysis.md', 'utf8')
+            const comment = fs.readFileSync('build/reports/metrics/artifact-analysis.md', 'utf8')
 
             const writeComment = 
               `mutation {
@@ -95,9 +100,10 @@ jobs:
             await github.graphql(writeComment)
 
       - name: Evaluate
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'acknowledge-artifact-size-increase') }}
         run: |
-          cat has-significant-change.txt | grep true
-          if [ $? = 0 ]; then 
+          cd build/reports/metrics
+          cat has-significant-change.txt | grep false || {
             echo An artifact increased in size by more than allowed or a new artifact was created.
             exit 1
-          fi
+          }
