@@ -66,6 +66,7 @@ private fun streamGetStatus(
     return AWS_OP_SUCCESS
 }
 
+@Suppress("unused")
 private fun streamGetLength(
     stream: CPointer<aws_input_stream>?,
     outLength: CPointer<platform.posix.int64_tVar>?,
