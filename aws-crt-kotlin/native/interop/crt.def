@@ -24,8 +24,11 @@ headers = aws/common/allocator.h \
         aws/auth/signing.h \
         aws/auth/signing_config.h \
         aws/auth/signable.h \
-        aws/auth/signing_result.h
-headerFilter = aws/common/* aws/io/* aws/http/* aws/compression/* aws/auth/*
+        aws/auth/signing_result.h \
+        aws/compression/compression.h \
+        aws/cal/hash.h \
+        aws/checksums/crc.h
+headerFilter = aws/common/* aws/io/* aws/http/* aws/compression/* aws/auth/* aws/checksums/* aws/cal/*
 
 linkerOpts.osx = -framework Security
 linkerOpts.ios = -framework Security
@@ -41,11 +44,6 @@ static void s_crt_kotlin_init_allocator(int trace_level);
 static void s_crt_kotlin_clean_up(void);
 static void s_crt_kotlin_logger_cleanup(void);
 static void s_crt_kotlin_log(enum aws_log_level level, aws_log_subject_t subject, const char *message);
-static int s_crt_kotlin_aws_credentials_provider_get_credentials(
-    struct aws_credentials_provider *provider,
-    aws_on_get_credentials_callback_fn *callback,
-    void *user_data
-);
 
 // definitions
 static struct aws_allocator *s_crt_kotlin_allocator = NULL;
@@ -120,46 +118,3 @@ static void s_crt_kotlin_logger_cleanup(void) {
         aws_logger_clean_up(&s_crt_kotlin_logger);
     }
 }
-
-// Modification of aws_credentials_provider_get_credentials_fn, taking a pointer to a `callback` function instead of a value.
-typedef int(s_crt_kotlin_aws_credentials_provider_get_credentials_fn)(
-    struct aws_credentials_provider *provider,
-    aws_on_get_credentials_callback_fn *callback, // Modified to take a pointer to the callback
-    void *user_data);
-
-
-/**
- * An implementation of `s_crt_kotlin_aws_credentials_provider_get_credentials_fn`
- */
-int s_crt_kotlin_aws_credentials_provider_get_credentials(
-    struct aws_credentials_provider *provider,
-    aws_on_get_credentials_callback_fn *callback,
-    void *user_data
-) {
-    return aws_credentials_provider_get_credentials(provider, &callback, user_data);
-}
-
-/*
- * Modification of `aws_credentials_provider_vtable`, using `s_crt_kotlin_aws_credentials_provider_get_credentials_fn`
- * as the `get_credentials` function.
- */
-struct s_crt_kotlin_aws_credentials_provider_vtable {
-    s_crt_kotlin_aws_credentials_provider_get_credentials_fn *get_credentials;
-    aws_credentials_provider_destroy_fn *destroy;
-};
-
-/**
- * Modification of `aws_credentials_provider`, taking our custom vtable struct.
- */
-struct s_crt_kotlin_aws_credentials_provider {
-    struct s_crt_kotlin_aws_credentials_provider_vtable *vtable;
-    struct aws_allocator *allocator;
-    struct aws_credentials_provider_shutdown_options shutdown_options;
-    void *impl;
-    struct aws_atomic_var ref_count;
-};
-
-typedef int(s_crt_kotlin_aws_credentials_provider_delegate_get_credentials_fn)(
-    void *delegate_user_data,
-    aws_on_get_credentials_callback_fn *callback,
-    void *callback_user_data);

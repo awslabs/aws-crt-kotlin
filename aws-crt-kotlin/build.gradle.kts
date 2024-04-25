@@ -177,6 +177,7 @@ kotlin {
     val xcrun = "/usr/bin/xcrun"
 
     tasks.register<Exec>("bootIosSimulatorDevice") {
+        isIgnoreExitValue = true
         commandLine(xcrun, "simctl", "boot", simulatorDeviceName)
 
         doLast {
