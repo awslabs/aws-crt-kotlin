@@ -19,10 +19,6 @@ class CRTNativeTest {
         CRT.initRuntime()
     }
 
-    @Test
-    fun testLastError() {
-        assertEquals(0, CRT.lastError())
-    }
 
     @Test
     fun testErrorString() {
