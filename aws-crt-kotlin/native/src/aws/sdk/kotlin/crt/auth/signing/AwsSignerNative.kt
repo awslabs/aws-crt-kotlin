@@ -56,12 +56,7 @@ public actual object AwsSigner {
 
         val callbackChannel = userDataStableRef.get().second
         val signature = runBlocking { callbackChannel.receive() } // wait for async signing to complete....
-
         val signedRequest = userDataStableRef.get().first.get()
-        val pathCursor = cValue<aws_byte_cursor>()
-        val pathCursorPointer: CPointer<aws_byte_cursor> = pathCursor.ptr
-
-        aws_http_message_get_request_path(signedRequest, pathCursorPointer)
 
         return AwsSigningResult(signedRequest.toHttpRequest(), signature)
     }
