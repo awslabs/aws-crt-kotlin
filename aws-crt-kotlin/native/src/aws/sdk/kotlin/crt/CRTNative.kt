@@ -35,7 +35,7 @@ public actual object CRT {
             aws_io_library_init(Allocator.Default)
             aws_http_library_init(Allocator.Default)
             aws_auth_library_init(Allocator.Default)
-            // TODO initialize aws_cal, aws_mqtt, aws_sdkutils
+            aws_cal_library_init(Allocator.Default)
 
             Logging.initialize(config)
             aws_register_log_subject_info_list(s_crt_log_subject_list.ptr)
