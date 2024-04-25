@@ -233,16 +233,10 @@ internal fun CPointer<cnames.structs.aws_http_message>.toHttpRequest(): HttpRequ
     aws_http_message_get_request_method(nativeReq, nativeMethodPtr)
     req.method = nativeMethodPtr.pointed.toKString()
 
-    // WORKS
     val encodedPath = cValue<aws_byte_cursor>()
     val encodedPathPtr = encodedPath.ptr
     aws_http_message_get_request_path(nativeReq, encodedPathPtr)
     req.encodedPath = encodedPathPtr.pointed.toKString()
-
-    // DOESN'T WORK? But it's basically the same thing...
-//        val encodedPath = cValue<aws_byte_cursor>()
-//        aws_http_message_get_request_path(this@toHttpRequest, encodedPath.ptr)
-//        req.encodedPath = encodedPath.toKString()
 
     val headers = aws_http_message_get_headers(nativeReq)
     for (i in 0 until aws_http_message_get_header_count(nativeReq).toInt()) {
