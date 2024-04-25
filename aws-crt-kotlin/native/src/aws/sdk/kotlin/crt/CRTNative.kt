@@ -34,6 +34,8 @@ public actual object CRT {
             aws_compression_library_init(Allocator.Default)
             aws_io_library_init(Allocator.Default)
             aws_http_library_init(Allocator.Default)
+            aws_auth_library_init(Allocator.Default)
+            // TODO initialize aws_cal, aws_mqtt, aws_sdkutils
 
             Logging.initialize(config)
             aws_register_log_subject_info_list(s_crt_log_subject_list.ptr)
@@ -110,6 +112,7 @@ private fun cleanup() {
     aws_compression_library_clean_up()
     aws_io_library_clean_up()
     aws_common_library_clean_up()
+    aws_auth_library_clean_up()
 
     s_crt_kotlin_clean_up()
 }
