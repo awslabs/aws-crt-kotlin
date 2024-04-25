@@ -7,14 +7,11 @@ package aws.sdk.kotlin.crt.auth.signing
 
 import aws.sdk.kotlin.crt.*
 import aws.sdk.kotlin.crt.auth.credentials.Credentials
-import aws.sdk.kotlin.crt.auth.credentials.StaticCredentialsProvider
-import aws.sdk.kotlin.crt.auth.credentials.build
 import aws.sdk.kotlin.crt.http.Headers
 import aws.sdk.kotlin.crt.http.HttpRequest
 import aws.sdk.kotlin.crt.http.HttpRequestBodyStream
 import aws.sdk.kotlin.crt.http.headers
 import aws.sdk.kotlin.crt.io.Uri
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import kotlin.test.*
 
@@ -47,8 +44,8 @@ class SigningTest : CrtTest() {
      */
     private fun createSigV4TestSuiteRequest(): HttpRequest = HttpRequest.build {
         method = "POST"
-//        headers.append("Host", "example.amazonaws.com")
-//        encodedPath = "/?Param1=value1"
+        headers.append("Host", "example.amazonaws.com")
+        encodedPath = "/?Param1=value1"
     }
 
     private fun createUnsignableRequest(method: String, path: String): HttpRequest = HttpRequest.build {
@@ -57,26 +54,17 @@ class SigningTest : CrtTest() {
         headers.append("Authorization", "example.amazonaws.com")
     }
 
-    @Ignore
     @Test
     fun testSigningSuccess() = runTest {
-//        val request = createSimpleRequest("https://www.example.com", "POST", "/derp", "<body>Hello</body>")
-//        val request = createSimpleRequest("https://www.example.com", "POST", "/derp", null)
-        val request = HttpRequest.build {
-            method = "POST"
-            encodedPath = "https://www.example.com"
-//            headers {
-//                append("Host", Uri.parse("https://www.example.com").hostAndPort)
-//            }
-        }
-
+        val request = createSimpleRequest("https://www.example.com", "POST", "/derp", "<body>Hello</body>")
         val signingConfig = AwsSigningConfig.build {
             algorithm = AwsSigningAlgorithm.SIGV4
-            signatureType = AwsSignatureType.HTTP_REQUEST_VIA_QUERY_PARAMS
+            signatureType = AwsSignatureType.HTTP_REQUEST_VIA_HEADERS
             region = "us-east-1"
             service = "service"
-            date = TEST_DATE_EPOCH_MILLI
+            date = Platform.epochMilliNow()
             credentials = Credentials(TEST_ACCESS_KEY_ID, TEST_SECRET_ACCESS_KEY, null)
+            shouldSignHeader = { it != "bad-param" }
             useDoubleUriEncode = true
             normalizeUriPath = true
         }
@@ -88,13 +76,7 @@ class SigningTest : CrtTest() {
 
     @Test
     fun testQuerySigningSuccess() = runTest {
-//        val request = createSigV4TestSuiteRequest()
-        val request = HttpRequest.build {
-            method = "POST"
-//            headers.append("Host", "example.com")
-            encodedPath = "https://www.example.com"
-        }
-
+        val request = createSigV4TestSuiteRequest()
         val signingConfig = AwsSigningConfig.build {
             algorithm = AwsSigningAlgorithm.SIGV4
             signatureType = AwsSignatureType.HTTP_REQUEST_VIA_QUERY_PARAMS
@@ -104,7 +86,6 @@ class SigningTest : CrtTest() {
             credentials = Credentials(TEST_ACCESS_KEY_ID, TEST_SECRET_ACCESS_KEY, null)
             useDoubleUriEncode = true
             normalizeUriPath = true
-            signedBodyHeader = AwsSignedBodyHeaderType.X_AMZ_CONTENT_SHA256
             signedBodyValue = AwsSignedBodyValue.EMPTY_SHA256
             expirationInSeconds = 60
         }
@@ -112,7 +93,6 @@ class SigningTest : CrtTest() {
         val signedRequest = AwsSigner.signRequest(request, signingConfig)
 
         val path = signedRequest.encodedPath
-        println("signedRequest path: $path")
         assertTrue(path.contains("X-Amz-Signature="), "`$path` did not contain expected signature")
         assertTrue(path.contains("X-Amz-SignedHeaders=host"), "`$path` did not contain expected host")
         assertTrue(path.contains("X-Amz-Credential=AKIDEXAMPLE%2F20150830%2F"), "`$path` did not contain expected credentials")
@@ -120,74 +100,57 @@ class SigningTest : CrtTest() {
         assertTrue(path.contains("X-Amz-Expires=60"), "`$path` did not contain expected expiration")
     }
 
-    @Ignore
     @Test
     fun testSigningBasicSigV4() = runTest {
-        StaticCredentialsProvider.build {
-            accessKeyId = TEST_ACCESS_KEY_ID
-            secretAccessKey = TEST_SECRET_ACCESS_KEY
-        }.use { provider ->
-            val request = createSigV4TestSuiteRequest()
-            val signingConfig = AwsSigningConfig.build {
-                algorithm = AwsSigningAlgorithm.SIGV4
-                signatureType = AwsSignatureType.HTTP_REQUEST_VIA_HEADERS
-                region = "us-east-1"
-                service = "service"
-                date = TEST_DATE_EPOCH_MILLI
-                credentials = runBlocking { provider.getCredentials() }
-                useDoubleUriEncode = true
-                normalizeUriPath = true
-                signedBodyValue = AwsSignedBodyValue.EMPTY_SHA256
-                expirationInSeconds = 60
-            }
-
-            val signedRequest = AwsSigner.signRequest(request, signingConfig)
-            assertTrue(signedRequest.headers.contains("X-Amz-Date", "20150830T123600Z"), "${signedRequest.headers}")
-            assertTrue(
-                signedRequest.headers.contains(
-                    "Authorization",
-                    "AWS4-HMAC-SHA256 Credential=AKIDEXAMPLE/20150830/us-east-1/service/aws4_request, SignedHeaders=host;x-amz-date, Signature=28038455d6de14eafc1f9222cf5aa6f1a96197d7deb8263271d420d138af7f11",
-                ),
-                "sigv4 authorization not equal: " + signedRequest.headers["Authorization"],
-            )
+        val request = createSigV4TestSuiteRequest()
+        val signingConfig = AwsSigningConfig.build {
+            algorithm = AwsSigningAlgorithm.SIGV4
+            signatureType = AwsSignatureType.HTTP_REQUEST_VIA_HEADERS
+            region = "us-east-1"
+            service = "service"
+            date = TEST_DATE_EPOCH_MILLI
+            credentials = Credentials(TEST_ACCESS_KEY_ID, TEST_SECRET_ACCESS_KEY, null)
+            useDoubleUriEncode = true
+            normalizeUriPath = true
+            signedBodyValue = AwsSignedBodyValue.EMPTY_SHA256
+            expirationInSeconds = 60
         }
+
+        val signedRequest = AwsSigner.signRequest(request, signingConfig)
+        assertTrue(signedRequest.headers.contains("X-Amz-Date", "20150830T123600Z"), "${signedRequest.headers}")
+        assertTrue(
+            signedRequest.headers.contains(
+                "Authorization",
+                "AWS4-HMAC-SHA256 Credential=AKIDEXAMPLE/20150830/us-east-1/service/aws4_request, SignedHeaders=host;x-amz-date, Signature=28038455d6de14eafc1f9222cf5aa6f1a96197d7deb8263271d420d138af7f11",
+            ),
+            "sigv4 authorization not equal: " + signedRequest.headers["Authorization"],
+        )
     }
 
-    @Ignore
     @Test
     fun testSigningFailureBadRequest() = runTest {
-        StaticCredentialsProvider.build {
-            accessKeyId = TEST_ACCESS_KEY_ID
-            secretAccessKey = TEST_SECRET_ACCESS_KEY
-        }.use { provider ->
-            val request = createUnsignableRequest("POST", "/bad")
-            val signingConfig = AwsSigningConfig.build {
-                algorithm = AwsSigningAlgorithm.SIGV4
-                signatureType = AwsSignatureType.HTTP_REQUEST_VIA_HEADERS
-                region = "us-east-1"
-                service = "service"
-                date = Platform.epochMilliNow()
-                credentials = runBlocking { provider.getCredentials() }
-                useDoubleUriEncode = true
-                normalizeUriPath = true
-                signedBodyValue = AwsSignedBodyValue.EMPTY_SHA256
-            }
-
-            val ex = assertFailsWith<CrtRuntimeException> {
-                AwsSigner.signRequest(request, signingConfig)
-            }
-            assertEquals("AWS_AUTH_SIGNING_ILLEGAL_REQUEST_HEADER", ex.errorName)
+        val request = createUnsignableRequest("POST", "/bad")
+        val signingConfig = AwsSigningConfig.build {
+            algorithm = AwsSigningAlgorithm.SIGV4
+            signatureType = AwsSignatureType.HTTP_REQUEST_VIA_HEADERS
+            region = "us-east-1"
+            service = "service"
+            date = Platform.epochMilliNow()
+            credentials = Credentials(TEST_ACCESS_KEY_ID, TEST_SECRET_ACCESS_KEY, null)
+            useDoubleUriEncode = true
+            normalizeUriPath = true
+            signedBodyValue = AwsSignedBodyValue.EMPTY_SHA256
         }
+
+        val ex = assertFailsWith<CrtRuntimeException> {
+            AwsSigner.signRequest(request, signingConfig)
+        }
+        assertEquals("AWS_AUTH_SIGNING_ILLEGAL_REQUEST_HEADER", ex.errorName)
     }
 
-    @Ignore
     @Test
     fun testSigningSigV4Asymmetric() = runTest {
-        println("testSigningSigV4Asymmetric lastError: ${CRT.lastError()}")
-
         val request = createSigV4TestSuiteRequest()
-        println("createSigV4TestSuiteRequest() lastError: ${CRT.lastError()}")
-
         val signingConfig = AwsSigningConfig.build {
             algorithm = AwsSigningAlgorithm.SIGV4_ASYMMETRIC
             signatureType = AwsSignatureType.HTTP_REQUEST_VIA_HEADERS
@@ -200,42 +163,33 @@ class SigningTest : CrtTest() {
             signedBodyValue = AwsSignedBodyValue.EMPTY_SHA256
             expirationInSeconds = 60
         }
-        println("AwsSigningConfig.build lastError: ${CRT.lastError()}")
 
         val signedRequest = AwsSigner.signRequest(request, signingConfig)
-        println("AwsSigner.signRequest lastError: ${CRT.lastError()}")
-
         assertTrue(signedRequest.headers.contains("X-Amz-Date", "20150830T123600Z"), "${signedRequest.headers}")
         val prefix = "AWS4-ECDSA-P256-SHA256 Credential=AKIDEXAMPLE/20150830/service/aws4_request, SignedHeaders=host;x-amz-date;x-amz-region-set, Signature="
         assertTrue(signedRequest.headers["Authorization"]!!.contains(prefix), signedRequest.headers["Authorization"])
     }
 
-    @Ignore
     @Test
     fun testSigningChunkTrailingHeaders() = runTest {
-        StaticCredentialsProvider.build {
-            accessKeyId = "AKID"
-            secretAccessKey = "SECRET"
-        }.use { provider ->
-            val signingConfig = AwsSigningConfig.build {
-                algorithm = AwsSigningAlgorithm.SIGV4
-                signatureType = AwsSignatureType.HTTP_REQUEST_TRAILING_HEADERS
-                region = "foo"
-                service = "bar"
-                date = 1651022625000
-                credentials = runBlocking { provider.getCredentials() }
-            }
-
-            val trailingHeaders = Headers.build {
-                append("x-amz-checksum-crc32", "AAAAAA==")
-                append("x-amz-arbitrary-header-with-value", "test")
-            }
-
-            val previousSignature = "106d0654706e3e8dde144d69ca9882ea38d4d72576056c724ba763f8ed3074f3".encodeToByteArray()
-
-            val signature = AwsSigner.signChunkTrailer(trailingHeaders, previousSignature, signingConfig).signature.decodeToString()
-            val expectedSignature = "24f8ed01c7add645b75e65d2382fae5233b97526fdd1a2c4094933b93f6a08bf" // validated using DefaultAwsSigner
-            assertEquals(expectedSignature, signature)
+        val signingConfig = AwsSigningConfig.build {
+            algorithm = AwsSigningAlgorithm.SIGV4
+            signatureType = AwsSignatureType.HTTP_REQUEST_TRAILING_HEADERS
+            region = "foo"
+            service = "bar"
+            date = 1651022625000
+            credentials = Credentials(TEST_ACCESS_KEY_ID, TEST_SECRET_ACCESS_KEY, null)
         }
+
+        val trailingHeaders = Headers.build {
+            append("x-amz-checksum-crc32", "AAAAAA==")
+            append("x-amz-arbitrary-header-with-value", "test")
+        }
+
+        val previousSignature = "106d0654706e3e8dde144d69ca9882ea38d4d72576056c724ba763f8ed3074f3".encodeToByteArray()
+
+        val signature = AwsSigner.signChunkTrailer(trailingHeaders, previousSignature, signingConfig).signature.decodeToString()
+        val expectedSignature = "8b578658fa1705d62bf26aa73e764ac4b705e6d9efd223a2d9e156580f085de4" // validated using DefaultAwsSigner
+        assertEquals(expectedSignature, signature)
     }
 }
