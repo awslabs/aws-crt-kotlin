@@ -224,28 +224,35 @@ internal fun HttpRequest.toNativeRequest(): CPointer<cnames.structs.aws_http_mes
     return nativeReq
 }
 
-internal fun CPointer<cnames.structs.aws_http_message>.toHttpRequest(): HttpRequest {
+internal fun CPointer<cnames.structs.aws_http_message>.toHttpRequest(): HttpRequest = memScoped {
+    val nativeReq = this@toHttpRequest
     val req = HttpRequestBuilder()
 
     val nativeMethod = cValue<aws_byte_cursor>()
-    aws_http_message_get_request_method(this, nativeMethod)
+    val nativeMethodPtr = nativeMethod.ptr
+    aws_http_message_get_request_method(nativeReq, nativeMethodPtr)
+    req.method = nativeMethodPtr.pointed.toKString()
 
-    req.method = nativeMethod.toKString()
-
+    // WORKS
     val encodedPath = cValue<aws_byte_cursor>()
-    aws_http_message_get_request_path(this, encodedPath)
-    req.encodedPath = encodedPath.toKString()
+    val encodedPathPtr = encodedPath.ptr
+    aws_http_message_get_request_path(nativeReq, encodedPathPtr)
+    req.encodedPath = encodedPathPtr.pointed.toKString()
 
-    val headers = aws_http_message_get_headers(this)
-    for (i in 0 until aws_http_message_get_header_count(this).toInt()) {
+    // DOESN'T WORK? But it's basically the same thing...
+//        val encodedPath = cValue<aws_byte_cursor>()
+//        aws_http_message_get_request_path(this@toHttpRequest, encodedPath.ptr)
+//        req.encodedPath = encodedPath.toKString()
+
+    val headers = aws_http_message_get_headers(nativeReq)
+    for (i in 0 until aws_http_message_get_header_count(nativeReq).toInt()) {
         val header = cValue<aws_http_header>()
-        aws_http_headers_get_index(headers, i.toULong(), header)
-        header.useContents {
-            req.headers.append(name.toKString(), value.toKString())
-        }
+        val headerPtr = header.ptr
+        aws_http_headers_get_index(headers, i.toULong(), headerPtr)
+        req.headers.append(headerPtr.pointed.name.toKString(), headerPtr.pointed.value.toKString())
     }
 
-    val nativeStream = aws_http_message_get_body_stream(this)
+    val nativeStream = aws_http_message_get_body_stream(nativeReq)
     req.body = nativeStream?.toHttpRequestBodyStream()
 
     return req.build()
