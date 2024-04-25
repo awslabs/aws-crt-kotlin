@@ -19,7 +19,6 @@ class CRTNativeTest {
         CRT.initRuntime()
     }
 
-
     @Test
     fun testErrorString() {
         assertEquals("Success.", CRT.errorString(0))
