@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import aws.sdk.kotlin.crt.Allocator
-import aws.sdk.kotlin.crt.CrtRuntimeException
 import aws.sdk.kotlin.crt.awsAssertOpSuccess
 import kotlinx.cinterop.*
 import libcrt.*

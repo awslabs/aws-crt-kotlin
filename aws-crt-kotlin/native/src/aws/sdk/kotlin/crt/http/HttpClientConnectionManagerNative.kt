@@ -164,12 +164,12 @@ private fun aws_socket_options.kinit(opts: SocketOptions) {
     keep_alive_timeout_sec = opts.keepAliveTimeoutSecs.convert()
 }
 
-private fun SocketType.toNativeSocketType() = when(this) {
+private fun SocketType.toNativeSocketType() = when (this) {
     SocketType.STREAM -> aws_socket_type.AWS_SOCKET_STREAM
     SocketType.DGRAM -> aws_socket_type.AWS_SOCKET_DGRAM
 }
 
-private fun SocketDomain.toNativeSocketDomain() = when(this) {
+private fun SocketDomain.toNativeSocketDomain() = when (this) {
     SocketDomain.IPv4 -> aws_socket_domain.AWS_SOCKET_IPV4
     SocketDomain.IPv6 -> aws_socket_domain.AWS_SOCKET_IPV6
     SocketDomain.LOCAL -> aws_socket_domain.AWS_SOCKET_LOCAL

@@ -39,20 +39,24 @@ public actual object AwsSigner {
         val userData = nativeRequest to Channel<ByteArray>(1)
         val userDataStableRef = StableRef.create(userData)
 
-        val signable = checkNotNull(aws_signable_new_http_request(
-            allocator = Allocator.Default.allocator,
-            request = nativeRequest.get()
-        )) { "aws_signable_new_http_request" }
+        val signable = checkNotNull(
+            aws_signable_new_http_request(
+                allocator = Allocator.Default.allocator,
+                request = nativeRequest.get(),
+            ),
+        ) { "aws_signable_new_http_request" }
 
         val nativeSigningConfig: CPointer<aws_signing_config_base> = config.toNativeSigningConfig().reinterpret()
 
-        awsAssertOpSuccess(aws_sign_request_aws(
-            allocator = Allocator.Default.allocator,
-            signable = signable,
-            base_config = nativeSigningConfig,
-            on_complete = staticCFunction(::signCallback),
-            userdata = userDataStableRef.asCPointer(),
-        )) { "sign() aws_sign_request_aws" }
+        awsAssertOpSuccess(
+            aws_sign_request_aws(
+                allocator = Allocator.Default.allocator,
+                signable = signable,
+                base_config = nativeSigningConfig,
+                on_complete = staticCFunction(::signCallback),
+                userdata = userDataStableRef.asCPointer(),
+            ),
+        ) { "sign() aws_sign_request_aws" }
 
         val callbackChannel = userDataStableRef.get().second
         val signature = runBlocking { callbackChannel.receive() } // wait for async signing to complete....
@@ -71,12 +75,13 @@ public actual object AwsSigner {
                 val chunkInputStream: CValuesRef<aws_input_stream> = checkNotNull(
                     aws_input_stream_new_from_cursor(
                         Allocator.Default.allocator,
-                        chunkBodyPinned.asAwsByteCursor()
-                    )) { "signChunk() aws_input_stream_new_from_cursor" }
+                        chunkBodyPinned.asAwsByteCursor(),
+                    ),
+                ) { "signChunk() aws_input_stream_new_from_cursor" }
 
                 prevSignature.usePinned { prevSignaturePinned ->
                     checkNotNull(
-                        aws_signable_new_chunk(Allocator.Default.allocator, chunkInputStream, prevSignaturePinned.asAwsByteCursor())
+                        aws_signable_new_chunk(Allocator.Default.allocator, chunkInputStream, prevSignaturePinned.asAwsByteCursor()),
                     ) { "aws_signable_new_chunk unexpectedly null" }
                 }
             }
@@ -95,20 +100,24 @@ public actual object AwsSigner {
             trailingHeaders.forEach { key, values ->
                 key.encodeToByteArray().usePinned { keyPinned ->
                     val keyCursor = keyPinned.asAwsByteCursor()
-                    values.forEach { it.encodeToByteArray().usePinned { valuePinned ->
-                        val valueCursor = valuePinned.asAwsByteCursor()
-                        awsAssertOpSuccess(aws_http_headers_add(nativeTrailingHeaders, keyCursor, valueCursor)) {
-                            "signChunkTrailer() aws_http_headers_add"
+                    values.forEach {
+                        it.encodeToByteArray().usePinned { valuePinned ->
+                            val valueCursor = valuePinned.asAwsByteCursor()
+                            awsAssertOpSuccess(aws_http_headers_add(nativeTrailingHeaders, keyCursor, valueCursor)) {
+                                "signChunkTrailer() aws_http_headers_add"
+                            }
                         }
-                    }}
+                    }
                 }
             }
 
-            checkNotNull(aws_signable_new_trailing_headers(
-                Allocator.Default.allocator,
-                nativeTrailingHeaders,
-                prevSignature.usePinned { it.asAwsByteCursor() }
-            )) { "aws_signable_new_trailing_headers unexpectedly null" }
+            checkNotNull(
+                aws_signable_new_trailing_headers(
+                    Allocator.Default.allocator,
+                    nativeTrailingHeaders,
+                    prevSignature.usePinned { it.asAwsByteCursor() },
+                ),
+            ) { "aws_signable_new_trailing_headers unexpectedly null" }
         }
 
         return signChunkSignable(chunkTrailerSignable, config)
@@ -121,13 +130,15 @@ private fun signChunkSignable(signable: CPointer<aws_signable>, config: AwsSigni
 
     val nativeConfig: CPointer<aws_signing_config_base> = config.toNativeSigningConfig().reinterpret()
 
-    awsAssertOpSuccess(aws_sign_request_aws(
-        allocator = Allocator.Default.allocator,
-        signable = signable,
-        base_config = nativeConfig,
-        on_complete = staticCFunction(::signChunkCallback),
-        userdata = callbackChannelStableRef.asCPointer(),
-    )) { "aws_sign_request_aws() failed in signChunkSignable" }
+    awsAssertOpSuccess(
+        aws_sign_request_aws(
+            allocator = Allocator.Default.allocator,
+            signable = signable,
+            base_config = nativeConfig,
+            on_complete = staticCFunction(::signChunkCallback),
+            userdata = callbackChannelStableRef.asCPointer(),
+        ),
+    ) { "aws_sign_request_aws() failed in signChunkSignable" }
 
     // wait for async signing to complete....
     val signature = runBlocking { callbackChannel.receive() }.also {
@@ -213,7 +224,7 @@ private fun AwsSigningConfig.toNativeSigningConfig(): CPointer<aws_signing_confi
 private fun signCallback(signingResult: CPointer<aws_signing_result>?, errorCode: Int, userData: COpaquePointer?) {
     awsAssertOpSuccess(errorCode) { "signing failed with code $errorCode: ${CRT.errorString(errorCode)}" }
     checkNotNull(signingResult) { "signing callback received null aws_signing_result" }
-    checkNotNull(userData) { "signing callback received null user data"}
+    checkNotNull(userData) { "signing callback received null user data" }
 
     val (pinnedRequestToSign, callbackChannel) = userData
         .asStableRef<Pair<Pinned<CPointer<cnames.structs.aws_http_message>>, Channel<ByteArray>>>()
@@ -234,7 +245,7 @@ private fun signCallback(signingResult: CPointer<aws_signing_result>?, errorCode
 private fun signChunkCallback(signingResult: CPointer<aws_signing_result>?, errorCode: Int, userData: COpaquePointer?) {
     awsAssertOpSuccess(errorCode) { "signing failed with code $errorCode: ${CRT.errorString(errorCode)}" }
     checkNotNull(signingResult) { "signing callback received null aws_signing_result" }
-    checkNotNull(userData) { "signing callback received null user data"}
+    checkNotNull(userData) { "signing callback received null user data" }
 
     val callbackChannel = userData.asStableRef<Channel<ByteArray>>().get()
     runBlocking { callbackChannel.send(signingResult.getSignature()) }
@@ -245,5 +256,5 @@ private fun Credentials.toNativeCredentials(): CPointer<cnames.structs.aws_crede
     access_key_id = accessKeyId.toAwsString(),
     secret_access_key = secretAccessKey.toAwsString(),
     session_token = sessionToken?.toAwsString(),
-    expiration_timepoint_seconds = UINT64_MAX // FIXME?: Our Credentials do not have an expiration field
+    expiration_timepoint_seconds = UINT64_MAX, // FIXME?: Our Credentials do not have an expiration field
 )
