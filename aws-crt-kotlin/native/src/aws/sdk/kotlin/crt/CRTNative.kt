@@ -113,6 +113,7 @@ private fun cleanup() {
     aws_io_library_clean_up()
     aws_common_library_clean_up()
     aws_auth_library_clean_up()
+    aws_cal_library_clean_up()
 
     s_crt_kotlin_clean_up()
 }
