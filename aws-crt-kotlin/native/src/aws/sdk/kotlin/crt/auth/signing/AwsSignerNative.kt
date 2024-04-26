@@ -59,10 +59,8 @@ public actual object AwsSigner {
         ) { "sign() aws_sign_request_aws" }
 
         val callbackChannel = userDataStableRef.get().second
-        val signature = runBlocking { callbackChannel.receive() } // wait for async signing to complete....
-        val signedRequest = userDataStableRef.get().first.get()
-
-        return AwsSigningResult(signedRequest.toHttpRequest(), signature)
+        val signature = callbackChannel.receive() // wait for async signing to complete....
+        return AwsSigningResult(nativeRequest.get().toHttpRequest(), signature)
     }
 
     public actual suspend fun signChunk(
