@@ -192,9 +192,11 @@ private fun AwsSigningConfig.toNativeSigningConfig(): CPointer<aws_signing_confi
         service.initFromCursor(this@toNativeSigningConfig.service.toAwsString().asAwsByteCursor())
         aws_date_time_init_epoch_millis(date.ptr, this@toNativeSigningConfig.date.toULong())
 
-        // FIXME Can't convert Kotlin config's shouldSignHeader to a C function without capturing the config variable, and staticCFunction cannot capture variables.
-        // should_sign_header = this@toNativeSigningConfig.shouldSignHeader?.toNativeShouldSignHeaderFn()
-        // should_sign_header_ud =
+        this@toNativeSigningConfig.shouldSignHeader?.let {
+            val shouldSignHeaderStableRef = StableRef.create(it)
+            should_sign_header = staticCFunction(::nativeShouldSignHeaderFn)
+            should_sign_header_ud = shouldSignHeaderStableRef.asCPointer()
+        }
 
         flags.use_double_uri_encode = if (this@toNativeSigningConfig.useDoubleUriEncode) 1u else 0u
         flags.should_normalize_uri_path = if (this@toNativeSigningConfig.normalizeUriPath) 1u else 0u
@@ -213,6 +215,16 @@ private fun AwsSigningConfig.toNativeSigningConfig(): CPointer<aws_signing_confi
     }
 
     return config.ptr
+}
+
+private typealias ShouldSignHeaderFunction = (String) -> Boolean
+private fun nativeShouldSignHeaderFn(headerName: CPointer<aws_byte_cursor>?, userData: COpaquePointer?): Boolean {
+    checkNotNull(headerName) { "aws_should_sign_header_fn expected non-null header name" }
+    if (userData == null) { return true }
+
+    val kShouldSignHeaderFn = userData.asStableRef<ShouldSignHeaderFunction>().get()
+    val kHeaderName = headerName.pointed.toKString()
+    return kShouldSignHeaderFn(kHeaderName)
 }
 
 /**

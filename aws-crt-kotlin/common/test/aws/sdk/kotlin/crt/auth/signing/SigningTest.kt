@@ -7,10 +7,7 @@ package aws.sdk.kotlin.crt.auth.signing
 
 import aws.sdk.kotlin.crt.*
 import aws.sdk.kotlin.crt.auth.credentials.Credentials
-import aws.sdk.kotlin.crt.http.Headers
-import aws.sdk.kotlin.crt.http.HttpRequest
-import aws.sdk.kotlin.crt.http.HttpRequestBodyStream
-import aws.sdk.kotlin.crt.http.headers
+import aws.sdk.kotlin.crt.http.*
 import aws.sdk.kotlin.crt.io.Uri
 import kotlinx.coroutines.test.runTest
 import kotlin.test.*
@@ -191,5 +188,50 @@ class SigningTest : CrtTest() {
         val signature = AwsSigner.signChunkTrailer(trailingHeaders, previousSignature, signingConfig).signature.decodeToString()
         val expectedSignature = "8b578658fa1705d62bf26aa73e764ac4b705e6d9efd223a2d9e156580f085de4" // validated using DefaultAwsSigner
         assertEquals(expectedSignature, signature)
+    }
+
+    @Test
+    fun testShouldSignHeader() = runTest {
+        val request = HttpRequestBuilder().apply {
+            method = "POST"
+            encodedPath = "https://www.example.com"
+            headers {
+                append("bad-header", "should not be signed")
+                append("Host", "https://www.example.com")
+            }
+        }.build()
+
+        val baseSigningConfig = AwsSigningConfig.Builder().apply {
+            algorithm = AwsSigningAlgorithm.SIGV4
+            signatureType = AwsSignatureType.HTTP_REQUEST_VIA_HEADERS
+            region = "us-east-1"
+            service = "service"
+            date = Platform.epochMilliNow()
+            credentials = Credentials(TEST_ACCESS_KEY_ID, TEST_SECRET_ACCESS_KEY, null)
+            useDoubleUriEncode = true
+            normalizeUriPath = true
+        }
+
+        val skipHeaderConfig = baseSigningConfig.apply {
+            shouldSignHeader = { it != "bad-header" }
+        }.build()
+        val implicitSignAllHeadersConfig = baseSigningConfig.apply {
+            shouldSignHeader = null
+        }.build()
+        val explicitSignAllHeadersConfig = baseSigningConfig.apply {
+            shouldSignHeader = { true }
+        }.build()
+
+        val skipHeaderSignedRequest = AwsSigner.signRequest(request, skipHeaderConfig)
+        assertTrue(skipHeaderSignedRequest.headers.contains("Authorization"))
+        assertFalse(skipHeaderSignedRequest.headers["Authorization"]!!.contains("bad-header"))
+
+        val implicitSignAllHeadersRequest = AwsSigner.signRequest(request, implicitSignAllHeadersConfig)
+        assertTrue(implicitSignAllHeadersRequest.headers.contains("Authorization"))
+        assertTrue(implicitSignAllHeadersRequest.headers["Authorization"]!!.contains("bad-header"))
+
+        val explicitSignAllHeadersRequest = AwsSigner.signRequest(request, explicitSignAllHeadersConfig)
+        assertTrue(explicitSignAllHeadersRequest.headers.contains("Authorization"))
+        assertTrue(explicitSignAllHeadersRequest.headers["Authorization"]!!.contains("bad-header"))
     }
 }
