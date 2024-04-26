@@ -41,4 +41,4 @@ mockserver-netty = { module = "org.mock-server:mockserver-netty", version.ref = 
 [plugins]
 kotlin-multiplatform = {id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin-version" }
 aws-kotlin-repo-tools-kmp = { id = "aws.sdk.kotlin.gradle.kmp", version.ref = "aws-kotlin-repo-tools-version" }
-aws-kotlin-repo-tools-artifactsizemetrics = { id = "artifact-size-metrics", version.ref = "aws-kotlin-repo-tools-version" }
+aws-kotlin-repo-tools-artifactsizemetrics = { id = "aws.sdk.kotlin.gradle.artifactsizemetrics", version.ref = "aws-kotlin-repo-tools-version" }
