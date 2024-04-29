@@ -1,3 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 import kotlinx.cinterop.*
 import libcrt.aws_checksums_crc32
 import libcrt.aws_checksums_crc32c
@@ -10,7 +14,7 @@ import platform.posix.uint8_tVar
 internal typealias AwsChecksumsCrcFunction = (
     input: CValuesRef<uint8_tVar>?,
     length: Int,
-    previousCrc32: uint32_t
+    previousCrc32: uint32_t,
 ) -> uint32_t
 
 internal class Crc(val checksumFn: AwsChecksumsCrcFunction) : HashFunction {

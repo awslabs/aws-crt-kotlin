@@ -46,7 +46,9 @@ private fun streamRead(
     try {
         // MutableBuffer handles updating dest->len
         val buffer = MutableBuffer(dest)
-        handler.khandler.sendRequestBody(buffer)
+        if (handler.khandler.sendRequestBody(buffer)) {
+            handler.bodyDone = true
+        }
     } catch (ex: Exception) {
         log(LogLevel.Error, "streamRead: $ex")
         return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
@@ -66,6 +68,7 @@ private fun streamGetStatus(
     return AWS_OP_SUCCESS
 }
 
+@Suppress("unused")
 private fun streamGetLength(
     stream: CPointer<aws_input_stream>?,
     outLength: CPointer<platform.posix.int64_tVar>?,
@@ -112,6 +115,11 @@ internal fun inputStream(khandler: HttpRequestBodyStream): CPointer<aws_input_st
     val stableRef = StableRef.create(impl)
     stream.impl = stableRef.asCPointer()
     return stream.ptr
+}
+
+internal fun CPointer<aws_input_stream>.toHttpRequestBodyStream(): HttpRequestBodyStream {
+    val stableRef = checkNotNull(this.pointed.impl?.asStableRef<RequestBodyStream>()) { "toHttpRequestBodyStream() expected non-null `impl`" }
+    return stableRef.get().khandler
 }
 
 // wrapper around the actual implementation

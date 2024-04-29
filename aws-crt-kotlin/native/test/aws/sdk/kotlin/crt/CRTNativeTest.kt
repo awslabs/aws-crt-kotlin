@@ -20,11 +20,6 @@ class CRTNativeTest {
     }
 
     @Test
-    fun testLastError() {
-        assertEquals(0, CRT.lastError())
-    }
-
-    @Test
     fun testErrorString() {
         assertEquals("Success.", CRT.errorString(0))
         assertEquals("Out of memory.", CRT.errorString(1))

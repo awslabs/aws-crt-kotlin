@@ -20,9 +20,16 @@ headers = aws/common/allocator.h \
         aws/http/request_response.h \
         aws/http/proxy.h \
         aws/compression/compression.h \
+        aws/auth/credentials.h \
+        aws/auth/signing.h \
+        aws/auth/signing_config.h \
+        aws/auth/signable.h \
+        aws/auth/signing_result.h \
+        aws/compression/compression.h \
         aws/cal/hash.h \
+        aws/cal/cal.h \
         aws/checksums/crc.h
-headerFilter = aws/common/* aws/io/* aws/http/* aws/compression/* aws/cal/* aws/checksums/*
+headerFilter = aws/common/* aws/io/* aws/http/* aws/compression/* aws/auth/* aws/checksums/* aws/cal/*
 
 linkerOpts.osx = -framework Security
 linkerOpts.ios = -framework Security

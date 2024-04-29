@@ -156,6 +156,8 @@ private fun Project.registerCmakeBuildTask(
                 relativeBuildDir,
                 "--config",
                 buildType.toString(),
+                "--parallel",
+                System.getProperty("org.gradle.workers.max", "16"),
             )
 
             val osxSdk = knTarget.konanTarget.osxDeviceSdkName
