@@ -1,7 +1,7 @@
 [versions]
 kotlin-version = "1.9.21"
 
-aws-kotlin-repo-tools-version = "0.3.2"
+aws-kotlin-repo-tools-version = "0.4.4"
 
 # libs
 crt-java-version = "0.29.6"
@@ -40,4 +40,5 @@ mockserver-netty = { module = "org.mock-server:mockserver-netty", version.ref = 
 
 [plugins]
 kotlin-multiplatform = {id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin-version" }
-aws-kotlin-repo-tools-kmp = { id = "aws.sdk.kotlin.kmp", version.ref = "aws-kotlin-repo-tools-version" }
+aws-kotlin-repo-tools-kmp = { id = "aws.sdk.kotlin.gradle.kmp", version.ref = "aws-kotlin-repo-tools-version" }
+aws-kotlin-repo-tools-artifactsizemetrics = { id = "aws.sdk.kotlin.gradle.artifactsizemetrics", version.ref = "aws-kotlin-repo-tools-version" }

@@ -18,6 +18,13 @@ plugins {
     id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.13.2"
     alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.aws.kotlin.repo.tools.kmp)
+    alias(libs.plugins.aws.kotlin.repo.tools.artifactsizemetrics)
+}
+
+artifactSizeMetrics {
+    artifactPrefixes = setOf(":aws-crt-kotlin")
+    significantChangeThresholdPercentage = 5.0
+    projectRepositoryName = "aws-crt-kotlin"
 }
 
 allprojects {
