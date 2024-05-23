@@ -24,11 +24,11 @@ public actual class EventLoopGroup actual constructor(maxThreads: Int) : Closeab
     /**
      * Close this ELG
      */
-    override fun close() {
+    actual override fun close() {
         jniElg.close()
     }
 
-    override suspend fun waitForShutdown() {
+    actual override suspend fun waitForShutdown() {
         jniElg.shutdownCompleteFuture.await()
     }
 }

@@ -25,7 +25,11 @@ import aws.sdk.kotlin.crt.io.ClientBootstrap
 public expect class DefaultChainCredentialsProvider internal constructor(builder: DefaultChainCredentialsProviderBuilder) :
     CredentialsProvider {
 
-    public companion object
+    public companion object { }
+
+    override fun close()
+    override suspend fun getCredentials(): Credentials
+    override suspend fun waitForShutdown()
 }
 
 public class DefaultChainCredentialsProviderBuilder {

@@ -34,4 +34,7 @@ public expect class HttpClientConnectionManager(options: HttpClientConnectionMan
      * @param conn Connection to release
      */
     public fun releaseConnection(conn: HttpClientConnection)
+
+    override fun close()
+    override suspend fun waitForShutdown()
 }
