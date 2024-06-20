@@ -13,6 +13,7 @@ import aws.sdk.kotlin.crt.Closeable
  */
 public expect class TlsContext(options: TlsContextOptions? = null) : Closeable {
     public companion object {}
+    override fun close()
 }
 
 /**

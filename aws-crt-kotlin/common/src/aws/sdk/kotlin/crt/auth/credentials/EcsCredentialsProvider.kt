@@ -13,7 +13,11 @@ import aws.sdk.kotlin.crt.io.TlsContext
  */
 public expect class EcsCredentialsProvider
 internal constructor(builder: EcsCredentialsProviderBuilder) : CredentialsProvider {
-    public companion object
+    public companion object { }
+
+    override fun close()
+    override suspend fun getCredentials(): Credentials
+    override suspend fun waitForShutdown()
 }
 
 public class EcsCredentialsProviderBuilder {

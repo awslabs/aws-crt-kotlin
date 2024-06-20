@@ -15,11 +15,11 @@ public actual class ClientBootstrap actual constructor(elg: EventLoopGroup, hr: 
     AsyncShutdown {
     internal val jniBootstrap = ClientBootstrapJni(elg.jniElg, hr.jniHr)
 
-    override fun close() {
+    actual override fun close() {
         jniBootstrap.close()
     }
 
-    override suspend fun waitForShutdown() {
+    actual override suspend fun waitForShutdown() {
         jniBootstrap.shutdownCompleteFuture.await()
     }
 }

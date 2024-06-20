@@ -10,7 +10,7 @@ import aws.sdk.kotlin.crt.Closeable
 public actual class TlsContext actual constructor(options: TlsContextOptions?) : Closeable {
     public actual companion object {}
 
-    override fun close() {
+    actual override fun close() {
         TODO("Not yet implemented")
     }
 }
