@@ -17,7 +17,7 @@ public actual class TlsContext actual constructor(options: TlsContextOptions?) :
     public actual companion object {
     }
 
-    override fun close() {
+    actual override fun close() {
         jniCtx.close()
     }
 }
