@@ -6,8 +6,9 @@
 package aws.sdk.kotlin.crt.auth.credentials
 
 public actual class StsAssumeRoleCredentialsProvider
-internal actual constructor(builder: StsAssumeRoleCredentialsProviderBuilder) :
-    CredentialsProvider {
+internal actual constructor(
+    builder: StsAssumeRoleCredentialsProviderBuilder,
+) : CredentialsProvider {
     public actual companion object {}
 
     override suspend fun getCredentials(): Credentials {

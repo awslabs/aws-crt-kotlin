@@ -22,8 +22,7 @@ import aws.sdk.kotlin.crt.io.ClientBootstrap
  *
  * @return the newly-constructed credentials provider
  */
-public expect class DefaultChainCredentialsProvider internal constructor(builder: DefaultChainCredentialsProviderBuilder) :
-    CredentialsProvider {
+public expect class DefaultChainCredentialsProvider internal constructor(builder: DefaultChainCredentialsProviderBuilder) : CredentialsProvider {
 
     public companion object
 }
@@ -40,5 +39,4 @@ public class DefaultChainCredentialsProviderBuilder {
 /**
  * Construct a new credentials provider using a builder
  */
-public fun DefaultChainCredentialsProvider.Companion.build(block: DefaultChainCredentialsProviderBuilder.() -> Unit):
-    DefaultChainCredentialsProvider = DefaultChainCredentialsProviderBuilder().apply(block).build()
+public fun DefaultChainCredentialsProvider.Companion.build(block: DefaultChainCredentialsProviderBuilder.() -> Unit): DefaultChainCredentialsProvider = DefaultChainCredentialsProviderBuilder().apply(block).build()

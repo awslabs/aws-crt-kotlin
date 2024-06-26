@@ -10,7 +10,8 @@ import software.amazon.awssdk.crt.auth.credentials.StaticCredentialsProvider as 
  * A credentials provider for a fixed set of credentials
  */
 public actual class StaticCredentialsProvider internal actual constructor(builder: StaticCredentialsProviderBuilder) :
-    JniCredentialsProvider(), CredentialsProvider {
+    JniCredentialsProvider(),
+    CredentialsProvider {
     public actual companion object {}
 
     override val jniCredentials = StaticCredentialsProviderJni.StaticCredentialsProviderBuilder().apply {

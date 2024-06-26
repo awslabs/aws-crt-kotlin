@@ -60,5 +60,4 @@ public class X509CredentialsProviderBuilder {
 /**
  * Construct a new credentials provider using a builder
  */
-public fun X509CredentialsProvider.Companion.build(block: X509CredentialsProviderBuilder.() -> Unit):
-    X509CredentialsProvider = X509CredentialsProviderBuilder().apply(block).build()
+public fun X509CredentialsProvider.Companion.build(block: X509CredentialsProviderBuilder.() -> Unit): X509CredentialsProvider = X509CredentialsProviderBuilder().apply(block).build()

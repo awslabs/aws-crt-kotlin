@@ -6,8 +6,9 @@
 package aws.sdk.kotlin.crt.auth.credentials
 
 public actual class EcsCredentialsProvider
-internal actual constructor(builder: EcsCredentialsProviderBuilder) :
-    CredentialsProvider {
+internal actual constructor(
+    builder: EcsCredentialsProviderBuilder,
+) : CredentialsProvider {
     public actual companion object {}
 
     override suspend fun getCredentials(): Credentials {

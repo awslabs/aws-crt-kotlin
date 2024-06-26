@@ -19,8 +19,10 @@ import software.amazon.awssdk.crt.auth.credentials.StsCredentialsProvider as Sts
 private const val DEFAULT_DURATION_SECONDS = 3600
 
 public actual class StsAssumeRoleCredentialsProvider
-internal actual constructor(builder: StsAssumeRoleCredentialsProviderBuilder) :
-    CredentialsProvider, JniCredentialsProvider() {
+internal actual constructor(
+    builder: StsAssumeRoleCredentialsProviderBuilder,
+) : JniCredentialsProvider(),
+    CredentialsProvider {
     public actual companion object {}
 
     override val jniCredentials: CredentialsProviderJni =

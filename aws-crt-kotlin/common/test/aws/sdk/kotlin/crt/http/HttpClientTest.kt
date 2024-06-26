@@ -116,7 +116,9 @@ data class HttpTestResponse(val statusCode: Int, val headers: Headers, val body:
         if (body != null) {
             if (other.body == null) return false
             if (!body.contentEquals(other.body)) return false
-        } else if (other.body != null) return false
+        } else if (other.body != null) {
+            return false
+        }
 
         return true
     }
