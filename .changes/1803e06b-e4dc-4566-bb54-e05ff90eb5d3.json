@@ -1,0 +1,5 @@
+{
+    "id": "1803e06b-e4dc-4566-bb54-e05ff90eb5d3",
+    "type": "misc",
+    "description": "Upgrade to aws-crt-java v0.29.25"
+}
