@@ -9,8 +9,10 @@ import software.amazon.awssdk.crt.auth.credentials.CredentialsProvider as Creden
 import software.amazon.awssdk.crt.auth.credentials.EcsCredentialsProvider as EcsCredentialsProviderJni
 
 public actual class EcsCredentialsProvider
-internal actual constructor(builder: EcsCredentialsProviderBuilder) :
-    CredentialsProvider, JniCredentialsProvider() {
+internal actual constructor(
+    builder: EcsCredentialsProviderBuilder,
+) : JniCredentialsProvider(),
+    CredentialsProvider {
     public actual companion object {}
 
     override val jniCredentials: CredentialsProviderJni =

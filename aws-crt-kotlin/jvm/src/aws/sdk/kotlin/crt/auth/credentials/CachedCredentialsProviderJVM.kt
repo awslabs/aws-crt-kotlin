@@ -10,7 +10,8 @@ import software.amazon.awssdk.crt.auth.credentials.CachedCredentialsProvider as 
 import software.amazon.awssdk.crt.auth.credentials.CredentialsProvider as CredentialsProviderJni
 
 public actual class CachedCredentialsProvider internal actual constructor(builder: CachedCredentialsProviderBuilder) :
-    CredentialsProvider, JniCredentialsProvider() {
+    JniCredentialsProvider(),
+    CredentialsProvider {
     public actual companion object {}
 
     override val jniCredentials: CredentialsProviderJni =

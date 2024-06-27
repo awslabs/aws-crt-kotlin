@@ -9,7 +9,8 @@ import software.amazon.awssdk.crt.auth.credentials.CredentialsProvider as Creden
 import software.amazon.awssdk.crt.auth.credentials.DefaultChainCredentialsProvider as DefaultChainCredentialsProviderJni
 
 public actual class DefaultChainCredentialsProvider internal actual constructor(builder: DefaultChainCredentialsProviderBuilder) :
-    CredentialsProvider, JniCredentialsProvider() {
+    JniCredentialsProvider(),
+    CredentialsProvider {
     public actual companion object {}
 
     override val jniCredentials: CredentialsProviderJni =

@@ -28,8 +28,7 @@ public class StaticCredentialsProviderBuilder {
 /**
  * Construct a new credentials provider using a builder
  */
-public fun StaticCredentialsProvider.Companion.build(block: StaticCredentialsProviderBuilder.() -> Unit):
-    StaticCredentialsProvider = StaticCredentialsProviderBuilder().apply(block).build()
+public fun StaticCredentialsProvider.Companion.build(block: StaticCredentialsProviderBuilder.() -> Unit): StaticCredentialsProvider = StaticCredentialsProviderBuilder().apply(block).build()
 
 /**
  * Create provider from a set of credentials

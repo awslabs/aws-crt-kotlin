@@ -5,8 +5,7 @@
 
 package aws.sdk.kotlin.crt.auth.credentials
 
-public actual class X509CredentialsProvider internal actual constructor(builder: X509CredentialsProviderBuilder) :
-    CredentialsProvider {
+public actual class X509CredentialsProvider internal actual constructor(builder: X509CredentialsProviderBuilder) : CredentialsProvider {
 
     public actual companion object {}
 

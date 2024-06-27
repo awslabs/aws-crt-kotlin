@@ -13,7 +13,9 @@ import aws.sdk.kotlin.crt.io.TlsContext
  * authenticated in a mobile or web application with a web identity provider.
  */
 public expect class StsWebIdentityCredentialsProvider
-internal constructor(builder: StsWebIdentityCredentialsProviderBuilder) : CredentialsProvider {
+internal constructor(
+    builder: StsWebIdentityCredentialsProviderBuilder,
+) : CredentialsProvider {
     public companion object
 }
 
@@ -34,5 +36,4 @@ public class StsWebIdentityCredentialsProviderBuilder {
 /**
  * Construct a new credentials provider using a builder.
  */
-public fun StsWebIdentityCredentialsProvider.Companion.build(block: StsWebIdentityCredentialsProviderBuilder.() -> Unit):
-    StsWebIdentityCredentialsProvider = StsWebIdentityCredentialsProviderBuilder().apply(block).build()
+public fun StsWebIdentityCredentialsProvider.Companion.build(block: StsWebIdentityCredentialsProviderBuilder.() -> Unit): StsWebIdentityCredentialsProvider = StsWebIdentityCredentialsProviderBuilder().apply(block).build()

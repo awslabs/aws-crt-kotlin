@@ -12,7 +12,9 @@ import aws.sdk.kotlin.crt.io.TlsContext
  * A credentials provider that uses profile files.
  */
 public expect class ProfileCredentialsProvider
-internal constructor(builder: ProfileCredentialsProviderBuilder) : CredentialsProvider {
+internal constructor(
+    builder: ProfileCredentialsProviderBuilder,
+) : CredentialsProvider {
     public companion object
 }
 
@@ -50,5 +52,4 @@ public class ProfileCredentialsProviderBuilder {
 /**
  * Construct a new credentials provider using a builder.
  */
-public fun ProfileCredentialsProvider.Companion.build(block: ProfileCredentialsProviderBuilder.() -> Unit):
-    ProfileCredentialsProvider = ProfileCredentialsProviderBuilder().apply(block).build()
+public fun ProfileCredentialsProvider.Companion.build(block: ProfileCredentialsProviderBuilder.() -> Unit): ProfileCredentialsProvider = ProfileCredentialsProviderBuilder().apply(block).build()

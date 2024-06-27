@@ -16,4 +16,6 @@ import aws.sdk.kotlin.crt.Closeable
  * Otherwise, maxThreads will be the number of event loops in the group.
  * @throws [aws.sdk.kotlin.crt.CrtRuntimeException] If the system is unable to allocate space for a native event loop group
 */
-public expect class EventLoopGroup(maxThreads: Int = 1) : Closeable, AsyncShutdown
+public expect class EventLoopGroup(maxThreads: Int = 1) :
+    Closeable,
+    AsyncShutdown
