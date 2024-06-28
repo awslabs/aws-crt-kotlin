@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.8.6] - 06/28/2024
+
+### Miscellaneous
+* Upgrade to aws-crt-java v0.29.25
+* Upgrade to ktlint v1.3.0
+
 ## [0.8.5] - 02/09/2024
 
 ### Features
