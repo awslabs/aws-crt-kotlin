@@ -11,7 +11,9 @@ import aws.sdk.kotlin.crt.Closeable
 /**
  * Represents a producer/source of AWS credentials
  */
-public interface CredentialsProvider : Closeable, AsyncShutdown {
+public interface CredentialsProvider :
+    Closeable,
+    AsyncShutdown {
 
     /**
      * Request credentials from the provider

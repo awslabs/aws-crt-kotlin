@@ -9,7 +9,8 @@ import software.amazon.awssdk.crt.auth.credentials.CredentialsProvider as Creden
 import software.amazon.awssdk.crt.auth.credentials.X509CredentialsProvider as X509CredentialsProviderJni
 
 public actual class X509CredentialsProvider internal actual constructor(builder: X509CredentialsProviderBuilder) :
-    CredentialsProvider, JniCredentialsProvider() {
+    JniCredentialsProvider(),
+    CredentialsProvider {
 
     public actual companion object {}
 

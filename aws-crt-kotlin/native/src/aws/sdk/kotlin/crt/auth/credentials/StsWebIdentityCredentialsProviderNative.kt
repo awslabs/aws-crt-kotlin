@@ -6,8 +6,9 @@
 package aws.sdk.kotlin.crt.auth.credentials
 
 public actual class StsWebIdentityCredentialsProvider
-internal actual constructor(builder: StsWebIdentityCredentialsProviderBuilder) :
-    CredentialsProvider {
+internal actual constructor(
+    builder: StsWebIdentityCredentialsProviderBuilder,
+) : CredentialsProvider {
     public actual companion object {}
 
     actual override suspend fun getCredentials(): Credentials {

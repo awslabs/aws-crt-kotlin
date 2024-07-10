@@ -20,7 +20,8 @@ import software.amazon.awssdk.crt.io.SocketOptions as SocketOptionsJni
 
 public actual class HttpClientConnectionManager actual constructor(
     public actual val options: HttpClientConnectionManagerOptions,
-) : Closeable, AsyncShutdown {
+) : Closeable,
+    AsyncShutdown {
 
     private val jniManager = HttpClientConnectionManagerJni.create(options.into())
 

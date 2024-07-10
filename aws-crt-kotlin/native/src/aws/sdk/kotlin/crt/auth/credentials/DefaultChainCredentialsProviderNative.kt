@@ -5,8 +5,7 @@
 
 package aws.sdk.kotlin.crt.auth.credentials
 
-public actual class DefaultChainCredentialsProvider internal actual constructor(builder: DefaultChainCredentialsProviderBuilder) :
-    CredentialsProvider {
+public actual class DefaultChainCredentialsProvider internal actual constructor(builder: DefaultChainCredentialsProviderBuilder) : CredentialsProvider {
     public actual companion object {}
 
     actual override suspend fun getCredentials(): Credentials {

@@ -6,8 +6,9 @@
 package aws.sdk.kotlin.crt.auth.credentials
 
 public actual class ProfileCredentialsProvider
-internal actual constructor(builder: ProfileCredentialsProviderBuilder) :
-    CredentialsProvider {
+internal actual constructor(
+    builder: ProfileCredentialsProviderBuilder,
+) : CredentialsProvider {
     public actual companion object {}
 
     actual override suspend fun getCredentials(): Credentials {

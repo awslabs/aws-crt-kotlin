@@ -47,5 +47,4 @@ public class CachedCredentialsProviderBuilder {
 /**
  * Construct a new credentials provider using a builder
  */
-public fun CachedCredentialsProvider.Companion.build(block: CachedCredentialsProviderBuilder.() -> Unit):
-    CachedCredentialsProvider = CachedCredentialsProviderBuilder().apply(block).build()
+public fun CachedCredentialsProvider.Companion.build(block: CachedCredentialsProviderBuilder.() -> Unit): CachedCredentialsProvider = CachedCredentialsProviderBuilder().apply(block).build()
