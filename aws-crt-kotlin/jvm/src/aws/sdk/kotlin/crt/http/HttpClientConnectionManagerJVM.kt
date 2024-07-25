@@ -53,11 +53,11 @@ public actual class HttpClientConnectionManager actual constructor(
         jniManager.releaseConnection(ktConn.jniConn)
     }
 
-    override fun close() {
+    actual override fun close() {
         jniManager.close()
     }
 
-    override suspend fun waitForShutdown() {
+    actual override suspend fun waitForShutdown() {
         jniManager.shutdownCompleteFuture.await()
     }
 }

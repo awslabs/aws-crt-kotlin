@@ -18,4 +18,7 @@ import aws.sdk.kotlin.crt.Closeable
 */
 public expect class EventLoopGroup(maxThreads: Int = 1) :
     Closeable,
-    AsyncShutdown
+    AsyncShutdown {
+    override fun close()
+    override suspend fun waitForShutdown()
+}

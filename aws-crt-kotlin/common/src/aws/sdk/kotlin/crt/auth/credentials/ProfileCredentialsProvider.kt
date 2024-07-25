@@ -15,7 +15,11 @@ public expect class ProfileCredentialsProvider
 internal constructor(
     builder: ProfileCredentialsProviderBuilder,
 ) : CredentialsProvider {
-    public companion object
+    public companion object { }
+
+    override fun close()
+    override suspend fun getCredentials(): Credentials
+    override suspend fun waitForShutdown()
 }
 
 public class ProfileCredentialsProviderBuilder {

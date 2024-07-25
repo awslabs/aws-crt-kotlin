@@ -11,15 +11,15 @@ package aws.sdk.kotlin.crt.auth.credentials
 public actual class StaticCredentialsProvider internal actual constructor(builder: StaticCredentialsProviderBuilder) : CredentialsProvider {
     public actual companion object {}
 
-    override suspend fun getCredentials(): Credentials {
+    actual override suspend fun getCredentials(): Credentials {
         TODO("Not yet implemented")
     }
 
-    override fun close() {
+    actual override fun close() {
         TODO("Not yet implemented")
     }
 
-    override suspend fun waitForShutdown() {
+    actual override suspend fun waitForShutdown() {
         TODO("Not yet implemented")
     }
 }

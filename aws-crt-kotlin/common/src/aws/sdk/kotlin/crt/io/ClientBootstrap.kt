@@ -14,4 +14,7 @@ import aws.sdk.kotlin.crt.Closeable
  */
 public expect class ClientBootstrap(elg: EventLoopGroup, hr: HostResolver) :
     Closeable,
-    AsyncShutdown
+    AsyncShutdown {
+    override suspend fun waitForShutdown()
+    override fun close()
+}

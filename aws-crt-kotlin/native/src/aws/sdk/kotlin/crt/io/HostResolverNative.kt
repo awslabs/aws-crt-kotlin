@@ -13,11 +13,11 @@ public actual class HostResolver actual constructor(elg: EventLoopGroup, maxEntr
     AsyncShutdown {
     public actual constructor(elg: EventLoopGroup) : this(elg, DEFAULT_MAX_ENTRIES)
 
-    override suspend fun waitForShutdown() {
+    actual override suspend fun waitForShutdown() {
         TODO("Not yet implemented")
     }
 
-    override fun close() {
+    actual override fun close() {
         TODO("Not yet implemented")
     }
 }

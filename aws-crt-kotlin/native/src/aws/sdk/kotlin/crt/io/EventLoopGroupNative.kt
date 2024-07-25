@@ -19,11 +19,11 @@ import aws.sdk.kotlin.crt.Closeable
 public actual class EventLoopGroup actual constructor(maxThreads: Int) :
     Closeable,
     AsyncShutdown {
-    override suspend fun waitForShutdown() {
+    actual override suspend fun waitForShutdown() {
         TODO("Not yet implemented")
     }
 
-    override fun close() {
+    actual override fun close() {
         TODO("Not yet implemented")
     }
 }

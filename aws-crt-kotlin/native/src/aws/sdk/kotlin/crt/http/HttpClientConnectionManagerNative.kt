@@ -29,11 +29,11 @@ public actual class HttpClientConnectionManager actual constructor(
     public actual fun releaseConnection(conn: HttpClientConnection) {
     }
 
-    override suspend fun waitForShutdown() {
+    actual override suspend fun waitForShutdown() {
         TODO("Not yet implemented")
     }
 
-    override fun close() {
+    actual override fun close() {
         TODO("Not yet implemented")
     }
 }
