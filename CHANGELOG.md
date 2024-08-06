@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.8.8] - 08/06/2024
+
+### Miscellaneous
+* Upgrade to Kotlin 2.0.10
+* Upgrade to aws-crt-java 0.30.5
+
 ## [0.8.7] - 07/25/2024
 
 ### Miscellaneous
