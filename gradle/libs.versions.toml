@@ -1,10 +1,10 @@
 [versions]
-kotlin-version = "2.0.0"
+kotlin-version = "2.0.10"
 
-aws-kotlin-repo-tools-version = "0.4.9"
+aws-kotlin-repo-tools-version = "0.4.10"
 
 # libs
-crt-java-version = "0.29.25"
+crt-java-version = "0.30.5"
 coroutines-version = "1.8.1"
 
 # testing
