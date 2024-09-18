@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.8.9] - 09/18/2024
+
+### Miscellaneous
+* Upgrade to kotlinx.coroutines 1.9.0
+
 ## [0.8.8] - 08/06/2024
 
 ### Miscellaneous
