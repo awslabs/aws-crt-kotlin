@@ -8,33 +8,18 @@ crt-java-version = "0.31.3"
 coroutines-version = "1.9.0"
 
 # testing
-junit-version = "5.10.1"
-kotest-version = "5.8.0"
 mock-server-version = "5.15.0"
-# fixme - remove in favor of clikt
-kotlinx-cli-version = "0.3.6"
 
 
 [libraries]
 crt-java = { module = "software.amazon.awssdk.crt:aws-crt", version.ref = "crt-java-version" }
 
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin-version"}
-kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin-version"}
-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin-version" }
-kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin-version" }
 
 
 kotlinx-coroutines-debug = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-debug", version.ref = "coroutines-version" }
-kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines-version" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines-version" }
 kotlinx-coroutines-jdk8 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8", version.ref = "coroutines-version" }
-kotlinx-cli = { module = "org.jetbrains.kotlinx:kotlinx-cli", version.ref = "kotlinx-cli-version" }
-
-junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-version" }
-junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit-version" }
-
-kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest-version" }
-kotest-assertions-core-jvm = { module = "io.kotest:kotest-assertions-core-jvm", version.ref = "kotest-version" }
 
 mockserver-netty = { module = "org.mock-server:mockserver-netty", version.ref = "mock-server-version" }
 
