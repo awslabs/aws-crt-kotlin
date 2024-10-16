@@ -20,4 +20,3 @@ pluginManagement {
 rootProject.name = "aws-crt-kotlin-parent"
 
 include(":aws-crt-kotlin")
-include(":elasticurl")
