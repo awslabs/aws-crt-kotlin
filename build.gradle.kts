@@ -54,7 +54,7 @@ subprojects {
 if (project.typedProp<Boolean>("kotlinWarningsAsErrors") == true) {
     allprojects {
         tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-            kotlinOptions.allWarningsAsErrors = true
+            compilerOptions.allWarningsAsErrors = true
         }
     }
 }
@@ -68,7 +68,3 @@ val lintPaths = listOf(
 )
 
 configureLinting(lintPaths)
-
-apiValidation {
-    ignoredProjects += setOf("elasticurl")
-}
