@@ -19,7 +19,7 @@
     ],
     "test_steps": [
         "{gradlew} apiCheck",
-        "{gradlew} test jvmTest"
+        "{gradlew} jvmTest"
     ],
     "targets": {
         "linux": {
@@ -31,7 +31,7 @@
             ],
             "!test_steps": [
                 "{gradlew} apiCheck",
-                "{gradlew} test jvmTest -Dlibcrypto.path={libcrypto_path}"
+                "{gradlew} jvmTest -Dlibcrypto.path={libcrypto_path}"
             ]
         }
     }
