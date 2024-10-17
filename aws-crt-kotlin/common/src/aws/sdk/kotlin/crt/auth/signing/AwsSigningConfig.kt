@@ -12,6 +12,7 @@ import aws.sdk.kotlin.crt.auth.credentials.CredentialsProvider
 public enum class AwsSigningAlgorithm(public val value: Int) {
     SIGV4(0),
     SIGV4_ASYMMETRIC(1),
+    SIGV4_S3EXPRESS(2),
 }
 
 public enum class AwsSignatureType(public val value: Int) {
@@ -175,5 +176,22 @@ public class AwsSigningConfig(builder: Builder) {
         public var expirationInSeconds: Long = 0
 
         public fun build(): AwsSigningConfig = AwsSigningConfig(this)
+    }
+
+    public fun toBuilder(): Builder = Builder().apply {
+        region = this@AwsSigningConfig.region
+        service = this@AwsSigningConfig.service
+        date = this@AwsSigningConfig.date
+        algorithm = this@AwsSigningConfig.algorithm
+        shouldSignHeader = this@AwsSigningConfig.shouldSignHeader
+        signatureType = this@AwsSigningConfig.signatureType
+        useDoubleUriEncode = this@AwsSigningConfig.useDoubleUriEncode
+        normalizeUriPath = this@AwsSigningConfig.normalizeUriPath
+        omitSessionToken = this@AwsSigningConfig.omitSessionToken
+        signedBodyValue = this@AwsSigningConfig.signedBodyValue
+        signedBodyHeader = this@AwsSigningConfig.signedBodyHeader
+        credentials = this@AwsSigningConfig.credentials
+        credentialsProvider = this@AwsSigningConfig.credentialsProvider
+        expirationInSeconds = this@AwsSigningConfig.expirationInSeconds
     }
 }

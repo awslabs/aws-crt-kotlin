@@ -1,5 +1,38 @@
 # Changelog
 
+## [0.8.10] - 10/16/2024
+
+### Miscellaneous
+* Upgrade to Kotlin 2.0.21
+* Upgrade aws-crt-java to 0.31.3
+
+## [0.8.9] - 09/18/2024
+
+### Miscellaneous
+* Upgrade to kotlinx.coroutines 1.9.0
+
+## [0.8.8] - 08/06/2024
+
+### Miscellaneous
+* Upgrade to Kotlin 2.0.10
+* Upgrade to aws-crt-java 0.30.5
+
+## [0.8.7] - 07/25/2024
+
+### Miscellaneous
+* Upgrade to Kotlin 2.0.0
+
+## [0.8.6] - 06/28/2024
+
+### Miscellaneous
+* Upgrade to aws-crt-java v0.29.25
+* Upgrade to ktlint v1.3.0
+
+## [0.8.5] - 02/09/2024
+
+### Features
+* Add SIGV4_S3EXPRESS signing algorithm and AwsSigningConfig.toBuilder function
+
 ## [0.8.4] - 01/10/2024
 
 ### Features

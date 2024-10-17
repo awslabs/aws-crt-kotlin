@@ -12,14 +12,14 @@ import aws.sdk.kotlin.crt.io.Uri
 import kotlinx.coroutines.test.runTest
 import kotlin.test.*
 
+private val TEST_ACCESS_KEY_ID: String = "AKIDEXAMPLE"
+private val TEST_SECRET_ACCESS_KEY: String = "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY"
+
+// 2015-08-30T12:36:00Z
+private val TEST_DATE_EPOCH_MILLI: Long = 1440938160000
+
 // ported over from crt-java
 class SigningTest : CrtTest() {
-    private val TEST_ACCESS_KEY_ID: String = "AKIDEXAMPLE"
-    private val TEST_SECRET_ACCESS_KEY: String = "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY"
-
-    // 2015-08-30T12:36:00Z
-    private val TEST_DATE_EPOCH_MILLI: Long = 1440938160000
-
     private fun createSimpleRequest(url: String, method: String, path: String, body: String? = null): HttpRequest = HttpRequest.build {
         this.method = method
         this.encodedPath = path

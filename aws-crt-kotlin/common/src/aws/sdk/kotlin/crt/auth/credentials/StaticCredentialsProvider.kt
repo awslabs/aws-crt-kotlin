@@ -9,7 +9,11 @@ package aws.sdk.kotlin.crt.auth.credentials
  * A credentials provider for a fixed set of credentials
  */
 public expect class StaticCredentialsProvider internal constructor(builder: StaticCredentialsProviderBuilder) : CredentialsProvider {
-    public companion object
+    public companion object { }
+
+    override fun close()
+    override suspend fun getCredentials(): Credentials
+    override suspend fun waitForShutdown()
 }
 
 public class StaticCredentialsProviderBuilder {
@@ -28,8 +32,7 @@ public class StaticCredentialsProviderBuilder {
 /**
  * Construct a new credentials provider using a builder
  */
-public fun StaticCredentialsProvider.Companion.build(block: StaticCredentialsProviderBuilder.() -> Unit):
-    StaticCredentialsProvider = StaticCredentialsProviderBuilder().apply(block).build()
+public fun StaticCredentialsProvider.Companion.build(block: StaticCredentialsProviderBuilder.() -> Unit): StaticCredentialsProvider = StaticCredentialsProviderBuilder().apply(block).build()
 
 /**
  * Create provider from a set of credentials

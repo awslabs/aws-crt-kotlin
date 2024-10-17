@@ -11,3 +11,4 @@ build/
 *.iml
 .idea/
 local.properties
+*.klib

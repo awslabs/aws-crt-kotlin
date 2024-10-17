@@ -17,11 +17,11 @@ import org.mockserver.model.HttpRequest.request
 import org.mockserver.model.HttpResponse.response
 import kotlin.test.*
 
+private val TEST_DOC_LINE = "This is a sample to prove that http downloads and uploads work."
+private val TEST_DOC_SHA256 = "c7fdb5314b9742467b16bd5ea2f8012190b5e2c44a005f7984f89aab58219534"
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class HttpRequestResponseTest : HttpClientTest() {
-    private val TEST_DOC_LINE =
-        "This is a sample to prove that http downloads and uploads work. It doesn't really matter what's in here, we mainly just need to verify the downloads and uploads work."
-    private val TEST_DOC_SHA256 = "c7fdb5314b9742467b16bd5ea2f8012190b5e2c44a005f7984f89aab58219534"
 
     lateinit var mockServer: MockServerClient
     lateinit var url: String

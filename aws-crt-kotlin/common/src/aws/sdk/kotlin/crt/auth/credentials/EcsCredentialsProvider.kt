@@ -12,8 +12,14 @@ import aws.sdk.kotlin.crt.io.TlsContext
  * A credentials provider that sources credentials from an ECS environment.
  */
 public expect class EcsCredentialsProvider
-internal constructor(builder: EcsCredentialsProviderBuilder) : CredentialsProvider {
-    public companion object
+internal constructor(
+    builder: EcsCredentialsProviderBuilder,
+) : CredentialsProvider {
+    public companion object { }
+
+    override fun close()
+    override suspend fun getCredentials(): Credentials
+    override suspend fun waitForShutdown()
 }
 
 public class EcsCredentialsProviderBuilder {
@@ -50,5 +56,4 @@ public class EcsCredentialsProviderBuilder {
 /**
  * Construct a new ECS credentials provider using a builder.
  */
-public fun EcsCredentialsProvider.Companion.build(block: EcsCredentialsProviderBuilder.() -> Unit):
-    EcsCredentialsProvider = EcsCredentialsProviderBuilder().apply(block).build()
+public fun EcsCredentialsProvider.Companion.build(block: EcsCredentialsProviderBuilder.() -> Unit): EcsCredentialsProvider = EcsCredentialsProviderBuilder().apply(block).build()

@@ -15,7 +15,11 @@ import aws.sdk.kotlin.crt.io.TlsContext
  * @return the newly-constructed credentials provider
  */
 public expect class X509CredentialsProvider internal constructor(builder: X509CredentialsProviderBuilder) : CredentialsProvider {
-    public companion object
+    public companion object { }
+
+    override fun close()
+    override suspend fun getCredentials(): Credentials
+    override suspend fun waitForShutdown()
 }
 
 public class X509CredentialsProviderBuilder {
@@ -60,5 +64,4 @@ public class X509CredentialsProviderBuilder {
 /**
  * Construct a new credentials provider using a builder
  */
-public fun X509CredentialsProvider.Companion.build(block: X509CredentialsProviderBuilder.() -> Unit):
-    X509CredentialsProvider = X509CredentialsProviderBuilder().apply(block).build()
+public fun X509CredentialsProvider.Companion.build(block: X509CredentialsProviderBuilder.() -> Unit): X509CredentialsProvider = X509CredentialsProviderBuilder().apply(block).build()

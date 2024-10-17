@@ -19,6 +19,7 @@ class ProfileCredentialsProviderTest {
 
     @Test
     fun `it should create a provider for a valid profile`() = runBlocking {
+        val configPath = Files.createTempFile("ProfileCredentialsProviderTest_config", "")
         val credsPath = Files.createTempFile("ProfileCredentialsProviderTest_creds", "")
         credsPath.toFile().writeText(
             """
@@ -30,6 +31,7 @@ class ProfileCredentialsProviderTest {
 
         try {
             val provider = ProfileCredentialsProvider.build {
+                configFileName = configPath.toString()
                 credentialsFileName = credsPath.toString()
             }
             val actual = provider.getCredentials()

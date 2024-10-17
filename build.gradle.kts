@@ -23,6 +23,14 @@ buildscript {
 plugins {
     id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.13.2"
     alias(libs.plugins.kotlin.multiplatform) apply false
+    alias(libs.plugins.aws.kotlin.repo.tools.kmp)
+    alias(libs.plugins.aws.kotlin.repo.tools.artifactsizemetrics)
+}
+
+artifactSizeMetrics {
+    artifactPrefixes = setOf(":aws-crt-kotlin")
+    significantChangeThresholdPercentage = 5.0
+    projectRepositoryName = "aws-crt-kotlin"
 }
 
 allprojects {
@@ -30,6 +38,9 @@ allprojects {
         mavenLocal()
         mavenCentral()
     }
+
+    // Enables running `./gradlew allDeps` to get a comprehensive list of dependencies for every subproject
+    tasks.register<DependencyReportTask>("allDeps") { }
 }
 
 subprojects {

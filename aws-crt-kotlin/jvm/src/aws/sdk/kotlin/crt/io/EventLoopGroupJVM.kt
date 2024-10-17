@@ -18,17 +18,19 @@ import software.amazon.awssdk.crt.io.EventLoopGroup as EventLoopGroupJni
  * Otherwise, maxThreads will be the number of event loops in the group.
  * @throws [aws.sdk.kotlin.crt.CrtRuntimeException] If the system is unable to allocate space for a native event loop group
  */
-public actual class EventLoopGroup actual constructor(maxThreads: Int) : Closeable, AsyncShutdown {
+public actual class EventLoopGroup actual constructor(maxThreads: Int) :
+    Closeable,
+    AsyncShutdown {
     internal val jniElg = EventLoopGroupJni(maxThreads)
 
     /**
      * Close this ELG
      */
-    override fun close() {
+    actual override fun close() {
         jniElg.close()
     }
 
-    override suspend fun waitForShutdown() {
+    actual override suspend fun waitForShutdown() {
         jniElg.shutdownCompleteFuture.await()
     }
 }

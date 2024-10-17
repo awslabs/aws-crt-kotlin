@@ -322,6 +322,7 @@ public final class aws/sdk/kotlin/crt/auth/signing/AwsSigner {
 public final class aws/sdk/kotlin/crt/auth/signing/AwsSigningAlgorithm : java/lang/Enum {
 	public static final field SIGV4 Laws/sdk/kotlin/crt/auth/signing/AwsSigningAlgorithm;
 	public static final field SIGV4_ASYMMETRIC Laws/sdk/kotlin/crt/auth/signing/AwsSigningAlgorithm;
+	public static final field SIGV4_S3EXPRESS Laws/sdk/kotlin/crt/auth/signing/AwsSigningAlgorithm;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getValue ()I
 	public static fun valueOf (Ljava/lang/String;)Laws/sdk/kotlin/crt/auth/signing/AwsSigningAlgorithm;
@@ -345,6 +346,7 @@ public final class aws/sdk/kotlin/crt/auth/signing/AwsSigningConfig {
 	public final fun getSignedBodyHeader ()Laws/sdk/kotlin/crt/auth/signing/AwsSignedBodyHeaderType;
 	public final fun getSignedBodyValue ()Ljava/lang/String;
 	public final fun getUseDoubleUriEncode ()Z
+	public final fun toBuilder ()Laws/sdk/kotlin/crt/auth/signing/AwsSigningConfig$Builder;
 }
 
 public final class aws/sdk/kotlin/crt/auth/signing/AwsSigningConfig$Builder {
@@ -505,6 +507,7 @@ public final class aws/sdk/kotlin/crt/http/HttpClientConnectionManagerOptionsBui
 
 public final class aws/sdk/kotlin/crt/http/HttpException : aws/sdk/kotlin/crt/CrtRuntimeException {
 	public fun <init> (I)V
+	public fun getErrorCode ()I
 }
 
 public final class aws/sdk/kotlin/crt/http/HttpHeader {
