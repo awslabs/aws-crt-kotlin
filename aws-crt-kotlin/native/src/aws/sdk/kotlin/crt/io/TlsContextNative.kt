@@ -105,7 +105,7 @@ public actual class TlsContext actual constructor(options: TlsContextOptions?) :
         }
     }
 
-    override fun close() {
+    actual override fun close() {
         aws_tls_ctx_release(ptr)
         aws_tls_ctx_options_clean_up(tlsCtxOpts.ptr)
         Allocator.Default.free(tlsCtxOpts.rawPtr)

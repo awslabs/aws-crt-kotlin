@@ -166,6 +166,7 @@ private fun CPointer<aws_signing_result>.getSignature(): ByteArray {
 private fun AwsSigningAlgorithm.toNativeSigningAlgorithm(): aws_signing_algorithm = when (this) {
     AwsSigningAlgorithm.SIGV4 -> aws_signing_algorithm.AWS_SIGNING_ALGORITHM_V4
     AwsSigningAlgorithm.SIGV4_ASYMMETRIC -> aws_signing_algorithm.AWS_SIGNING_ALGORITHM_V4_ASYMMETRIC
+    AwsSigningAlgorithm.SIGV4_S3EXPRESS -> aws_signing_algorithm.AWS_SIGNING_ALGORITHM_V4_S3EXPRESS
 }
 
 private fun AwsSignatureType.toNativeSignatureType(): aws_signature_type = when (this) {

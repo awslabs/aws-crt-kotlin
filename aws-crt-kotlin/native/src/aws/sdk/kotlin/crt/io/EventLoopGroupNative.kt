@@ -39,11 +39,11 @@ public actual class EventLoopGroup actual constructor(maxThreads: Int) : NativeH
         }
     }
 
-    override suspend fun waitForShutdown() {
+    actual override suspend fun waitForShutdown() {
         shutdownCompleteChannel.receive()
     }
 
-    override fun close() {
+    actual override fun close() {
         aws_event_loop_group_release(ptr)
     }
 }

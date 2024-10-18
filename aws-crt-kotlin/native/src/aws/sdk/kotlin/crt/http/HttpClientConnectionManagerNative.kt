@@ -146,11 +146,11 @@ public actual class HttpClientConnectionManager actual constructor(
         ) { "aws_http_connection_manager_release_connection()" }
     }
 
-    override suspend fun waitForShutdown() {
+    actual override suspend fun waitForShutdown() {
         shutdownComplete.receiveCatching().getOrNull()
     }
 
-    override fun close() {
+    actual override fun close() {
         aws_http_connection_manager_release(manager)
     }
 }

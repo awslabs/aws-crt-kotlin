@@ -12,7 +12,7 @@ public actual class StaticCredentialsProvider internal actual constructor(builde
     private val credentials = Credentials(builder.accessKeyId!!, builder.secretAccessKey!!, builder.sessionToken)
 
     public actual companion object {}
-    override suspend fun getCredentials(): Credentials = credentials
-    override fun close() { }
-    override suspend fun waitForShutdown() { }
+    actual override suspend fun getCredentials(): Credentials = credentials
+    actual override fun close() { }
+    actual override suspend fun waitForShutdown() { }
 }

@@ -37,11 +37,11 @@ public actual class ClientBootstrap actual constructor(
         }
     }
 
-    override suspend fun waitForShutdown() {
+    actual override suspend fun waitForShutdown() {
         shutdownCompleteChannel.receive()
     }
 
-    override fun close() {
+    actual override fun close() {
         aws_client_bootstrap_release(ptr)
     }
 }

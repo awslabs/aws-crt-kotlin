@@ -13,9 +13,11 @@ kotest-version = "5.8.0"
 mock-server-version = "5.15.0"
 # fixme - remove in favor of clikt
 kotlinx-cli-version = "0.3.6"
+kotlinx-io-version = "0.3.1"
 
 
 [libraries]
+aws-kotlin-repo-tools-build-support = { module="aws.sdk.kotlin.gradle:build-support", version.ref = "aws-kotlin-repo-tools-version" }
 crt-java = { module = "software.amazon.awssdk.crt:aws-crt", version.ref = "crt-java-version" }
 
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin-version"}
@@ -29,6 +31,7 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines-version" }
 kotlinx-coroutines-jdk8 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8", version.ref = "coroutines-version" }
 kotlinx-cli = { module = "org.jetbrains.kotlinx:kotlinx-cli", version.ref = "kotlinx-cli-version" }
+kotlinx-io = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinx-io-version"}
 
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-version" }
 junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit-version" }

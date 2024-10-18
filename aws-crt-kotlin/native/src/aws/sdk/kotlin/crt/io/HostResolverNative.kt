@@ -40,11 +40,11 @@ public actual class HostResolver actual constructor(elg: EventLoopGroup, maxEntr
         }
     }
 
-    override suspend fun waitForShutdown() {
+    actual override suspend fun waitForShutdown() {
         shutdownCompleteChannel.receive()
     }
 
-    override fun close() {
+    actual override fun close() {
         aws_host_resolver_release(ptr)
     }
 }
