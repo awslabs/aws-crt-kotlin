@@ -199,7 +199,9 @@ kotlin {
     }
 
     tasks.withType<KotlinNativeSimulatorTest>().configureEach {
-        if (!HostManager.hostIsMac) { return@configureEach }
+        if (!HostManager.hostIsMac) {
+            return@configureEach
+        }
 
         dependsOn("bootIosSimulatorDevice")
         finalizedBy("shutdownIosSimulatorDevice")

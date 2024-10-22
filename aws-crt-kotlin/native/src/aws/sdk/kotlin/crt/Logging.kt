@@ -17,7 +17,9 @@ internal object Logging {
     private val initializerMu = Mutex() // protects `initialized`
 
     internal fun initialize(config: Config) {
-        if (initialized) { return }
+        if (initialized) {
+            return
+        }
 
         runBlocking {
             initializerMu.withLock {

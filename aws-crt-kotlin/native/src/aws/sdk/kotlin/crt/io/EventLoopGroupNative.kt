@@ -21,7 +21,10 @@ import libcrt.*
  * @throws [aws.sdk.kotlin.crt.CrtRuntimeException] If the system is unable to allocate space for a native event loop group
  */
 @OptIn(ExperimentalForeignApi::class)
-public actual class EventLoopGroup actual constructor(maxThreads: Int) : NativeHandle<aws_event_loop_group>, Closeable, AsyncShutdown {
+public actual class EventLoopGroup actual constructor(maxThreads: Int) :
+    NativeHandle<aws_event_loop_group>,
+    Closeable,
+    AsyncShutdown {
 
     override val ptr: CPointer<aws_event_loop_group>
 

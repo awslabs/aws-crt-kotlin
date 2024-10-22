@@ -23,7 +23,8 @@ import kotlin.coroutines.suspendCoroutine
 
 public actual class HttpClientConnectionManager actual constructor(
     public actual val options: HttpClientConnectionManagerOptions,
-) : Closeable, AsyncShutdown {
+) : Closeable,
+    AsyncShutdown {
     public actual val managerMetrics: HttpManagerMetrics
         get() = memScoped {
             val metrics = alloc<aws_http_manager_metrics>()

@@ -18,7 +18,9 @@ public actual object CRT {
     private val initializerMu = Mutex() // protects `initialized`
 
     public actual fun initRuntime(block: Config.() -> Unit) {
-        if (initialized) { return }
+        if (initialized) {
+            return
+        }
 
         runBlocking {
             initializerMu.withLock {

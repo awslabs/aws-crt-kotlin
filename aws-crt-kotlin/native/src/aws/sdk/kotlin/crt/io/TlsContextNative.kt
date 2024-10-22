@@ -14,7 +14,9 @@ import aws.sdk.kotlin.crt.util.toAwsString
 import kotlinx.cinterop.*
 import libcrt.*
 
-public actual class TlsContext actual constructor(options: TlsContextOptions?) : NativeHandle<aws_tls_ctx>, Closeable {
+public actual class TlsContext actual constructor(options: TlsContextOptions?) :
+    NativeHandle<aws_tls_ctx>,
+    Closeable {
     private val tlsCtxOpts: aws_tls_ctx_options = Allocator.Default.alloc()
 
     public actual companion object {}

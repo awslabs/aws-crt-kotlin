@@ -13,7 +13,10 @@ import kotlinx.cinterop.*
 import libcrt.*
 
 @OptIn(ExperimentalForeignApi::class)
-public actual class HostResolver actual constructor(elg: EventLoopGroup, maxEntries: Int) : NativeHandle<aws_host_resolver>, Closeable, AsyncShutdown {
+public actual class HostResolver actual constructor(elg: EventLoopGroup, maxEntries: Int) :
+    NativeHandle<aws_host_resolver>,
+    Closeable,
+    AsyncShutdown {
     public actual constructor(elg: EventLoopGroup) : this(elg, DEFAULT_MAX_ENTRIES)
 
     override val ptr: CPointer<aws_host_resolver>

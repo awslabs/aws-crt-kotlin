@@ -19,9 +19,13 @@ internal typealias InitializeHashFn = (
  */
 public class Sha1 : HashFunction {
     private val sha1 = Sha(::aws_sha1_new)
-    override fun update(input: ByteArray, offset: Int, length: Int) { sha1.update(input, offset, length) }
+    override fun update(input: ByteArray, offset: Int, length: Int) {
+        sha1.update(input, offset, length)
+    }
     override fun digest(): ByteArray = sha1.digest()
-    override fun reset() { sha1.reset() }
+    override fun reset() {
+        sha1.reset()
+    }
 }
 
 /**
@@ -29,9 +33,13 @@ public class Sha1 : HashFunction {
  */
 public class Sha256 : HashFunction {
     private val sha256 = Sha(::aws_sha256_new)
-    override fun update(input: ByteArray, offset: Int, length: Int) { sha256.update(input, offset, length) }
+    override fun update(input: ByteArray, offset: Int, length: Int) {
+        sha256.update(input, offset, length)
+    }
     override fun digest(): ByteArray = sha256.digest()
-    override fun reset() { sha256.reset() }
+    override fun reset() {
+        sha256.reset()
+    }
 }
 
 internal class Sha(val initializeFn: InitializeHashFn) : HashFunction {

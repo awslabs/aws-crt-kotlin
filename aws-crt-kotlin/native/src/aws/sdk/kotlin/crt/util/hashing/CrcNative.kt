@@ -44,9 +44,13 @@ internal class Crc(val checksumFn: AwsChecksumsCrcFunction) : HashFunction {
  */
 public class Crc32 : HashFunction {
     private val crc32 = Crc(::aws_checksums_crc32)
-    override fun update(input: ByteArray, offset: Int, length: Int) { crc32.update(input, offset, length) }
+    override fun update(input: ByteArray, offset: Int, length: Int) {
+        crc32.update(input, offset, length)
+    }
     override fun digest(): ByteArray = crc32.digest()
-    override fun reset() { crc32.reset() }
+    override fun reset() {
+        crc32.reset()
+    }
 }
 
 /**
@@ -54,7 +58,11 @@ public class Crc32 : HashFunction {
  */
 public class Crc32c : HashFunction {
     private val crc32c = Crc(::aws_checksums_crc32c)
-    override fun update(input: ByteArray, offset: Int, length: Int) { crc32c.update(input, offset, length) }
+    override fun update(input: ByteArray, offset: Int, length: Int) {
+        crc32c.update(input, offset, length)
+    }
     override fun digest(): ByteArray = crc32c.digest()
-    override fun reset() { crc32c.reset() }
+    override fun reset() {
+        crc32c.reset()
+    }
 }

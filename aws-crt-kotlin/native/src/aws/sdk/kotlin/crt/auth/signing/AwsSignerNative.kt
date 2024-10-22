@@ -221,7 +221,9 @@ private fun AwsSigningConfig.toNativeSigningConfig(): CPointer<aws_signing_confi
 private typealias ShouldSignHeaderFunction = (String) -> Boolean
 private fun nativeShouldSignHeaderFn(headerName: CPointer<aws_byte_cursor>?, userData: COpaquePointer?): Boolean {
     checkNotNull(headerName) { "aws_should_sign_header_fn expected non-null header name" }
-    if (userData == null) { return true }
+    if (userData == null) {
+        return true
+    }
 
     val kShouldSignHeaderFn = userData.asStableRef<ShouldSignHeaderFunction>().get()
     val kHeaderName = headerName.pointed.toKString()

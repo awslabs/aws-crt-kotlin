@@ -19,7 +19,9 @@ import libcrt.aws_client_bootstrap_release
 public actual class ClientBootstrap actual constructor(
     elg: EventLoopGroup,
     hr: HostResolver,
-) : NativeHandle<aws_client_bootstrap>, Closeable, AsyncShutdown {
+) : NativeHandle<aws_client_bootstrap>,
+    Closeable,
+    AsyncShutdown {
     private val shutdownCompleteChannel = shutdownChannel()
     private val channelStableRef = StableRef.create(shutdownCompleteChannel)
     override val ptr: CPointer<aws_client_bootstrap>

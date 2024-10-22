@@ -21,7 +21,9 @@ import platform.posix.size_t
 internal class HttpClientConnectionNative(
     private val manager: HttpClientConnectionManager,
     override val ptr: CPointer<cnames.structs.aws_http_connection>,
-) : Closeable, HttpClientConnection, NativeHandle<cnames.structs.aws_http_connection> {
+) : Closeable,
+    HttpClientConnection,
+    NativeHandle<cnames.structs.aws_http_connection> {
 
     override val id: String = ptr.rawValue.toString()
     override fun makeRequest(httpReq: HttpRequest, handler: HttpStreamResponseHandler): HttpStream {

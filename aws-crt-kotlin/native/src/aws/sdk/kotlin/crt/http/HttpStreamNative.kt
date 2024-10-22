@@ -18,7 +18,8 @@ import kotlin.coroutines.suspendCoroutine
 
 internal class HttpStreamNative(
     override val ptr: CPointer<cnames.structs.aws_http_stream>,
-) : HttpStream, NativeHandle<cnames.structs.aws_http_stream> {
+) : HttpStream,
+    NativeHandle<cnames.structs.aws_http_stream> {
 
     override val responseStatusCode: Int
         get() {
@@ -78,7 +79,7 @@ internal class HttpStreamNative(
         }
 
         if (isFinalChunk) {
-            val chunkOpts = cValue<aws_http1_chunk_options>() {
+            val chunkOpts = cValue<aws_http1_chunk_options> {
                 chunk_data_size = 0.convert()
             }
 

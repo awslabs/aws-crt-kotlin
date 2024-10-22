@@ -12,7 +12,9 @@ internal object Allocator {
 }
 
 @OptIn(ExperimentalForeignApi::class)
-internal class AwsAllocator : NativeFreeablePlacement, CValuesRef<aws_allocator>() {
+internal class AwsAllocator :
+    CValuesRef<aws_allocator>(),
+    NativeFreeablePlacement {
     internal val allocator: CPointer<aws_allocator> = s_crt_kotlin_allocator
         ?: throw CrtRuntimeException("CRT allocator is not initialized, ensure CRT.initRuntime() was called.")
 

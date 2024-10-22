@@ -23,7 +23,9 @@ public actual object CRT {
      */
     public actual fun initRuntime(block: Config.() -> Unit): Unit = runBlocking {
         initializerMu.withLock {
-            if (initialized) { return@runBlocking }
+            if (initialized) {
+                return@runBlocking
+            }
 
             val config = Config().apply(block)
 

@@ -14,9 +14,9 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class CredentialsProviderTest : CrtTest() {
-    private val EXPECTED_CREDENTIALS = Credentials("access_key_id", "secret_access_key", "session_token")
+private val EXPECTED_CREDENTIALS = Credentials("access_key_id", "secret_access_key", "session_token")
 
+class CredentialsProviderTest : CrtTest() {
     @Ignore // FIXME Enable when Kotlin/Native implementation is complete
     @Test
     fun testStaticProvider() = runTest {
