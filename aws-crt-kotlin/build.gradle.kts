@@ -7,7 +7,6 @@ import aws.sdk.kotlin.gradle.crt.cmakeInstallDir
 import aws.sdk.kotlin.gradle.crt.configureCrtCMakeBuild
 import aws.sdk.kotlin.gradle.crt.disableCrossCompileTargets
 import aws.sdk.kotlin.gradle.dsl.configurePublishing
-import aws.sdk.kotlin.gradle.kmp.IDEA_ACTIVE
 import aws.sdk.kotlin.gradle.kmp.configureKmpTargets
 import aws.sdk.kotlin.gradle.util.typedProp
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
