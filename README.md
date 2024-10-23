@@ -35,9 +35,7 @@ CRT interfaces are subject to change.
 OCI_EXE=docker python3 .github/scripts/run-container-test.py --distro al2 --arch x64 --test-bin-dir ./aws-crt-kotlin/build/bin
 ```
 
-
 See the usage/help for different distributions provided: `python3 .github/scripts/run-container.py -h`
-
 
 ### OSX
 
@@ -66,46 +64,9 @@ List simulator runtimes with:
 xcrun simctl list devices available
 ```
 
-
-See also: 
-
+See also:
 * https://developer.apple.com/documentation/xcode/installing-additional-simulator-runtimes
 * https://www.iosdev.recipes/simctl/
 
 ### Windows
-
-
-## Elasticurl App
-
-The `elasticurl` project contains an MPP (JVM and Native only) executable that provides a simple testing application for exercising the CRT bindings. 
-
-**Native**
-
-```
-# replace "PLATFORM" with the target platform you want to run (e.g. macosX64, linuxX64, etc)
-
-./elasticurl/bin/PLATFORM/elasticurlDebugExecutable/elasticurl.kexe [OPTIONS] URL
-```
-
-
-**JVM**
-```
-java -jar ./elasticurl/libs/elasticurl-jvm.jar [OPTIONS] URL
-```
-
-NOTE: You can also use the convenience script `./scripts/elasticurlJvm.sh [OPTIONS] URL`
-
-To enable memory tracing specify the environment variable `CRTDEBUG=trace=N` and provide the CLI option `-v trace`
-
-e.g.
-```
-CRTDEBUG=trace=2 ./elasticurl/bin/macosX64/elasticurlDebugExecutable/elasticurl.kexe -v trace https://aws.amazon.com
-```
-
-
-**Integration Test**
-
-Run the simple elasticurl integration test script
-
-`./scripts/elasticurl-test.sh`
-
+Not supported yet.

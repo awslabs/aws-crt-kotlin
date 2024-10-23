@@ -23,7 +23,7 @@ plugins {
 val sdkVersion: String by project
 group = properties["publishGroupName"] ?: error("missing publishGroupName")
 version = sdkVersion
-description = "Kotlin Multiplatform bindings for AWS SDK Common Runtime"
+description = "Kotlin Multiplatform bindings for AWS Common Runtime"
 
 // See: https://kotlinlang.org/docs/reference/opt-in-requirements.html#opting-in-to-using-api
 val optinAnnotations = listOf("kotlin.RequiresOptIn", "kotlinx.cinterop.ExperimentalForeignApi")
