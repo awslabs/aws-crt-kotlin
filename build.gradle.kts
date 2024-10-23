@@ -21,7 +21,7 @@ buildscript {
 }
 
 plugins {
-    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.13.2"
+    alias(libs.plugins.kotlinx.binary.compatibility.validator)
     alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.aws.kotlin.repo.tools.kmp)
     alias(libs.plugins.aws.kotlin.repo.tools.artifactsizemetrics)
@@ -60,7 +60,7 @@ subprojects {
 if (project.typedProp<Boolean>("kotlinWarningsAsErrors") == true) {
     allprojects {
         tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-            kotlinOptions.allWarningsAsErrors = true
+            compilerOptions.allWarningsAsErrors = true
         }
     }
 }
@@ -75,7 +75,3 @@ val lintPaths = listOf(
 )
 
 configureLinting(lintPaths)
-
-apiValidation {
-    ignoredProjects += setOf("elasticurl")
-}

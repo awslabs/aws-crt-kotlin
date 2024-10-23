@@ -507,7 +507,6 @@ public final class aws/sdk/kotlin/crt/http/HttpClientConnectionManagerOptionsBui
 
 public final class aws/sdk/kotlin/crt/http/HttpException : aws/sdk/kotlin/crt/CrtRuntimeException {
 	public fun <init> (I)V
-	public fun getErrorCode ()I
 }
 
 public final class aws/sdk/kotlin/crt/http/HttpHeader {
