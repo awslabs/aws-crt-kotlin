@@ -42,6 +42,7 @@ kotest-assertions-core-jvm = { module = "io.kotest:kotest-assertions-core-jvm", 
 mockserver-netty = { module = "org.mock-server:mockserver-netty", version.ref = "mock-server-version" }
 
 [plugins]
-kotlin-multiplatform = {id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin-version" }
-aws-kotlin-repo-tools-kmp = { id = "aws.sdk.kotlin.gradle.kmp", version.ref = "aws-kotlin-repo-tools-version" }
 aws-kotlin-repo-tools-artifactsizemetrics = { id = "aws.sdk.kotlin.gradle.artifactsizemetrics", version.ref = "aws-kotlin-repo-tools-version" }
+aws-kotlin-repo-tools-kmp = { id = "aws.sdk.kotlin.gradle.kmp", version.ref = "aws-kotlin-repo-tools-version" }
+kotlin-multiplatform = {id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin-version" }
+kotlinx-binary-compatibility-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version = "0.13.2" }
