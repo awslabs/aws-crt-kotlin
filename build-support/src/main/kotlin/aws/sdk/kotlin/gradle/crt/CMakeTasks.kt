@@ -156,8 +156,9 @@ private fun Project.registerCmakeBuildTask(
                 relativeBuildDir,
                 "--config",
                 buildType.toString(),
-                "--parallel",
-                System.getProperty("org.gradle.workers.max", "16"),
+                // FIXME There is a parallelism issue between linuxx64 and linuxarm64 causing flaky builds
+//                "--parallel",
+//                System.getProperty("org.gradle.workers.max", "16"),
             )
 
             val osxSdk = knTarget.konanTarget.osxDeviceSdkName

@@ -33,17 +33,6 @@ configureKmpTargets()
 kotlin {
     explicitApi()
 
-    // FIXME - move to repo-tools plugin
-    macosX64()
-    macosArm64()
-    iosSimulatorArm64()
-    iosArm64()
-    iosX64()
-    linuxX64()
-    linuxArm64()
-    // FIXME - setup docker files and cmake tasks appropriately
-    // mingwX64()
-
     sourceSets {
         val commonMain by getting {
             dependencies {
