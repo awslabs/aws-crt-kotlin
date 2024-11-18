@@ -2,6 +2,9 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
+package aws.sdk.kotlin.crt.util.hashing
+
+import aws.sdk.kotlin.crt.WithCrt
 import kotlinx.cinterop.*
 import libcrt.aws_checksums_crc32
 import libcrt.aws_checksums_crc32c
@@ -21,6 +24,10 @@ internal class Crc(val checksumFn: AwsChecksumsCrcFunction) : HashFunction {
     private var crc = 0U
 
     override fun update(input: ByteArray, offset: Int, length: Int) {
+        if (input.isEmpty() || length == 0) {
+            return
+        }
+
         val offsetInput = input.usePinned {
             it.addressOf(offset)
         }
@@ -42,7 +49,9 @@ internal class Crc(val checksumFn: AwsChecksumsCrcFunction) : HashFunction {
 /**
  * A CRC32 [HashFunction] implemented using bindings to CRT.
  */
-public class Crc32 : HashFunction {
+public class Crc32 :
+    WithCrt(),
+    HashFunction {
     private val crc32 = Crc(::aws_checksums_crc32)
     override fun update(input: ByteArray, offset: Int, length: Int) {
         crc32.update(input, offset, length)
@@ -56,7 +65,9 @@ public class Crc32 : HashFunction {
 /**
  * A CRC32C [HashFunction] implemented using bindings to CRT.
  */
-public class Crc32c : HashFunction {
+public class Crc32c :
+    WithCrt(),
+    HashFunction {
     private val crc32c = Crc(::aws_checksums_crc32c)
     override fun update(input: ByteArray, offset: Int, length: Int) {
         crc32c.update(input, offset, length)
