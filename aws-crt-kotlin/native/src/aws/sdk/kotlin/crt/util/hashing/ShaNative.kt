@@ -55,7 +55,9 @@ internal class Sha(val initializeFn: InitializeHashFn) : HashFunction {
 
     // aws_hash_update
     override fun update(input: ByteArray, offset: Int, length: Int) {
-        if (input.isEmpty() || length == 0) { return }
+        if (input.isEmpty() || length == 0) {
+            return
+        }
 
         val inputCursor = input.usePinned {
             aws_byte_cursor_from_array(it.addressOf(offset), length.convert())
