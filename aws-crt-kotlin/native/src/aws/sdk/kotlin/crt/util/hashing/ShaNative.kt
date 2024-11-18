@@ -5,6 +5,7 @@
 package aws.sdk.kotlin.crt.util.hashing
 
 import aws.sdk.kotlin.crt.Allocator
+import aws.sdk.kotlin.crt.CRT
 import aws.sdk.kotlin.crt.awsAssertOpSuccess
 import kotlinx.cinterop.*
 import libcrt.*
@@ -48,6 +49,7 @@ internal class Sha(val initializeFn: InitializeHashFn) : HashFunction {
     private var hash: CPointer<aws_hash>
 
     init {
+        CRT.initRuntime { }
         hash = initializeHash()
     }
 
