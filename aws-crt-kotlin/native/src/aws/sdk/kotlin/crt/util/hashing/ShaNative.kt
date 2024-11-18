@@ -5,7 +5,6 @@
 package aws.sdk.kotlin.crt.util.hashing
 
 import aws.sdk.kotlin.crt.Allocator
-import aws.sdk.kotlin.crt.CRT
 import aws.sdk.kotlin.crt.WithCrt
 import aws.sdk.kotlin.crt.awsAssertOpSuccess
 import kotlinx.cinterop.*
@@ -21,7 +20,9 @@ internal typealias InitializeHashFn = (
 /**
  * SHA-1 hash function implemented using bindings to CRT
  */
-public class Sha1 : HashFunction, WithCrt() {
+public class Sha1 :
+    WithCrt(),
+    HashFunction {
     private val sha1 = Sha(::aws_sha1_new)
     override fun update(input: ByteArray, offset: Int, length: Int) {
         sha1.update(input, offset, length)
@@ -35,7 +36,9 @@ public class Sha1 : HashFunction, WithCrt() {
 /**
  * SHA-256 hash function implemented using bindings to CRT
  */
-public class Sha256 : HashFunction, WithCrt() {
+public class Sha256 :
+    WithCrt(),
+    HashFunction {
     private val sha256 = Sha(::aws_sha256_new)
     override fun update(input: ByteArray, offset: Int, length: Int) {
         sha256.update(input, offset, length)
