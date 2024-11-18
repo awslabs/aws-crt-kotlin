@@ -31,6 +31,8 @@ public class Md5 : HashFunction {
     private var md5 = checkNotNull(aws_md5_new(Allocator.Default)) { "aws_md5_new" }
 
     override fun update(input: ByteArray, offset: Int, length: Int) {
+        if (input.isEmpty() || length == 0) { return }
+
         val inputCursor = input.usePinned {
             aws_byte_cursor_from_array(it.addressOf(offset), length.convert())
         }

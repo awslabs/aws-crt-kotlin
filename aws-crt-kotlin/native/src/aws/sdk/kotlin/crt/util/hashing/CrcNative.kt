@@ -28,6 +28,8 @@ internal class Crc(val checksumFn: AwsChecksumsCrcFunction) : HashFunction {
     private var crc = 0U
 
     override fun update(input: ByteArray, offset: Int, length: Int) {
+        if (input.isEmpty() || length == 0) { return }
+
         val offsetInput = input.usePinned {
             it.addressOf(offset)
         }
