@@ -6,6 +6,7 @@ package aws.sdk.kotlin.crt.util.hashing
 
 import aws.sdk.kotlin.crt.Allocator
 import aws.sdk.kotlin.crt.CRT
+import aws.sdk.kotlin.crt.WithCrt
 import aws.sdk.kotlin.crt.awsAssertOpSuccess
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.cValue
@@ -23,11 +24,7 @@ import libcrt.aws_md5_new
 /**
  * MD5 hash function implemented using bindings to CRT
  */
-public class Md5 : HashFunction {
-    init {
-        CRT.initRuntime { }
-    }
-
+public class Md5 : HashFunction, WithCrt() {
     private var md5 = checkNotNull(aws_md5_new(Allocator.Default)) { "aws_md5_new" }
 
     override fun update(input: ByteArray, offset: Int, length: Int) {

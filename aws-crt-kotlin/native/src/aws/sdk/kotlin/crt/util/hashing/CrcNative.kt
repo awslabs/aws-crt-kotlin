@@ -4,7 +4,7 @@
  */
 package aws.sdk.kotlin.crt.util.hashing
 
-import aws.sdk.kotlin.crt.CRT
+import aws.sdk.kotlin.crt.WithCrt
 import kotlinx.cinterop.*
 import libcrt.aws_checksums_crc32
 import libcrt.aws_checksums_crc32c
@@ -21,10 +21,6 @@ internal typealias AwsChecksumsCrcFunction = (
 ) -> uint32_t
 
 internal class Crc(val checksumFn: AwsChecksumsCrcFunction) : HashFunction {
-    init {
-        CRT.initRuntime { }
-    }
-
     private var crc = 0U
 
     override fun update(input: ByteArray, offset: Int, length: Int) {
@@ -53,7 +49,7 @@ internal class Crc(val checksumFn: AwsChecksumsCrcFunction) : HashFunction {
 /**
  * A CRC32 [HashFunction] implemented using bindings to CRT.
  */
-public class Crc32 : HashFunction {
+public class Crc32 : HashFunction, WithCrt() {
     private val crc32 = Crc(::aws_checksums_crc32)
     override fun update(input: ByteArray, offset: Int, length: Int) {
         crc32.update(input, offset, length)
@@ -67,7 +63,7 @@ public class Crc32 : HashFunction {
 /**
  * A CRC32C [HashFunction] implemented using bindings to CRT.
  */
-public class Crc32c : HashFunction {
+public class Crc32c : HashFunction, WithCrt() {
     private val crc32c = Crc(::aws_checksums_crc32c)
     override fun update(input: ByteArray, offset: Int, length: Int) {
         crc32c.update(input, offset, length)
