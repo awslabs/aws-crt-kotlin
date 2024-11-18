@@ -100,7 +100,7 @@ kotlin {
 // disable "standalone" mode in simulator tests since it causes TLS issues. this means we need to manage the simulator
 // ourselves (booting / shutting down). FIXME: https://youtrack.jetbrains.com/issue/KT-38317
 kotlin {
-    val simulatorDeviceName = project.findProperty("iosSimulatorDevice") as? String ?: "iPhone 15"
+    val simulatorDeviceName = project.findProperty("iosSimulatorDevice") as? String ?: "iPhone 16"
 
     val xcrun = "/usr/bin/xcrun"
 
