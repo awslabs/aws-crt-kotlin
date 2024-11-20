@@ -36,12 +36,12 @@
 ## [0.8.4] - 01/10/2024
 
 ### Features
-* [#893](https://github.com/awslabs/smithy-kotlin/issues/893) Surface HTTP connection manager metrics
+* [#893](https://github.com/smithy-lang/smithy-kotlin/issues/893) Surface HTTP connection manager metrics
 
 ## [0.8.3] - 01/05/2024
 
 ### Features
-* [#893](https://github.com/awslabs/smithy-kotlin/issues/893) Enable access to metrics for HTTP streams
+* [#893](https://github.com/smithy-lang/smithy-kotlin/issues/893) Enable access to metrics for HTTP streams
 
 ## [0.8.2] - 11/17/2023
 
@@ -83,7 +83,7 @@
 ## [0.6.7] - 12/15/2022
 
 ### Features
-* [#759](https://github.com/awslabs/smithy-kotlin/issues/759) Add `writeChunk` method to HttpStream
+* [#759](https://github.com/smithy-lang/smithy-kotlin/issues/759) Add `writeChunk` method to HttpStream
 
 ## [0.6.6] - 11/22/2022
 
