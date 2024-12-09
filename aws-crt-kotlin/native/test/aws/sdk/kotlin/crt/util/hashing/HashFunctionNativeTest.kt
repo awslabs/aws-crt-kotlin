@@ -2,6 +2,8 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
+package aws.sdk.kotlin.crt.util.hashing
+
 import aws.sdk.kotlin.crt.util.encodeToHex
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -45,6 +47,23 @@ class HashFunctionTest {
 
             hash.update(data, 1, 3) // huh
 
+            assertEquals(expected, hash.digest().encodeToHex())
+        }
+    }
+
+    @Test
+    fun testEmptyUpdate() {
+        // algorithm -> hash("")
+        val tests = listOf(
+            (Sha1() to "da39a3ee5e6b4b0d3255bfef95601890afd80709"),
+            (Sha256() to "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"),
+            (Crc32() to "00000000"),
+            (Crc32c() to "00000000"),
+        )
+
+        tests.forEach { (hash, expected) ->
+            val data = "".encodeToByteArray()
+            hash.update(data, 0, 0)
             assertEquals(expected, hash.digest().encodeToHex())
         }
     }

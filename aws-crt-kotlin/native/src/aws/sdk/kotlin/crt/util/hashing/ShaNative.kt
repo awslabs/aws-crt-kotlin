@@ -2,7 +2,10 @@
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
+package aws.sdk.kotlin.crt.util.hashing
+
 import aws.sdk.kotlin.crt.Allocator
+import aws.sdk.kotlin.crt.WithCrt
 import aws.sdk.kotlin.crt.awsAssertOpSuccess
 import kotlinx.cinterop.*
 import libcrt.*
@@ -17,7 +20,9 @@ internal typealias InitializeHashFn = (
 /**
  * SHA-1 hash function implemented using bindings to CRT
  */
-public class Sha1 : HashFunction {
+public class Sha1 :
+    WithCrt(),
+    HashFunction {
     private val sha1 = Sha(::aws_sha1_new)
     override fun update(input: ByteArray, offset: Int, length: Int) {
         sha1.update(input, offset, length)
@@ -31,7 +36,9 @@ public class Sha1 : HashFunction {
 /**
  * SHA-256 hash function implemented using bindings to CRT
  */
-public class Sha256 : HashFunction {
+public class Sha256 :
+    WithCrt(),
+    HashFunction {
     private val sha256 = Sha(::aws_sha256_new)
     override fun update(input: ByteArray, offset: Int, length: Int) {
         sha256.update(input, offset, length)
@@ -51,6 +58,10 @@ internal class Sha(val initializeFn: InitializeHashFn) : HashFunction {
 
     // aws_hash_update
     override fun update(input: ByteArray, offset: Int, length: Int) {
+        if (input.isEmpty() || length == 0) {
+            return
+        }
+
         val inputCursor = input.usePinned {
             aws_byte_cursor_from_array(it.addressOf(offset), length.convert())
         }
