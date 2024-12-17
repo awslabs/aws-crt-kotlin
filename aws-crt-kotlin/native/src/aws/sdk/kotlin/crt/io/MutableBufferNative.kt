@@ -7,6 +7,7 @@ package aws.sdk.kotlin.crt.io
 import aws.sdk.kotlin.crt.Allocator
 import aws.sdk.kotlin.crt.Closeable
 import aws.sdk.kotlin.crt.CrtRuntimeException
+import aws.sdk.kotlin.crt.WithCrt
 import kotlinx.cinterop.*
 import libcrt.*
 
@@ -17,7 +18,7 @@ import libcrt.*
 @OptIn(ExperimentalForeignApi::class)
 public actual class MutableBuffer private constructor(
     private val buffer: InnerBuffer,
-) : Closeable {
+) : WithCrt(), Closeable {
     internal constructor(borrowed: CPointer<aws_byte_buf>) : this(InnerBuffer.Borrowed(borrowed))
 
     /**
@@ -74,7 +75,7 @@ private sealed interface InnerBuffer {
      */
     data class KBuffer(
         private val dest: ByteArray,
-    ) : InnerBuffer {
+    ) : WithCrt(), InnerBuffer {
         private val pinned = dest.pin()
 
         override val pointer: CPointer<aws_byte_buf> =
