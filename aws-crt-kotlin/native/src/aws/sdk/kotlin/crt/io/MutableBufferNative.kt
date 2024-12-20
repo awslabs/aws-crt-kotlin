@@ -18,7 +18,8 @@ import libcrt.*
 @OptIn(ExperimentalForeignApi::class)
 public actual class MutableBuffer private constructor(
     private val buffer: InnerBuffer,
-) : WithCrt(), Closeable {
+) : WithCrt(),
+    Closeable {
     internal constructor(borrowed: CPointer<aws_byte_buf>) : this(InnerBuffer.Borrowed(borrowed))
 
     /**
@@ -75,7 +76,8 @@ private sealed interface InnerBuffer {
      */
     data class KBuffer(
         private val dest: ByteArray,
-    ) : WithCrt(), InnerBuffer {
+    ) : WithCrt(),
+        InnerBuffer {
         private val pinned = dest.pin()
 
         override val pointer: CPointer<aws_byte_buf> =
