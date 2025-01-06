@@ -182,7 +182,7 @@ class UriTest : CrtTest() {
         assertEquals(expected, uri.toString())
     }
 
-    @Ignore // FIXME Enable when Kotlin/Native implementation is complete
+    @IgnoreNative // FIXME Enable when Kotlin/Native implementation is complete
     @Test
     fun itParses() {
         val uri = "https://test.aws.com:8000/kotlin?foo=baz"
