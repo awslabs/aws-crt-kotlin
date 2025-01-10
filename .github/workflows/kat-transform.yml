@@ -24,8 +24,6 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
-        with:
-          path: 'aws-crt-kotlin'
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -44,10 +42,9 @@ jobs:
           cache: 'gradle'
 
       - name: Configure Gradle
-        uses: ./aws-crt-kotlin/.github/actions/custom-gradle-distribution-url
+        uses: .github/actions/custom-gradle-distribution-url
 
       - name: Build
-        working-directory: ./aws-crt-kotlin
         shell: bash
         run: |
           pwd
@@ -57,7 +54,6 @@ jobs:
           ./gradlew publishAllPublicationsToTestLocalRepository
 
       - name: Transform
-        working-directory: ./aws-crt-kotlin
         shell: bash
         run: |
           pwd
