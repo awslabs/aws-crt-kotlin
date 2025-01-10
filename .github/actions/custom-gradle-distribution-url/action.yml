@@ -7,8 +7,8 @@ runs:
   steps:
     - name: Configure gradle distribution URL
       run: |
-        cd aws-crt-kotlin
-        
+        pwd 
+        ls
         # Keep gradle version in sync with aws-sdk-kotlin/gradle/wrapper/gradle-wrapper.properties
         gradle wrapper --gradle-distribution-url https://d2pjps8lqszrgq.cloudfront.net/gradle-8.12-bin.zip
       shell: bash
