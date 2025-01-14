@@ -1,5 +1,6 @@
 {
     "id": "337cca7e-6a38-4601-b5d2-9f8d12dd60f7",
     "type": "misc",
-    "description": "Upgrade to Kotlin 2.1.0"
+    "description": "Upgrade to Kotlin 2.1.0",
+    "requiresMinorVersionBump": true
 }
