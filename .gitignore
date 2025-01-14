@@ -12,3 +12,4 @@ build/
 .idea/
 local.properties
 *.klib
+.kotlin/
