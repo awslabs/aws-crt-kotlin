@@ -65,7 +65,7 @@ class HttpRequestResponseTest : HttpClientTest() {
         }
     }
 
-    @IgnoreNative // FIXME This test is broken since switching runSuspendingTest to runTest
+    @Ignore // FIXME This test is broken since switching runSuspendingTest to runTest
     @Test
     fun testHttpGet() = runTest {
         testSimpleRequest("GET", "/get", 200)
@@ -74,7 +74,7 @@ class HttpRequestResponseTest : HttpClientTest() {
         testSimpleRequest("GET", "/delete", 405)
     }
 
-    @IgnoreNative // FIXME This test is broken since switching runSuspendingTest to runTest
+    @Ignore // FIXME This test is broken since switching runSuspendingTest to runTest
     @Test
     fun testHttpPost() = runTest {
         testSimpleRequest("POST", "/get", 405)
@@ -83,7 +83,7 @@ class HttpRequestResponseTest : HttpClientTest() {
         testSimpleRequest("POST", "/delete", 405)
     }
 
-    @IgnoreNative // FIXME This test is broken since switching runSuspendingTest to runTest
+    @Ignore // FIXME This test is broken since switching runSuspendingTest to runTest
     @Test
     fun testHttpPut() = runTest {
         testSimpleRequest("PUT", "/get", 405)
@@ -92,7 +92,7 @@ class HttpRequestResponseTest : HttpClientTest() {
         testSimpleRequest("PUT", "/delete", 405)
     }
 
-    @IgnoreNative // FIXME This test is broken since switching runSuspendingTest to runTest
+    @Ignore // FIXME This test is broken since switching runSuspendingTest to runTest
     @Test
     fun testHttpDelete() = runTest {
         testSimpleRequest("DELETE", "/get", 405)
@@ -101,7 +101,7 @@ class HttpRequestResponseTest : HttpClientTest() {
         testSimpleRequest("DELETE", "/delete", 200)
     }
 
-    @IgnoreNative // FIXME This test is broken since switching runSuspendingTest to runTest
+    @Ignore // FIXME This test is broken since switching runSuspendingTest to runTest
     @Test
     fun testHttpDownload() = runTest {
         val response = roundTrip(url = "https://aws-crt-test-stuff.s3.amazonaws.com/http_test_doc.txt", verb = "GET")
@@ -111,7 +111,7 @@ class HttpRequestResponseTest : HttpClientTest() {
         assertEquals(TEST_DOC_SHA256, Digest.sha256(response.body).encodeToHex())
     }
 
-    @IgnoreNative // FIXME This test is broken since switching runSuspendingTest to runTest
+    @Ignore // FIXME This test is broken since switching runSuspendingTest to runTest
     @Test
     fun testHttpUpload() = runTest {
         val bodyToSend = TEST_DOC_LINE
