@@ -10,6 +10,7 @@ import aws.sdk.kotlin.crt.io.ClientBootstrap
 import aws.sdk.kotlin.crt.io.EventLoopGroup
 import aws.sdk.kotlin.crt.io.HostResolver
 import kotlinx.coroutines.test.runTest
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
