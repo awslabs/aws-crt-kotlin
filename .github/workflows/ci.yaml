@@ -33,7 +33,7 @@ jobs:
       - name: Test with ${{ matrix.java-version }}
         shell: bash
         run: |
-          ./gradlew apiCheck
+          ./gradlew jvmApiCheck
           ./gradlew -Ptest.java.version=${{ matrix.java-version }} -Paws.sdk.kotlin.crt.disableCrossCompile=true jvmTest --stacktrace 
       - name: Save Test Reports
         if: failure()
