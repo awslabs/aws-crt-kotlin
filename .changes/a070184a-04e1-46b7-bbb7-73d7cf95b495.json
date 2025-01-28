@@ -1,0 +1,5 @@
+{
+    "id": "a070184a-04e1-46b7-bbb7-73d7cf95b495",
+    "type": "bugfix",
+    "description": "Upgrade to latest version of CRT to pick up header signing changes"
+}
