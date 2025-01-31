@@ -50,14 +50,14 @@ private val KotlinNativeTarget.isWindows: Boolean
 internal fun Project.disable(knTarget: KotlinNativeTarget) {
     logger.warn("disabling Kotlin/Native target: ${knTarget.name}")
     knTarget.apply {
+        binaries.all {
+            linkTaskProvider.configure { enabled = false }
+        }
         compilations.all {
             cinterops.all {
                 tasks.named(interopProcessingTaskName).configure { enabled = false }
             }
             compileTaskProvider.configure { enabled = false }
-            binaries.all {
-                linkTaskProvider.configure { enabled = false }
-            }
         }
         mavenPublication {
             tasks.withType<AbstractPublishToMaven>().configureEach {
