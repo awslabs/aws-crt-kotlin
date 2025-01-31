@@ -7,12 +7,10 @@ import aws.sdk.kotlin.gradle.crt.cmakeInstallDir
 import aws.sdk.kotlin.gradle.crt.configureCrtCMakeBuild
 import aws.sdk.kotlin.gradle.crt.disableCrossCompileTargets
 import aws.sdk.kotlin.gradle.dsl.configurePublishing
-import aws.sdk.kotlin.gradle.kmp.configureKmpTargets
 import aws.sdk.kotlin.gradle.kmp.configureIosSimulatorTasks
+import aws.sdk.kotlin.gradle.kmp.configureKmpTargets
 import aws.sdk.kotlin.gradle.util.typedProp
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest
-import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
