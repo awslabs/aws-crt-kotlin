@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.9.1] - 01/28/2025
+
+### Fixes
+* Upgrade to latest version of CRT to pick up header signing changes
+
 ## [0.9.0] - 01/15/2025
 
 ### Miscellaneous
