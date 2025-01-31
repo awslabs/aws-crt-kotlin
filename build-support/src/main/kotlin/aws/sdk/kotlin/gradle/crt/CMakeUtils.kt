@@ -21,7 +21,6 @@ val KonanTarget.isSimulatorSdk: Boolean
         KonanTarget.TVOS_SIMULATOR_ARM64, KonanTarget.TVOS_X64,
         KonanTarget.WATCHOS_SIMULATOR_ARM64,
         KonanTarget.WATCHOS_X64,
-        KonanTarget.WATCHOS_X86,
         -> true
         else -> false
     }
@@ -46,7 +45,6 @@ val KonanTarget.osxDeviceSdkName: String?
         -> WATCHOS_DEVICE_SDK
         KonanTarget.WATCHOS_SIMULATOR_ARM64,
         KonanTarget.WATCHOS_X64,
-        KonanTarget.WATCHOS_X86,
         -> WATCHOS_SIMULATOR_SDK
         else -> null
     }
