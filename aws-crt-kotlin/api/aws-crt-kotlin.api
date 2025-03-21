@@ -65,6 +65,10 @@ public final class aws/sdk/kotlin/crt/LogLevel : java/lang/Enum {
 	public static fun values ()[Laws/sdk/kotlin/crt/LogLevel;
 }
 
+public class aws/sdk/kotlin/crt/WithCrt {
+	public fun <init> ()V
+}
+
 public final class aws/sdk/kotlin/crt/auth/credentials/CachedCredentialsProvider : aws/sdk/kotlin/crt/auth/credentials/JniCredentialsProvider, aws/sdk/kotlin/crt/auth/credentials/CredentialsProvider {
 	public static final field Companion Laws/sdk/kotlin/crt/auth/credentials/CachedCredentialsProvider$Companion;
 }
