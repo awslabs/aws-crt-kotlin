@@ -9,6 +9,7 @@ import aws.sdk.kotlin.crt.*
 import aws.sdk.kotlin.crt.Allocator
 import aws.sdk.kotlin.crt.util.ShutdownChannel
 import aws.sdk.kotlin.crt.util.shutdownChannel
+import cnames.structs.aws_event_loop_group
 import kotlinx.cinterop.*
 import libcrt.*
 
