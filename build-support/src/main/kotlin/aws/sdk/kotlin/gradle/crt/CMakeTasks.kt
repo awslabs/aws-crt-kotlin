@@ -158,7 +158,6 @@ private fun Project.registerCmakeBuildTask(
                 relativeBuildDir,
                 "--config",
                 buildType.toString(),
-                // FIXME There is a parallelism issue between linuxx64 and linuxarm64 causing flaky builds
                 "--parallel",
                 System.getProperty("org.gradle.workers.max", coresPlusOne),
             )
