@@ -15,6 +15,7 @@ import kotlinx.cinterop.*
 import libcrt.*
 
 public actual class TlsContext actual constructor(options: TlsContextOptions?) :
+    WithCrt(),
     NativeHandle<aws_tls_ctx>,
     Closeable {
     private val tlsCtxOpts: aws_tls_ctx_options = Allocator.Default.alloc()
