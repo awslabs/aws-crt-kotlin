@@ -71,7 +71,7 @@ kotlin {
     // see: https://github.com/JetBrains/kotlin-native/issues/2423#issuecomment-466300153
     targets.withType<KotlinNativeTarget> {
         val knTarget = this
-        logger.info("configuring $knTarget: ${knTarget.name}")
+        logger.info("configuring Kotlin/Native target $knTarget: ${knTarget.name}")
         val cmakeInstallTask = configureCrtCMakeBuild(knTarget, CMakeBuildType.Release)
         val targetInstallDir = project.cmakeInstallDir(knTarget)
         val headerDir = targetInstallDir.resolve("include")
@@ -79,7 +79,7 @@ kotlin {
 
         compilations["main"].cinterops {
             val interopDir = "$projectDir/native/interop"
-            println("configuring crt cinterop for: ${knTarget.name}")
+            logger.info("configuring crt cinterop for: ${knTarget.name}")
             val interopSettings = create("aws-crt") {
                 defFile("$interopDir/crt.def")
                 includeDirs(headerDir)
