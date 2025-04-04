@@ -80,7 +80,7 @@ internal fun Project.disable(knTarget: KotlinNativeTarget) {
     }
 }
 
-// targets that are always cross compiled/ran in docker containers
+// targets that are always cross compiled/ran in docker containers on non-Linux hosts
 internal val crossCompileTargets: List<KonanTarget> = listOf(
     KonanTarget.LINUX_X64,
     KonanTarget.LINUX_ARM64,
