@@ -9,6 +9,7 @@ import aws.sdk.kotlin.crt.*
 import aws.sdk.kotlin.crt.Allocator
 import aws.sdk.kotlin.crt.util.ShutdownChannel
 import aws.sdk.kotlin.crt.util.shutdownChannel
+import cnames.structs.aws_event_loop_group
 import kotlinx.cinterop.*
 import libcrt.*
 
@@ -32,13 +33,19 @@ public actual class EventLoopGroup actual constructor(maxThreads: Int) :
     private val channelStableRef = StableRef.create(shutdownCompleteChannel)
 
     init {
-        val shutdownOpts = cValue<aws_shutdown_callback_options> {
-            shutdown_callback_fn = staticCFunction(::onShutdownComplete)
-            shutdown_callback_user_data = channelStableRef.asCPointer()
-        }
+        ptr = memScoped {
+            val shutdownOpts = cValue<aws_shutdown_callback_options> {
+                shutdown_callback_fn = staticCFunction(::onShutdownComplete)
+                shutdown_callback_user_data = channelStableRef.asCPointer()
+            }
 
-        ptr = checkNotNull(aws_event_loop_group_new_default(Allocator.Default, maxThreads.toUShort(), shutdownOpts)) {
-            "aws_event_loop_group_new_default()"
+            val eventLoopGroupOpts = cValue<aws_event_loop_group_options> {
+                shutdown_options = shutdownOpts.ptr
+            }
+
+            checkNotNull(aws_event_loop_group_new(Allocator.Default, eventLoopGroupOpts)) {
+                "aws_event_loop_group_new()"
+            }
         }
     }
 

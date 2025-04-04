@@ -31,8 +31,8 @@ headers = aws/common/allocator.h \
         aws/checksums/crc.h
 headerFilter = aws/common/* aws/io/* aws/http/* aws/compression/* aws/auth/* aws/checksums/* aws/cal/*
 
-linkerOpts.osx = -framework Security
-linkerOpts.ios = -framework Security
+linkerOpts.osx = -framework Security -framework Network
+linkerOpts.ios = -framework Security -framework Network
 
 # included libs are linked automatically, adding linkerOpts like `-laws-c-common` causes
 # issues downstream as it will search for that library still.
