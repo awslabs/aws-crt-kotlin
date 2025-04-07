@@ -115,7 +115,7 @@ tasks.register("linuxTestBinaries") {
     }
 }
 
-val disableCrossCompile = providers.gradleProperty("aws.sdk.kotlin.crt.disableCrossCompile").get() == "true"
+val disableCrossCompile = providers.gradleProperty("aws.sdk.kotlin.crt.disableCrossCompile").getOrNull() == "true"
 if (disableCrossCompile) {
     logger.warn("aws.sdk.kotlin.crt.disableCrossCompile=true: Cross compilation is disabled.")
     disableCrossCompileTargets()
