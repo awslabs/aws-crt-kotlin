@@ -214,8 +214,7 @@ private fun runCmake(project: Project, target: KotlinNativeTarget, cmakeArgs: Li
         workingDir(project.rootDir)
         val exeArgs = cmakeArgs.toMutableList()
         val exeName = when {
-            // Only cross-compile on non-Linux hosts
-            !HostManager.hostIsLinux && target.konanTarget in crossCompileTargets -> {
+            target.konanTarget in crossCompileTargets -> {
                 // cross compiling via dockcross - set the docker exe to cmake
                 val containerScriptArgs = listOf("--args", "--pull=missing", "--", "cmake")
                 exeArgs.addAll(0, containerScriptArgs)
