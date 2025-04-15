@@ -121,12 +121,11 @@ private fun Project.registerCmakeConfigureTask(
                 }
             }
 
-            // FIXME Recent upgrade to GitHub Actions Ubuntu image / s2n-tls causes compilation errors like:
+            // FIXME? Compiling s2n-tls on GitHub Actions Ubuntu image (without Docker / cross-compilation) has errors like:
             // In function ‘s2n_hash_algorithms_init’
             // error: implicit declaration of function ‘EVP_MD_free’;
             // See https://github.com/aws/s2n-tls/blob/529b01a8363962a4e3809c9d9ee34fdd098fb0ba/tests/features/S2N_LIBCRYPTO_SUPPORTS_PROVIDERS.c#L29
             // and https://github.com/aws/s2n-tls/blob/529b01a8363962a4e3809c9d9ee34fdd098fb0ba/crypto/s2n_hash.c#L85
-//            args.add("-DS2N_LIBCRYPTO_SUPPORTS_PROVIDERS=FALSE")
 
             // executed from root build dir which is where CMakeLists.txt is
             // We _could_ use the undocumented -H flag but that will be harder to make work inside docker
