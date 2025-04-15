@@ -80,6 +80,32 @@ jobs:
       - name: Configure Docker Images
         run: |
           ./docker-images/build-all.sh
+      - name: Debug OpenSSL headers and libs
+        run: |
+          echo "🔍 OpenSSL dev packages installed:"
+          dpkg -l | grep libssl
+          
+          echo ""
+          echo "📁 OpenSSL headers:"
+          ls -l /usr/include/openssl
+          grep -A5 EVP_MD_fetch /usr/include/openssl/evp.h || echo "❌ EVP_MD_fetch not found in headers"
+          
+          echo ""
+          echo "🔧 pkg-config output:"
+          pkg-config --modversion openssl || echo "❌ pkg-config not available"
+          pkg-config --cflags openssl || echo "❌ pkg-config not available"
+          pkg-config --libs openssl || echo "❌ pkg-config not available"
+          
+          echo ""
+          echo "🔗 What libssl is linked by default:"
+          ldconfig -p | grep libssl
+          
+          echo ""
+          echo "🧪 Try compiling a probe:"
+          echo '#include <openssl/evp.h>
+          int main() { EVP_MD_fetch(0, 0, 0); return 0; }' > test.c
+          gcc -Werror -o test test.c -lssl -lcrypto && echo "✅ Compiles EVP_MD_fetch" || echo "❌ Compilation failed"
+
       - name: Build and Test ${{ env.PACKAGE_NAME }}
         run: |
           ./gradlew build
