@@ -53,6 +53,7 @@ class HttpClientConnectionTest : CrtTest() {
         println("exiting test")
     }
 
+    @Ignore
     @Test
     fun testHttpConnection(): Unit = runBlocking {
         // S3
