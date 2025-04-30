@@ -36,6 +36,8 @@ private fun TlsCipherPreference.into(): TlsCipherPreferenceJni = when (this) {
     TlsCipherPreference.KMS_PQ_SIKE_TLS_V1_0_2020_02 -> TlsCipherPreferenceJni.TLS_CIPHER_PREF_KMS_PQ_SIKE_TLSv1_0_2020_02
     TlsCipherPreference.KMS_PQ_TLS_V1_0_2020_07 -> TlsCipherPreferenceJni.TLS_CIPHER_PREF_KMS_PQ_TLSv1_0_2020_07
     TlsCipherPreference.PQ_TLS_V1_0_2021_05 -> TlsCipherPreferenceJni.TLS_CIPHER_PREF_PQ_TLSv1_0_2021_05
+    TlsCipherPreference.PQ_TLSV1_2_2024_10 -> TlsCipherPreferenceJni.TLS_CIPHER_PREF_PQ_TLSv1_2_2023
+    TlsCipherPreference.PQ_DEFAULT -> TlsCipherPreferenceJni.TLS_CIPHER_PQ_DEFAULT
 }
 
 private fun TlsVersion.into(): TlsVersionJni = when (this) {
