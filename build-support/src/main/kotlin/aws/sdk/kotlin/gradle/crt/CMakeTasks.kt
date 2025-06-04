@@ -11,6 +11,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 /**
  * See [CMAKE_BUILD_TYPE](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html)
@@ -208,12 +209,17 @@ private fun Project.registerCmakeInstallTask(
     }
 }
 
+private val containerCompileTargets = setOf(
+    KonanTarget.LINUX_X64,
+    KonanTarget.LINUX_ARM64,
+)
+
 private fun runCmake(project: Project, target: KotlinNativeTarget, cmakeArgs: List<String>) {
     project.exec {
         workingDir(project.rootDir)
         val exeArgs = cmakeArgs.toMutableList()
         val exeName = when {
-            target.konanTarget in crossCompileTargets -> {
+            target.konanTarget in containerCompileTargets -> {
                 // cross compiling via dockcross - set the docker exe to cmake
                 val containerScriptArgs = listOf("--args", "--pull=missing", "--", "cmake")
                 exeArgs.addAll(0, containerScriptArgs)
