@@ -80,8 +80,8 @@ private fun Project.registerCmakeConfigureTask(
     val cmakeBuildDir = project.cmakeBuildDir(knTarget)
     val installDir = project.cmakeInstallDir(knTarget)
 
-    val relativeBuildDir = cmakeBuildDir.relativeTo(project.rootDir).path
-    val relativeInstallDir = installDir.relativeTo(project.rootDir).path
+    val relativeBuildDir = cmakeBuildDir.relativeTo(project.rootDir).slashPath
+    val relativeInstallDir = installDir.relativeTo(project.rootDir).slashPath
     val cmakeLists = project.rootProject.projectDir.resolve("CMakeLists.txt")
 
     return project.tasks.register(knTarget.cmakeConfigureTaskName) {
@@ -142,7 +142,7 @@ private fun Project.registerCmakeBuildTask(
     buildType: CMakeBuildType,
 ): TaskProvider<Task> {
     val cmakeBuildDir = project.cmakeBuildDir(knTarget)
-    val relativeBuildDir = cmakeBuildDir.relativeTo(project.rootDir).path
+    val relativeBuildDir = cmakeBuildDir.relativeTo(project.rootDir).slashPath
 
     return project.tasks.register(knTarget.cmakeBuildTaskName) {
         group = "ffi"
@@ -188,7 +188,7 @@ private fun Project.registerCmakeInstallTask(
     buildType: CMakeBuildType,
 ): TaskProvider<Task> {
     val cmakeBuildDir = project.cmakeBuildDir(knTarget)
-    val relativeBuildDir = cmakeBuildDir.relativeTo(project.rootDir).path
+    val relativeBuildDir = cmakeBuildDir.relativeTo(project.rootDir).slashPath
     val installDir = project.cmakeInstallDir(knTarget)
 
     return project.tasks.register(knTarget.cmakeInstallTaskName) {
@@ -212,6 +212,11 @@ private fun Project.registerCmakeInstallTask(
 private val containerCompileTargets = setOf(
     KonanTarget.LINUX_X64,
     KonanTarget.LINUX_ARM64,
+    KonanTarget.MINGW_X64,
+)
+
+private val requiresExplicitBash = setOf(
+    KonanTarget.MINGW_X64,
 )
 
 private fun runCmake(project: Project, target: KotlinNativeTarget, cmakeArgs: List<String>) {
@@ -225,7 +230,13 @@ private fun runCmake(project: Project, target: KotlinNativeTarget, cmakeArgs: Li
                 exeArgs.addAll(0, containerScriptArgs)
                 val script = "dockcross-" + target.konanTarget.name.replace("_", "-")
                 validateCrossCompileScriptsAvailable(project, script)
-                "./$script"
+
+                if (target.konanTarget in requiresExplicitBash) {
+                    exeArgs.add(0, "./$script")
+                    "bash"
+                } else {
+                    "./$script"
+                }
             }
             else -> "cmake"
         }
