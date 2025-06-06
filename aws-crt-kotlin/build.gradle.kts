@@ -5,7 +5,6 @@
 import aws.sdk.kotlin.gradle.crt.CMakeBuildType
 import aws.sdk.kotlin.gradle.crt.cmakeInstallDir
 import aws.sdk.kotlin.gradle.crt.configureCrtCMakeBuild
-import aws.sdk.kotlin.gradle.crt.disableCrossCompileTargets
 import aws.sdk.kotlin.gradle.dsl.configurePublishing
 import aws.sdk.kotlin.gradle.kmp.configureIosSimulatorTasks
 import aws.sdk.kotlin.gradle.kmp.configureKmpTargets
@@ -113,12 +112,6 @@ tasks.register("linuxTestBinaries") {
     }.forEach { testTask ->
         dependsOn(testTask)
     }
-}
-
-val disableCrossCompile = providers.gradleProperty("aws.sdk.kotlin.crt.disableCrossCompile").getOrNull() == "true"
-if (disableCrossCompile) {
-    logger.warn("aws.sdk.kotlin.crt.disableCrossCompile=true: Cross compilation is disabled.")
-    disableCrossCompileTargets()
 }
 
 // run tests on specific JVM version

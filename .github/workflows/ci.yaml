@@ -34,7 +34,7 @@ jobs:
         shell: bash
         run: |
           ./gradlew jvmApiCheck
-          ./gradlew -Ptest.java.version=${{ matrix.java-version }} -Paws.sdk.kotlin.crt.disableCrossCompile=true jvmTest --stacktrace 
+          ./gradlew -Ptest.java.version=${{ matrix.java-version }} jvmTest --stacktrace
       - name: Save Test Reports
         if: failure()
         uses: actions/upload-artifact@v4
@@ -58,7 +58,7 @@ jobs:
         uses: ./.github/actions/setup-build
       - name: Build and Test ${{ env.PACKAGE_NAME }}
         run: |
-          ./gradlew -Paws.sdk.kotlin.crt.disableCrossCompile=true build
+          ./gradlew build
       - name: Save Test Reports
         if: failure()
         uses: actions/upload-artifact@v4
@@ -68,7 +68,6 @@ jobs:
 
   # build and test for targets: jvm, linuxX64
   # cross compile for: linuxX64, linuxArm64
-  # TODO - add mingw as cross compile target
   linux:
     runs-on: ubuntu-22.04
     steps:
@@ -97,7 +96,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: test-reports-linux
+          name: test-reports-linux-jvm
           path: '**/build/reports'
           retention-days: 15
 
@@ -130,7 +129,7 @@ jobs:
           RUN_CONTAINER_TEST=./native-test-binaries/.github/scripts/run-container-test.py 
           $RUN_CONTAINER_TEST --distro ${{ matrix.distro }} --arch ${{ matrix.arch }} --test-bin-dir ./native-test-binaries/aws-crt-kotlin/build/bin
 
-  # windows JVM
+  # windows JVM & native
   windows:
     runs-on: windows-2022
     steps:
@@ -141,7 +140,7 @@ jobs:
         uses: ./.github/actions/setup-build
       - name: Build and Test ${{ env.PACKAGE_NAME }}
         run: |
-          ./gradlew -P"aws.sdk.kotlin.crt.disableCrossCompile"=true build
+          ./gradlew build
       - name: Save Test Reports
         if: failure()
         uses: actions/upload-artifact@v4
@@ -150,5 +149,3 @@ jobs:
           path: '**/build/reports'
 
 # TODO - native test reports?
-# TODO - windows native
-
