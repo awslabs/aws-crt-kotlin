@@ -53,5 +53,15 @@ kotlin {
     }
 }
 
+configurations.all {
+    resolutionStrategy {
+        /*
+         FIXME: Remove this when "org.mock-server:mockserver-netty" releases a version that depends on
+         "commons-beanutils:commons-beanutils:1.11.0" or higher
+         */
+        force("commons-beanutils:commons-beanutils:1.11.0")
+    }
+}
+
 // Publishing
 configurePublishing("aws-crt-kotlin")
