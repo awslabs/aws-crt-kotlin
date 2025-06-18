@@ -139,7 +139,7 @@ def run_docker_test(opts):
     """
     platform = DOCKER_PLATFORM_BY_ARCH[opts.arch]
     oci_exe = oci_executable()
-    image_name = create_docker_image(opts, oci_exe)
+    image_name = get_docker_image(opts, oci_exe)
 
     test_bin_dir = os.path.abspath(opts.test_bin_dir)
     path_to_exe = f'./linux{opts.arch.capitalize()}/debugTest/test.kexe'
