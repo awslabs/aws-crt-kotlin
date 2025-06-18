@@ -23,6 +23,7 @@ import os
 import subprocess
 import shlex
 import shutil
+import textwrap
 
 VERBOSE = False
 
@@ -30,6 +31,10 @@ DISTRO_TO_IMAGE_NAME = {
     "ubuntu-22.04": "public.ecr.aws/lts/ubuntu:22.04_stable",
     "al2023": "public.ecr.aws/amazonlinux/amazonlinux:2023",
     "al2": "public.ecr.aws/amazonlinux/amazonlinux:2"
+}
+
+DISTRO_TO_PACKAGES = {
+    "al2023": [ "libxcrypt-compat" ],
 }
 
 DOCKER_PLATFORM_BY_ARCH = {
@@ -83,7 +88,50 @@ def oci_executable():
     exit(1)
 
 
-def run_docker_test(opts): 
+def create_docker_image(opts, oci_exe, base_image_name, packages):
+    lines = []
+
+    # Set base image
+    lines.append(f"FROM {base_image_name}")
+
+    # Install extra packages if necessary
+    if packages:
+        cmd = [
+            "RUN yum -y install",
+            *packages,
+        ].join(" ")
+        lines.append(cmd)
+
+    # Compile the contents
+    content = lines.join('\n')
+
+    # Write the Dockerfile
+    with open("Dockerfile", "w") as f:
+        f.write(content)
+
+    # Build the image
+    image_name = f"container-test-{opts.distro}:latest"
+    cmd = shlex.join([
+        oci_exe,
+        "build",
+        "-t",
+        image_name,
+    ])
+    shell(cmd)
+
+    return image_name
+
+
+def get_docker_image(opts, oci_exe):
+    base_image_name = DISTRO_TO_IMAGE_NAME[opts.distro]
+    packages = DISTRO_TO_PACKAGES.get(opts.distro)
+    if packages:
+        return create_docker_image(opts, oci_exe, base_image_name, packages)
+    else:
+        return base_image_name
+
+
+def run_docker_test(opts):
     """
     Run a docker test for a precompiled Kotlin/Native binary
 
@@ -91,9 +139,9 @@ def run_docker_test(opts):
     """
     platform = DOCKER_PLATFORM_BY_ARCH[opts.arch]
     oci_exe = oci_executable()
+    image_name = create_docker_image(opts, oci_exe)
 
     test_bin_dir = os.path.abspath(opts.test_bin_dir)
-    image_name = DISTRO_TO_IMAGE_NAME[opts.distro]
     path_to_exe = f'./linux{opts.arch.capitalize()}/debugTest/test.kexe'
 
     cmd = [
