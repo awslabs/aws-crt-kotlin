@@ -139,8 +139,12 @@ jobs:
       - name: Setup build environment
         uses: ./.github/actions/setup-build
       - name: Configure Docker Images
+        shell: powershell
         run: |
+          echo "Building Docker images"
           ./docker-images/build-all.sh
+          echo "Built images:"
+          ls -alsh dockcross-*
       - name: Build and Test ${{ env.PACKAGE_NAME }}
         run: |
           ./gradlew build

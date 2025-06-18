@@ -99,11 +99,11 @@ def create_docker_image(opts, oci_exe, base_image_name, packages):
         cmd = [
             "RUN yum -y install",
             *packages,
-        ].join(" ")
-        lines.append(cmd)
+        ]
+        lines.append(' '.join(cmd))
 
     # Compile the contents
-    content = lines.join('\n')
+    content = '\n'.join(lines) + '\n'
 
     # Write the Dockerfile
     with open("Dockerfile", "w") as f:
