@@ -1,5 +1,0 @@
-{
-    "id": "3d6fffae-2ce4-478f-b410-fce0afe16588",
-    "type": "bugfix",
-    "description": "Update the set of supported `TlsCipherPreference` values to reflect the latest capabilities/support from CRT"
-}
