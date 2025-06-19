@@ -141,11 +141,11 @@ jobs:
       - name: Configure Docker Images
         shell: bash
         run: |
-          echo "Installing docker-cli via chocolatey..."
-          choco install docker-cli
+          echo "Installing docker via chocolatey..."
+          choco install docker-desktop
 
           echo "Looking for DockerCli.exe via hardcoded path:"
-          ls "/c/ProgramData/chocolatey/lib/docker-cli" || true
+          ls "/c/Program Files/Docker/Docker" || true
 
           echo "Building Docker images"
           ./docker-images/build-images.sh mingw-x64
