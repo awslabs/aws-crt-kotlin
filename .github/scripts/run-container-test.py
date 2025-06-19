@@ -120,6 +120,9 @@ def create_docker_image(opts, oci_exe, base_image_name, packages):
     ])
     shell(cmd)
 
+    print f"Created Docker image {image_name}. Listing hosted images to be certain:"
+    shell("docker image ls --all")
+
     return image_name
 
 

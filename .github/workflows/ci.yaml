@@ -139,7 +139,7 @@ jobs:
       - name: Setup build environment
         uses: ./.github/actions/setup-build
       - name: Configure Docker Images
-        shell: powershell
+        shell: bash
         run: |
           echo "Building Docker images"
           ./docker-images/build-all.sh
