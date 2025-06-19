@@ -141,6 +141,12 @@ jobs:
       - name: Configure Docker Images
         shell: bash
         run: |
+          echo "Checking for DockerCli.exe via which"
+          which DockerCli.exe || true
+
+          echo "Checking for DockerCli.exe via path"
+          ls /c/Program\ Files/Docker/Docker/DockerCli.exe
+
           echo "Building Docker images"
           ./docker-images/build-images.sh mingw-x64
           echo "Built images:"

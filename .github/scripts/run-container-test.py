@@ -111,11 +111,14 @@ def create_docker_image(opts, oci_exe, base_image_name, packages):
 
     # Build the image
     image_name = f"container-test-{opts.distro}:latest"
+    platform = DOCKER_PLATFORM_BY_ARCH[opts.arch]
     cmd = shlex.join([
         oci_exe,
         "build",
         "-t",
         image_name,
+        "--platform",
+        platform,
         ".",
     ])
     shell(cmd)
