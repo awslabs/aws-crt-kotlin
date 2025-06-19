@@ -141,11 +141,17 @@ jobs:
       - name: Configure Docker Images
         shell: bash
         run: |
-          echo "Dumping /c/Program Files/"
-          ls "/c/Program Files" || true
+          echo "Installing docker-cli via chocolatey..."
+          choco install docker-cli
 
-          echo "Dumping /c/Program Files (x86)/"
-          ls "/c/Program Files (x86)" || true
+          echo "Looking for DockerCli.exe via PATH:"
+          which DockerCli.exe || true
+
+          echo "Looking for DockerCli.exe via hardcoded path:"
+          ls "/c/Program Files/Docker/Docker"
+
+          echo "Dumping all program files:"
+          ls "/c/Program Files"
 
           echo "Building Docker images"
           ./docker-images/build-images.sh mingw-x64
