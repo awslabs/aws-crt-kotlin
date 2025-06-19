@@ -142,7 +142,7 @@ jobs:
         shell: bash
         run: |
           echo "Installing docker via chocolatey..."
-          choco install docker-desktop || cat "/c/ProgramData/chocolatey/logs/chocolatey.log"
+          choco install -y -v docker-desktop
 
           echo "Looking for DockerCli.exe via hardcoded path:"
           ls "/c/Program Files/Docker/Docker" || true
