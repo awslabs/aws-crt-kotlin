@@ -138,15 +138,16 @@ jobs:
           submodules: true
       - name: Setup build environment
         uses: ./.github/actions/setup-build
-      - name: Configure Docker Images
-        shell: bash
+      - name: Install Docker
         run: |
           echo "Installing docker via chocolatey..."
           choco install -y -v docker-desktop
 
           echo "Looking for DockerCli.exe via hardcoded path:"
           ls "/c/Program Files/Docker/Docker" || true
-
+      - name: Configure Docker Images
+        shell: bash
+        run: |
           echo "Building Docker images"
           ./docker-images/build-images.sh mingw-x64
 
