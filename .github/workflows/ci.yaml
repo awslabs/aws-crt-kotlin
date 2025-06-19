@@ -141,14 +141,15 @@ jobs:
       - name: Configure Docker Images
         shell: bash
         run: |
-          echo "Checking for DockerCli.exe via which"
-          which DockerCli.exe || true
+          echo "Dumping /c/Program Files/"
+          ls "/c/Program Files" || true
 
-          echo "Checking for DockerCli.exe via path"
-          ls /c/Program\ Files/Docker/Docker/DockerCli.exe
+          echo "Dumping /c/Program Files (x86)/"
+          ls "/c/Program Files (x86)" || true
 
           echo "Building Docker images"
           ./docker-images/build-images.sh mingw-x64
+
           echo "Built images:"
           ls dockcross-*
       - name: Build and Test ${{ env.PACKAGE_NAME }}
