@@ -144,7 +144,7 @@ jobs:
           echo "Building Docker images"
           ./docker-images/build-all.sh
           echo "Built images:"
-          ls -alsh dockcross-*
+          ls dockcross-*
       - name: Build and Test ${{ env.PACKAGE_NAME }}
         run: |
           ./gradlew build

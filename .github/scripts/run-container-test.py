@@ -116,6 +116,7 @@ def create_docker_image(opts, oci_exe, base_image_name, packages):
         "build",
         "-t",
         image_name,
+        ".",
     ])
     shell(cmd)
 
