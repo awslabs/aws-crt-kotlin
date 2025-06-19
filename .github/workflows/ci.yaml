@@ -144,14 +144,8 @@ jobs:
           echo "Installing docker-cli via chocolatey..."
           choco install docker-cli
 
-          echo "Looking for DockerCli.exe via PATH:"
-          which DockerCli.exe || true
-
           echo "Looking for DockerCli.exe via hardcoded path:"
-          ls "/c/Program Files/Docker/Docker"
-
-          echo "Dumping all program files:"
-          ls "/c/Program Files"
+          ls "/c/ProgramData/chocolatey/lib/docker-cli" || true
 
           echo "Building Docker images"
           ./docker-images/build-images.sh mingw-x64
