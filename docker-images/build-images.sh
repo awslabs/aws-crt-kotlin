@@ -28,7 +28,7 @@ fi
 echo "using container executor OCI_EXE=$OCI_EXE"
 
 if [ "$#" -gt 0 ]; then
-  IMAGES=($@)
+  IMAGES=("$@")
 else
   IMAGES=(
     "linux-x64"

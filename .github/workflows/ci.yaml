@@ -78,7 +78,7 @@ jobs:
         uses: ./.github/actions/setup-build
       - name: Configure Docker Images
         run: |
-          ./docker-images/build-all.sh
+          ./docker-images/build-images.sh linux-x64 linux-arm64
       - name: Build and Test ${{ env.PACKAGE_NAME }}
         run: |
           ./gradlew build
@@ -142,7 +142,7 @@ jobs:
         shell: bash
         run: |
           echo "Building Docker images"
-          ./docker-images/build-all.sh
+          ./docker-images/build-images.sh mingw-x64
           echo "Built images:"
           ls dockcross-*
       - name: Build and Test ${{ env.PACKAGE_NAME }}
