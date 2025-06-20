@@ -147,16 +147,17 @@ jobs:
 #          echo "Looking for DockerCli.exe via hardcoded path:"
 #          ls "/c/Program Files/Docker/Docker" || true
 
-      - name: Install Podman?
-        run: |
-          echo "Installing podman via chocolatey..."
-          choco install -y -v podman-desktop
+#      - name: Install Podman?
+#        run: |
+#          echo "Installing podman via chocolatey..."
+#          choco install -y -v podman-desktop
+#
+#          echo "Looking for podman in PATH:"
+#          podman info || echo "podman not found in PATH"
+#
+#          echo "Dumping Program Files:"
+#          ls "C:\Program Files\"
 
-          echo "Looking for podman in PATH:"
-          podman info || echo "podman not found in PATH"
-
-          echo "Dumping Program Files:"
-          ls "C:\Program Files\"
       - name: Configure Docker Images
         shell: bash
         run: |
