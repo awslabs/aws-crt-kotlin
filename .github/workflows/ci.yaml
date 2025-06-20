@@ -138,13 +138,25 @@ jobs:
           submodules: true
       - name: Setup build environment
         uses: ./.github/actions/setup-build
-      - name: Install Docker
-        run: |
-          echo "Installing docker via chocolatey..."
-          choco install -y -v docker-desktop
 
-          echo "Looking for DockerCli.exe via hardcoded path:"
-          ls "/c/Program Files/Docker/Docker" || true
+#      - name: Install Docker
+#        run: |
+#          echo "Installing docker via chocolatey..."
+#          choco install -y -v docker-desktop
+#
+#          echo "Looking for DockerCli.exe via hardcoded path:"
+#          ls "/c/Program Files/Docker/Docker" || true
+
+      - name: Install Podman?
+        run: |
+          echo "Installing podman via chocolatey..."
+          choco install -y -v podman-desktop
+
+          echo "Looking for podman in PATH:"
+          podman info || echo "podman not found in PATH"
+
+          echo "Dumping Program Files:"
+          ls "C:\Program Files\"
       - name: Configure Docker Images
         shell: bash
         run: |
