@@ -138,6 +138,9 @@ jobs:
           submodules: true
       - name: Setup build environment
         uses: ./.github/actions/setup-build
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
 
 #      - name: Install Docker
 #        run: |
@@ -158,16 +161,18 @@ jobs:
 #          echo "Dumping Program Files:"
 #          ls "C:\Program Files\"
 
-      - name: Configure Docker Images
-        shell: bash
-        run: |
-          echo "Building Docker images"
-          ./docker-images/build-images.sh mingw-x64
+#      - name: Configure Docker Images
+#        shell: bash
+#        run: |
+#          echo "Building Docker images"
+#          ./docker-images/build-images.sh mingw-x64
+#
+#          echo "Built images:"
+#          ls dockcross-*
 
-          echo "Built images:"
-          ls dockcross-*
       - name: Build and Test ${{ env.PACKAGE_NAME }}
         run: |
+          # ./gradlew build -Paws.sdk.kotlin.crt.disableCrossCompile=mingw_x64
           ./gradlew build
       - name: Save Test Reports
         if: failure()
