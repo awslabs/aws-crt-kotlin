@@ -7,10 +7,6 @@ on:
       - '!main'
 
 env:
-  BUILDER_VERSION: v0.8.22
-  BUILDER_SOURCE: releases
-  BUILDER_HOST: https://d19elf31gohf1l.cloudfront.net
-  PACKAGE_NAME: aws-crt-kotlin
   RUN: ${{ github.run_id }}-${{ github.run_number }}
 
 jobs:
@@ -29,19 +25,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Configure JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'corretto'
-          java-version: 17
-          cache: 'gradle'
-
-      - name: Build and Test ${{ env.PACKAGE_NAME }}
+      - name: Build and Test
         run: |
-          python3 -c "from urllib.request import urlretrieve; urlretrieve('${{ env.BUILDER_HOST }}/${{ env.BUILDER_SOURCE }}/${{ env.BUILDER_VERSION }}/builder.pyz?run=${{ env.RUN }}', 'builder.pyz')"
-          chmod a+x builder.pyz
           echo "kotlinWarningsAsErrors=true" >> $GITHUB_WORKSPACE/local.properties
-          ./builder.pyz build -p ${{ env.PACKAGE_NAME }}
+          ./gradlew allTests
 
   macos-compat:
     runs-on: macos-latest
@@ -58,19 +45,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Configure JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'corretto'
-          java-version: 17
-          cache: 'gradle'
-
-      - name: Build and Test ${{ env.PACKAGE_NAME }}
+      - name: Build and Test
         run: |
-          python3 -c "from urllib.request import urlretrieve; urlretrieve('${{ env.BUILDER_HOST }}/${{ env.BUILDER_SOURCE }}/${{ env.BUILDER_VERSION }}/builder.pyz?run=${{ env.RUN }}', 'builder.pyz')"
-          chmod a+x builder.pyz
           echo "kotlinWarningsAsErrors=true" >> $GITHUB_WORKSPACE/local.properties
-          ./builder.pyz build -p ${{ env.PACKAGE_NAME }}
+          ./gradlew allTests
 
   windows-compat:
     runs-on: windows-latest
@@ -87,14 +65,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Configure JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'corretto'
-          java-version: 17
-          cache: 'gradle'
-
-      - name: Build and Test ${{ env.PACKAGE_NAME }}
+      - name: Build and Test
         run: |
-          python3 -c "from urllib.request import urlretrieve; urlretrieve('${{ env.BUILDER_HOST }}/${{ env.BUILDER_SOURCE }}/${{ env.BUILDER_VERSION }}/builder.pyz?run=${{ env.RUN }}', 'builder.pyz')"
-          python3 builder.pyz build -p ${{ env.PACKAGE_NAME }}
+          echo "kotlinWarningsAsErrors=true" >> $GITHUB_WORKSPACE/local.properties
+          ./gradlew allTests
