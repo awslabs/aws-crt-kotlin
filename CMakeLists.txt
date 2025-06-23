@@ -138,7 +138,7 @@ function(bundle_static_library name deps)
             COMMAND_EXPAND_LISTS
         )
 
-    elseif (CMAKE_C_COMPILER_ID MATCHES "^(Clang|GNU)$")
+    elseif (CMAKE_C_COMPILER_ID MATCHES "^(Clang|GNU|MSVC)$")
         # archive tool needs to support -M flag 
         file(WRITE ${CMAKE_BINARY_DIR}/${name}.ar.in "CREATE ${tgt_full_name}\n")
 
