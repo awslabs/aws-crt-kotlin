@@ -138,9 +138,9 @@ jobs:
           submodules: true
       - name: Setup build environment
         uses: ./.github/actions/setup-build
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
 
+#      - name: Set up QEMU
+#        uses: docker/setup-qemu-action@v3
 
 #      - name: Install Docker
 #        run: |
@@ -172,8 +172,7 @@ jobs:
 
       - name: Build and Test ${{ env.PACKAGE_NAME }}
         run: |
-          # ./gradlew build -Paws.sdk.kotlin.crt.disableCrossCompile=mingw_x64
-          ./gradlew build
+          ./gradlew build -Paws.sdk.kotlin.crt.disableCrossCompile=mingw_x64
       - name: Save Test Reports
         if: failure()
         uses: actions/upload-artifact@v4

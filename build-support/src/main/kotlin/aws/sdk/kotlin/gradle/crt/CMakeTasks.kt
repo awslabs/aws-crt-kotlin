@@ -220,25 +220,31 @@ private val requiresExplicitBash = setOf(
 )
 
 private fun runCmake(project: Project, target: KotlinNativeTarget, cmakeArgs: List<String>) {
+    val disableCrossCompile = (project.properties["aws.sdk.kotlin.crt.disableCrossCompile"] as? String ?: "")
+        .split(',')
+        .map { it.trim() }
+        .toSet()
+
+    val useContainer = target.konanTarget in containerCompileTargets && target.konanTarget.name !in disableCrossCompile
+
     project.exec {
         workingDir(project.rootDir)
         val exeArgs = cmakeArgs.toMutableList()
-        val exeName = when {
-            target.konanTarget in containerCompileTargets -> {
-                // cross compiling via dockcross - set the docker exe to cmake
-                val containerScriptArgs = listOf("--args", "--pull=missing", "--", "cmake")
-                exeArgs.addAll(0, containerScriptArgs)
-                val script = "dockcross-" + target.konanTarget.name.replace("_", "-")
-                validateCrossCompileScriptsAvailable(project, script)
+        val exeName = if (useContainer) {
+            // cross compiling via dockcross - set the docker exe to cmake
+            val containerScriptArgs = listOf("--args", "--pull=missing", "--", "cmake")
+            exeArgs.addAll(0, containerScriptArgs)
+            val script = "dockcross-" + target.konanTarget.name.replace("_", "-")
+            validateCrossCompileScriptsAvailable(project, script)
 
-                if (target.konanTarget in requiresExplicitBash) {
-                    exeArgs.add(0, "./$script")
-                    "bash"
-                } else {
-                    "./$script"
-                }
+            if (target.konanTarget in requiresExplicitBash) {
+                exeArgs.add(0, "./$script")
+                "bash"
+            } else {
+                "./$script"
             }
-            else -> "cmake"
+        } else {
+            "cmake"
         }
 
         project.logger.info("$exeName ${exeArgs.joinToString(separator = " ")}")
