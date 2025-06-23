@@ -172,7 +172,7 @@ jobs:
 
       - name: Build and Test ${{ env.PACKAGE_NAME }}
         run: |
-          ./gradlew build -Paws.sdk.kotlin.crt.disableCrossCompile=mingw_x64
+          gradlew.bat build -Paws.sdk.kotlin.crt.disableCrossCompile=mingw_x64
       - name: Save Test Reports
         if: failure()
         uses: actions/upload-artifact@v4
