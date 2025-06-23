@@ -25,6 +25,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: Configure JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: 17
+          cache: 'gradle'
+
       - name: Build and Test
         run: |
           echo "kotlinWarningsAsErrors=true" >> $GITHUB_WORKSPACE/local.properties
@@ -45,6 +52,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: Configure JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: 17
+          cache: 'gradle'
+
       - name: Build and Test
         run: |
           echo "kotlinWarningsAsErrors=true" >> $GITHUB_WORKSPACE/local.properties
@@ -64,6 +78,13 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+
+      - name: Configure JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: 17
+          cache: 'gradle'
 
       - name: Build and Test
         run: |
