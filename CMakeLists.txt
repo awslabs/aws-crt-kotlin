@@ -164,6 +164,13 @@ function(bundle_static_library name deps)
         )
 
     elseif (CMAKE_C_COMPILER_ID MATCHES "^MSVC$")
+        message(STATUS "Dumping all cmake variables:")
+        get_cmake_property(_variableNames VARIABLES)
+        list (SORT _variableNames)
+        foreach (_variableName ${_variableNames})
+            message(STATUS "${_variableName}=${${_variableName}}")
+        endforeach()
+
         foreach(tgt IN LISTS deps)
             list(APPEND static_libs_full_names $<TARGET_FILE:${tgt}>)
         endforeach()
@@ -175,6 +182,7 @@ function(bundle_static_library name deps)
             VERBATIM
             COMMAND_EXPAND_LISTS
         )
+
     else()
         message(FATAL_ERROR "Unknown bundling for C compiler ${CMAKE_C_COMPILER_ID}!")
     endif()
