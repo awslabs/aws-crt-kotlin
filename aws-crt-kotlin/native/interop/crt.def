@@ -37,8 +37,8 @@ linkerOpts.mingw = -lcrypt32 -lsecur32 -lncrypt -lshlwapi
 
 # included libs are linked automatically, adding linkerOpts like `-laws-c-common` causes
 # issues downstream as it will search for that library still.
-staticLibraries = libaws-crt-kotlin.a
-staticLibraries.mingw_x64 = libaws-crt-kotlin.lib
+staticLibraries = aws-crt-kotlin
+# staticLibraries.mingw = aws-crt-kotlin.lib
 
 ---
 
