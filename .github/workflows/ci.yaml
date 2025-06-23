@@ -136,6 +136,18 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@v2
+#        with:
+#          msystem: ${{ matrix.platform.msystem }}
+#          install: >-
+#            SDL2
+#            autotools
+#            cmake
+#            gcc
+#            ninja
+#            pkg-config
+
       - name: Setup build environment
         uses: ./.github/actions/setup-build
 
@@ -171,8 +183,9 @@ jobs:
 #          ls dockcross-*
 
       - name: Build and Test ${{ env.PACKAGE_NAME }}
+        shell: msys2 {0}
         run: |
-          ./gradlew.bat build `-Paws.sdk.kotlin.crt.disableCrossCompile=mingw_x64
+          ./gradlew build -Paws.sdk.kotlin.crt.disableCrossCompile=mingw_x64
       - name: Save Test Reports
         if: failure()
         uses: actions/upload-artifact@v4
