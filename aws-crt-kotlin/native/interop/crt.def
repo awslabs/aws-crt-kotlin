@@ -36,8 +36,12 @@ linkerOpts.ios = -framework Security -framework Network
 linkerOpts.mingw = -lcrypt32 -lsecur32 -lncrypt -lshlwapi
 
 # included libs are linked automatically, adding linkerOpts like `-laws-c-common` causes
-# issues downstream as it will search for that library still.
-staticLibraries = libaws-crt-kotlin.a
+# issues downstream as it will search for that library still. Unfortunately, the name of the file to link is different
+# between OSes and the `staticLibraries` key requires a strict filename (e.g., libaws-crt-kotlin.a), not a raw library
+# name (e.g., aws-crt-kotlin) so we have to declare the statics for each target family independently.
+staticLibraries.linux = libaws-crt-kotlin.a
+staticLibraries.osx = libaws-crt-kotlin.a
+staticLibraries.ios = libaws-crt-kotlin.a
 staticLibraries.mingw = aws-crt-kotlin.lib
 
 ---
