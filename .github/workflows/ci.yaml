@@ -141,7 +141,7 @@ jobs:
         with:
           msystem: MINGW64
           install: >-
-            cmake
+            mingw-w64-x86_64-cmake
       - name: Setup build environment
         uses: ./.github/actions/setup-build
 
