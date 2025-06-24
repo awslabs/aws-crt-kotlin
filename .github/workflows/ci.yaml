@@ -138,16 +138,10 @@ jobs:
           submodules: true
       - name: Set up MSYS2
         uses: msys2/setup-msys2@v2
-#        with:
-#          msystem: ${{ matrix.platform.msystem }}
-#          install: >-
-#            SDL2
-#            autotools
-#            cmake
-#            gcc
-#            ninja
-#            pkg-config
-
+        with:
+          msystem: MINGW64
+          install: >-
+            cmake
       - name: Setup build environment
         uses: ./.github/actions/setup-build
 
