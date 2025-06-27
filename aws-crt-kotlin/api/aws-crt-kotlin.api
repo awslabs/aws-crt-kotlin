@@ -399,10 +399,10 @@ public final class aws/sdk/kotlin/crt/auth/signing/AwsSigningResult {
 public abstract interface class aws/sdk/kotlin/crt/http/Headers {
 	public static final field Companion Laws/sdk/kotlin/crt/http/Headers$Companion;
 	public abstract fun contains (Ljava/lang/String;)Z
-	public abstract fun contains (Ljava/lang/String;Ljava/lang/String;)Z
+	public fun contains (Ljava/lang/String;Ljava/lang/String;)Z
 	public abstract fun entries ()Ljava/util/Set;
-	public abstract fun forEach (Lkotlin/jvm/functions/Function2;)V
-	public abstract fun get (Ljava/lang/String;)Ljava/lang/String;
+	public fun forEach (Lkotlin/jvm/functions/Function2;)V
+	public fun get (Ljava/lang/String;)Ljava/lang/String;
 	public abstract fun getAll (Ljava/lang/String;)Ljava/util/List;
 	public abstract fun isEmpty ()Z
 	public abstract fun names ()Ljava/util/Set;
@@ -410,12 +410,6 @@ public abstract interface class aws/sdk/kotlin/crt/http/Headers {
 
 public final class aws/sdk/kotlin/crt/http/Headers$Companion {
 	public final fun build (Lkotlin/jvm/functions/Function1;)Laws/sdk/kotlin/crt/http/Headers;
-}
-
-public final class aws/sdk/kotlin/crt/http/Headers$DefaultImpls {
-	public static fun contains (Laws/sdk/kotlin/crt/http/Headers;Ljava/lang/String;Ljava/lang/String;)Z
-	public static fun forEach (Laws/sdk/kotlin/crt/http/Headers;Lkotlin/jvm/functions/Function2;)V
-	public static fun get (Laws/sdk/kotlin/crt/http/Headers;Ljava/lang/String;)Ljava/lang/String;
 }
 
 public final class aws/sdk/kotlin/crt/http/HeadersBuilder {
@@ -616,17 +610,12 @@ public final class aws/sdk/kotlin/crt/http/HttpRequest$Companion {
 
 public abstract interface class aws/sdk/kotlin/crt/http/HttpRequestBodyStream {
 	public static final field Companion Laws/sdk/kotlin/crt/http/HttpRequestBodyStream$Companion;
-	public abstract fun resetPosition ()Z
-	public abstract fun sendRequestBody (Laws/sdk/kotlin/crt/io/MutableBuffer;)Z
+	public fun resetPosition ()Z
+	public fun sendRequestBody (Laws/sdk/kotlin/crt/io/MutableBuffer;)Z
 }
 
 public final class aws/sdk/kotlin/crt/http/HttpRequestBodyStream$Companion {
 	public final fun fromByteArray ([B)Laws/sdk/kotlin/crt/http/HttpRequestBodyStream;
-}
-
-public final class aws/sdk/kotlin/crt/http/HttpRequestBodyStream$DefaultImpls {
-	public static fun resetPosition (Laws/sdk/kotlin/crt/http/HttpRequestBodyStream;)Z
-	public static fun sendRequestBody (Laws/sdk/kotlin/crt/http/HttpRequestBodyStream;Laws/sdk/kotlin/crt/io/MutableBuffer;)Z
 }
 
 public final class aws/sdk/kotlin/crt/http/HttpRequestBuilder {
@@ -680,32 +669,23 @@ public final class aws/sdk/kotlin/crt/http/HttpStreamMetricsJVMKt {
 }
 
 public abstract interface class aws/sdk/kotlin/crt/http/HttpStreamResponseHandler {
-	public abstract fun onMetrics (Laws/sdk/kotlin/crt/http/HttpStream;Laws/sdk/kotlin/crt/http/HttpStreamMetrics;)V
-	public abstract fun onResponseBody (Laws/sdk/kotlin/crt/http/HttpStream;Laws/sdk/kotlin/crt/io/Buffer;)I
+	public fun onMetrics (Laws/sdk/kotlin/crt/http/HttpStream;Laws/sdk/kotlin/crt/http/HttpStreamMetrics;)V
+	public fun onResponseBody (Laws/sdk/kotlin/crt/http/HttpStream;Laws/sdk/kotlin/crt/io/Buffer;)I
 	public abstract fun onResponseComplete (Laws/sdk/kotlin/crt/http/HttpStream;I)V
 	public abstract fun onResponseHeaders (Laws/sdk/kotlin/crt/http/HttpStream;IILjava/util/List;)V
-	public abstract fun onResponseHeadersDone (Laws/sdk/kotlin/crt/http/HttpStream;I)V
-}
-
-public final class aws/sdk/kotlin/crt/http/HttpStreamResponseHandler$DefaultImpls {
-	public static fun onMetrics (Laws/sdk/kotlin/crt/http/HttpStreamResponseHandler;Laws/sdk/kotlin/crt/http/HttpStream;Laws/sdk/kotlin/crt/http/HttpStreamMetrics;)V
-	public static fun onResponseBody (Laws/sdk/kotlin/crt/http/HttpStreamResponseHandler;Laws/sdk/kotlin/crt/http/HttpStream;Laws/sdk/kotlin/crt/io/Buffer;)I
-	public static fun onResponseHeadersDone (Laws/sdk/kotlin/crt/http/HttpStreamResponseHandler;Laws/sdk/kotlin/crt/http/HttpStream;I)V
+	public fun onResponseHeadersDone (Laws/sdk/kotlin/crt/http/HttpStream;I)V
 }
 
 public abstract interface class aws/sdk/kotlin/crt/io/Buffer {
 	public static final field Companion Laws/sdk/kotlin/crt/io/Buffer$Companion;
 	public abstract fun copyTo ([BI)I
+	public static synthetic fun copyTo$default (Laws/sdk/kotlin/crt/io/Buffer;[BIILjava/lang/Object;)I
 	public abstract fun getLen ()I
 	public abstract fun readAll ()[B
 }
 
 public final class aws/sdk/kotlin/crt/io/Buffer$Companion {
 	public final fun getEmpty ()Laws/sdk/kotlin/crt/io/Buffer;
-}
-
-public final class aws/sdk/kotlin/crt/io/Buffer$DefaultImpls {
-	public static synthetic fun copyTo$default (Laws/sdk/kotlin/crt/io/Buffer;[BIILjava/lang/Object;)I
 }
 
 public final class aws/sdk/kotlin/crt/io/BufferKt {

@@ -1,12 +1,12 @@
 [versions]
-kotlin-version = "2.1.0"
+kotlin-version = "2.2.0"
 
-aws-kotlin-repo-tools-version = "0.4.25"
+aws-kotlin-repo-tools-version = "0.4.29"
 
 # libs
 crt-java-version = "0.38.1"
 coroutines-version = "1.9.0"
-binary-compatibility-validator-version = "0.16.3"
+binary-compatibility-validator-version = "0.18.0"
 
 # testing
 junit-version = "5.10.1"
@@ -15,7 +15,6 @@ mock-server-version = "5.15.0"
 # fixme - remove in favor of clikt
 kotlinx-cli-version = "0.3.6"
 
-
 [libraries]
 crt-java = { module = "software.amazon.awssdk.crt:aws-crt", version.ref = "crt-java-version" }
 
@@ -23,7 +22,6 @@ kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "
 kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin-version"}
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin-version" }
 kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin-version" }
-
 
 kotlinx-coroutines-debug = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-debug", version.ref = "coroutines-version" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines-version" }
