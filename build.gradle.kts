@@ -43,6 +43,7 @@ subprojects {
             jvmTarget.set(JvmTarget.JVM_1_8)
             freeCompilerArgs.add("-Xjdk-release=1.8")
             freeCompilerArgs.add("-Xexpect-actual-classes")
+            freeCompilerArgs.add("-jvm-default=no-compatibility") // https://youtrack.jetbrains.com/issue/KT-77376
         }
     }
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile> {
@@ -69,7 +70,3 @@ val lintPaths = listOf(
 )
 
 configureLinting(lintPaths)
-
-apiValidation {
-    ignoredProjects += setOf("elasticurl")
-}
