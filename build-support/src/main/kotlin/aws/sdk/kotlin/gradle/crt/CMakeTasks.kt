@@ -225,9 +225,8 @@ private fun runCmake(project: Project, target: KotlinNativeTarget, cmakeArgs: Li
         .map { it.trim() }
         .toSet()
 
-    val useContainer =
-        target.konanTarget in containerCompileTargets &&
-	target.konanTarget.name !in disableContainerTargets
+    val useContainer = target.konanTarget in containerCompileTargets &&
+        target.konanTarget.name !in disableContainerTargets
 
     project.exec {
         workingDir(project.rootDir)
