@@ -162,8 +162,22 @@ function(bundle_static_library name deps)
             COMMENT "Bundling ${name}"
             VERBATIM
         )
+
+    elseif (CMAKE_C_COMPILER_ID MATCHES "^MSVC$")
+        foreach(tgt IN LISTS deps)
+            list(APPEND static_libs_full_names $<TARGET_FILE:${tgt}>)
+        endforeach()
+
+        add_custom_command(
+            COMMAND ${CMAKE_AR} /OUT:${tgt_full_name} ${static_libs_full_names}
+            OUTPUT ${tgt_full_name}
+            COMMENT "Bundling ${name}"
+            VERBATIM
+            COMMAND_EXPAND_LISTS
+        )
+
     else()
-        message(FATAL_ERROR "Unknown bundling!")
+        message(FATAL_ERROR "Unknown bundling for C compiler ${CMAKE_C_COMPILER_ID}!")
     endif()
 
     add_custom_target(bundling_target ALL DEPENDS ${tgt_full_name})

@@ -33,6 +33,7 @@ headerFilter = aws/common/* aws/io/* aws/http/* aws/compression/* aws/auth/* aws
 
 linkerOpts.osx = -framework Security -framework Network
 linkerOpts.ios = -framework Security -framework Network
+linkerOpts.mingw = -lcrypt32 -lsecur32 -lncrypt -lshlwapi
 
 # included libs are linked automatically, adding linkerOpts like `-laws-c-common` causes
 # issues downstream as it will search for that library still.

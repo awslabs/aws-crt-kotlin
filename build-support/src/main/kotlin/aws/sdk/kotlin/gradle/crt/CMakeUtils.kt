@@ -87,3 +87,6 @@ val KotlinNativeTarget.cmakeBuildTaskName: String
 
 val KotlinNativeTarget.cmakeInstallTaskName: String
     get() = namedSuffix("cmakeInstall", capitalized = true)
+
+val File.slashPath: String
+    get() = path.replace(File.separatorChar, '/')
