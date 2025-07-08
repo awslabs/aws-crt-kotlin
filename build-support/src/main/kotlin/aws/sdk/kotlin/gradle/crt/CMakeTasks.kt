@@ -220,12 +220,14 @@ private val requiresExplicitBash = setOf(
 )
 
 private fun runCmake(project: Project, target: KotlinNativeTarget, cmakeArgs: List<String>) {
-    val disableCrossCompile = (project.properties["aws.sdk.kotlin.crt.disableCrossCompile"] as? String ?: "")
+    val disableContainerTargets = (project.properties["aws.crt.disableContainerTargets"] as? String ?: "")
         .split(',')
         .map { it.trim() }
         .toSet()
 
-    val useContainer = target.konanTarget in containerCompileTargets && target.konanTarget.name !in disableCrossCompile
+    val useContainer =
+        target.konanTarget in containerCompileTargets &&
+	target.konanTarget.name !in disableContainerTargets
 
     project.exec {
         workingDir(project.rootDir)
@@ -261,8 +263,6 @@ private fun validateCrossCompileScriptsAvailable(project: Project, script: Strin
         the cross compile scripts.
         
         e.g. `./docker-images/build-all.sh`
-        
-        Alternatively disable cross compilation by setting the property `-Paws.sdk.kotlin.crt.disableCrossCompile=true`
         """.trimIndent()
         error(message)
     }
