@@ -209,12 +209,20 @@ private fun Project.registerCmakeInstallTask(
     }
 }
 
+/**
+ * Konan targets for which a container will be used execute CMake tasks. Targets that do not appear in this list or are
+ * disabled by `aws.sdk.kotlin.crt.disableCrossCompile` will be compiled without using a container (i.e., in the same
+ * shell executing Gradle).
+ */
 private val containerCompileTargets = setOf(
     KonanTarget.LINUX_X64,
     KonanTarget.LINUX_ARM64,
     KonanTarget.MINGW_X64,
 )
 
+/**
+ * Konan targets which require explicitly running CMake inside of Bash
+ */
 private val requiresExplicitBash = setOf(
     KonanTarget.MINGW_X64,
 )
