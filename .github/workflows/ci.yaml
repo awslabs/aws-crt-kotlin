@@ -28,6 +28,14 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
+
+      - name: Configure JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: 17
+          cache: 'gradle'
+
       - name: Setup build environment
         uses: ./.github/actions/setup-build
       - name: Test with ${{ matrix.java-version }}

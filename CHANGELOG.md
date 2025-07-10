@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.9.2] - 06/18/2025
+
+### Fixes
+* Update the set of supported `TlsCipherPreference` values to reflect the latest capabilities/support from CRT
+
 ## [0.9.1] - 01/28/2025
 
 ### Fixes
