@@ -69,7 +69,3 @@ val lintPaths = listOf(
 )
 
 configureLinting(lintPaths)
-
-apiValidation {
-    ignoredProjects += setOf("elasticurl")
-}
