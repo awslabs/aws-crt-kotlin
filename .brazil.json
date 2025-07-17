@@ -7,7 +7,7 @@
   },
   "packageHandlingRules": {
     "versioning": {
-      "defaultVersionLayout": "{MAJOR}.{MINOR}.x"
+      "defaultVersionLayout": "{MAJOR}.x"
     },
     "rename": {
       "aws.sdk.kotlin.crt:aws-crt-kotlin": "AwsCrtKotlin"
