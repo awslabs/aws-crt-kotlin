@@ -27,15 +27,8 @@ internal actual fun isCipherSupported(cipher: TlsCipherPreference): Boolean =
 
 internal actual fun isAlpnSupported(): Boolean = TlsContextOptionsJni.isAlpnSupported()
 
-@Suppress("DEPRECATION")
 private fun TlsCipherPreference.into(): TlsCipherPreferenceJni = when (this) {
     TlsCipherPreference.SYSTEM_DEFAULT -> TlsCipherPreferenceJni.TLS_CIPHER_SYSTEM_DEFAULT
-    TlsCipherPreference.KMS_PQ_TLS_V1_0_2019_06 -> TlsCipherPreferenceJni.TLS_CIPHER_KMS_PQ_TLSv1_0_2019_06
-    TlsCipherPreference.KMS_PQ_SIKE_TLS_V1_0_2019_11 -> TlsCipherPreferenceJni.TLS_CIPHER_PREF_KMS_PQ_SIKE_TLSv1_0_2019_11
-    TlsCipherPreference.KMS_PQ_TLS_V1_0_2020_02 -> TlsCipherPreferenceJni.TLS_CIPHER_PREF_KMS_PQ_TLSv1_0_2020_02
-    TlsCipherPreference.KMS_PQ_SIKE_TLS_V1_0_2020_02 -> TlsCipherPreferenceJni.TLS_CIPHER_PREF_KMS_PQ_SIKE_TLSv1_0_2020_02
-    TlsCipherPreference.KMS_PQ_TLS_V1_0_2020_07 -> TlsCipherPreferenceJni.TLS_CIPHER_PREF_KMS_PQ_TLSv1_0_2020_07
-    TlsCipherPreference.PQ_TLS_V1_0_2021_05 -> TlsCipherPreferenceJni.TLS_CIPHER_PREF_PQ_TLSv1_0_2021_05
     TlsCipherPreference.PQ_TLSV1_2_2024_10 -> TlsCipherPreferenceJni.TLS_CIPHER_PREF_PQ_TLSv1_2_2023
     TlsCipherPreference.PQ_DEFAULT -> TlsCipherPreferenceJni.TLS_CIPHER_PQ_DEFAULT
 }

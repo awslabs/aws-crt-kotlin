@@ -70,9 +70,5 @@ val lintPaths = listOf(
 
 configureLinting(lintPaths)
 
-apiValidation {
-    ignoredProjects += setOf("elasticurl")
-}
-
 // https://github.com/jreleaser/jreleaser/issues/1492
 tasks.register("clean") {}
