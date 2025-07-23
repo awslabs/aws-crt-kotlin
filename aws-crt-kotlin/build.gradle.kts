@@ -100,6 +100,14 @@ configureIosSimulatorTasks()
 // Publishing
 configurePublishing("aws-crt-kotlin")
 
+// Temporary disable signing iOS artifacts because they are having trouble finding the signing key/passphrase
+// which are set via environment variables. Maybe the environment is not passed through to iOS builds?
+tasks.withType<Sign>().configureEach {
+    if (name.contains("ios", ignoreCase = true)) {
+        enabled = false
+    }
+}
+
 val linuxTargets: List<String> = listOf(
     "linuxX64",
     "linuxArm64",
