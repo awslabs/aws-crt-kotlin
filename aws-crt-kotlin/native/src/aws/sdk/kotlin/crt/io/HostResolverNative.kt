@@ -19,8 +19,7 @@ public actual class HostResolver private constructor(
     private val elg: EventLoopGroup,
     private val manageElg: Boolean,
     private val maxEntries: Int,
-) :
-    NativeHandle<aws_host_resolver>,
+) : NativeHandle<aws_host_resolver>,
     Closeable,
     AsyncShutdown {
 
