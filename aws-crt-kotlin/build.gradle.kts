@@ -111,6 +111,9 @@ tasks.withType<Sign>().configureEach {
     if (name.contains("jvm", ignoreCase = true)) {
         enabled = false
     }
+
+    // Also disable every other signing task, which has the same problem...
+    enabled = false
 }
 
 val linuxTargets: List<String> = listOf(
