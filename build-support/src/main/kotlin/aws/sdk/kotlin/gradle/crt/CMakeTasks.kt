@@ -10,6 +10,7 @@ import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -120,6 +121,10 @@ private fun Project.registerCmakeConfigureTask(
                 if (knTarget.konanTarget.isSimulatorSdk) {
                     args.add("-DCMAKE_OSX_SYSROOT=${knTarget.konanTarget.osxDeviceSdkName}")
                 }
+            }
+
+            if (HostManager.hostIsMingw && knTarget.konanTarget.family == Family.MINGW) {
+                args.add("-G \"MinGW Makefiles\"")
             }
 
             // FIXME? Compiling s2n-tls on GitHub Actions Ubuntu image (without Docker / cross-compilation) has errors like:
