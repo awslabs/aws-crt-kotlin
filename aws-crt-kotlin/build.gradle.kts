@@ -106,6 +106,11 @@ tasks.withType<Sign>().configureEach {
     if (name.contains("ios", ignoreCase = true)) {
         enabled = false
     }
+
+    // Also disable JVM, which has the same issue... for some reason...
+    if (name.contains("jvm", ignoreCase = true)) {
+        enabled = false
+    }
 }
 
 val linuxTargets: List<String> = listOf(
