@@ -124,7 +124,8 @@ private fun Project.registerCmakeConfigureTask(
             }
 
             if (HostManager.hostIsMingw && knTarget.konanTarget.family == Family.MINGW) {
-                args.add("-G \"MinGW Makefiles\"")
+                args.add("-G")
+                args.add("MinGW Makefiles")
             }
 
             // FIXME? Compiling s2n-tls on GitHub Actions Ubuntu image (without Docker / cross-compilation) has errors like:
