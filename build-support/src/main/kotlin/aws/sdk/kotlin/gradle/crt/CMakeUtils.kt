@@ -5,7 +5,6 @@
 package aws.sdk.kotlin.gradle.crt
 
 import org.gradle.api.Project
-import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
@@ -13,7 +12,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
 fun KotlinNativeTarget.namedSuffix(prefix: String, capitalized: Boolean = false): String =
-    prefix + if (capitalized) name.capitalized() else name
+    prefix + if (capitalized) name.uppercase() else name
 
 val KonanTarget.isSimulatorSdk: Boolean
     get() = when (this) {
