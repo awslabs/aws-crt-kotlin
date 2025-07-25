@@ -115,12 +115,6 @@ if (XCODE)
     set_property(GLOBAL PROPERTY XCODE_EMIT_EFFECTIVE_PLATFORM_NAME OFF)
 endif()
 
-if (WIN32)
-    # Ensure Windows SDK exposes newer APIs like PPROCESSOR_NUMBER
-    # https://github.com/aws/aws-iot-device-sdk-cpp-v2/issues/427
-    add_compile_definitions(_WIN32_WINNT=0x0601)
-endif()
-
 # Create a single static library that combines all the individual libs
 # We do this to work around issues with link order when including multiple
 # `staticLibraries` in the cinterop file.

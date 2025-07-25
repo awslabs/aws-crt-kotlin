@@ -123,10 +123,10 @@ private fun Project.registerCmakeConfigureTask(
                 }
             }
 
-            if (HostManager.hostIsMingw && knTarget.konanTarget.family == Family.MINGW) {
-                args.add("-G")
-                args.add("MSYS Makefiles")
-            }
+            // if (HostManager.hostIsMingw && knTarget.konanTarget.family == Family.MINGW) {
+            //     args.add("-G")
+            //     args.add("MSYS Makefiles")
+            // }
 
             // FIXME? Compiling s2n-tls on GitHub Actions Ubuntu image (without Docker / cross-compilation) has errors like:
             // In function ‘s2n_hash_algorithms_init’
