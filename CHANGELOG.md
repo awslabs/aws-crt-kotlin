@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.10.2] - 07/24/2025
+
+## [0.10.1] - 07/21/2025
+
+## [0.10.0] - 07/15/2025
+
+### Features
+* Upgrade to Kotlin 2.2.0
+
+### Fixes
+* [#1295](https://github.com/smithy-lang/smithy-kotlin/issues/1295) Enable building this project on JDK21 by setting -Xjdk-release flag
+
 ## [0.9.2] - 06/18/2025
 
 ### Fixes
