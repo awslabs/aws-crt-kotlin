@@ -5,8 +5,10 @@
 
 package aws.sdk.kotlin.crt.io
 
-import aws.sdk.kotlin.crt.*
 import aws.sdk.kotlin.crt.Allocator
+import aws.sdk.kotlin.crt.AsyncShutdown
+import aws.sdk.kotlin.crt.Closeable
+import aws.sdk.kotlin.crt.NativeHandle
 import aws.sdk.kotlin.crt.util.ShutdownChannel
 import aws.sdk.kotlin.crt.util.shutdownChannel
 import kotlinx.cinterop.*
@@ -16,12 +18,19 @@ import libcrt.aws_client_bootstrap_options
 import libcrt.aws_client_bootstrap_release
 
 @OptIn(ExperimentalForeignApi::class)
-public actual class ClientBootstrap actual constructor(
-    elg: EventLoopGroup,
-    hr: HostResolver,
+public actual class ClientBootstrap private constructor(
+    private val elg: EventLoopGroup,
+    private val manageElg: Boolean,
+    private val hr: HostResolver,
+    private val manageHr: Boolean,
 ) : NativeHandle<aws_client_bootstrap>,
     Closeable,
     AsyncShutdown {
+
+    public actual constructor() : this(EventLoopGroup(), true)
+    private constructor(elg: EventLoopGroup, manageElg: Boolean) : this(elg, manageElg, HostResolver(elg), true)
+    public actual constructor(elg: EventLoopGroup, hr: HostResolver) : this(elg, false, hr, false)
+
     private val shutdownCompleteChannel = shutdownChannel()
     private val channelStableRef = StableRef.create(shutdownCompleteChannel)
     override val ptr: CPointer<aws_client_bootstrap>
@@ -45,6 +54,9 @@ public actual class ClientBootstrap actual constructor(
 
     actual override fun close() {
         aws_client_bootstrap_release(ptr)
+
+        if (manageHr) hr.close()
+        if (manageElg) elg.close()
     }
 }
 

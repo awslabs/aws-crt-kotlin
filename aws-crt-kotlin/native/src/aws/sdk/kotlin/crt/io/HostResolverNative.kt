@@ -5,19 +5,27 @@
 
 package aws.sdk.kotlin.crt.io
 
-import aws.sdk.kotlin.crt.*
 import aws.sdk.kotlin.crt.Allocator
+import aws.sdk.kotlin.crt.AsyncShutdown
+import aws.sdk.kotlin.crt.Closeable
+import aws.sdk.kotlin.crt.NativeHandle
 import aws.sdk.kotlin.crt.util.ShutdownChannel
 import aws.sdk.kotlin.crt.util.shutdownChannel
 import kotlinx.cinterop.*
 import libcrt.*
 
 @OptIn(ExperimentalForeignApi::class)
-public actual class HostResolver actual constructor(elg: EventLoopGroup, maxEntries: Int) :
-    NativeHandle<aws_host_resolver>,
+public actual class HostResolver private constructor(
+    private val elg: EventLoopGroup,
+    private val manageElg: Boolean,
+    private val maxEntries: Int,
+) : NativeHandle<aws_host_resolver>,
     Closeable,
     AsyncShutdown {
-    public actual constructor(elg: EventLoopGroup) : this(elg, DEFAULT_MAX_ENTRIES)
+
+    public actual constructor(elg: EventLoopGroup, maxEntries: Int) : this(elg, false, maxEntries)
+    public actual constructor(elg: EventLoopGroup) : this(elg, false, DEFAULT_MAX_ENTRIES)
+    public actual constructor() : this(EventLoopGroup(), true, DEFAULT_MAX_ENTRIES)
 
     override val ptr: CPointer<aws_host_resolver>
 
@@ -49,6 +57,8 @@ public actual class HostResolver actual constructor(elg: EventLoopGroup, maxEntr
 
     actual override fun close() {
         aws_host_resolver_release(ptr)
+
+        if (manageElg) elg.close()
     }
 }
 

@@ -6,8 +6,6 @@
 package aws.sdk.kotlin.crt.io
 
 import aws.sdk.kotlin.crt.*
-import aws.sdk.kotlin.crt.Allocator
-import aws.sdk.kotlin.crt.awsAssertOpSuccess
 import aws.sdk.kotlin.crt.util.asAwsByteCursor
 import aws.sdk.kotlin.crt.util.free
 import aws.sdk.kotlin.crt.util.toAwsString

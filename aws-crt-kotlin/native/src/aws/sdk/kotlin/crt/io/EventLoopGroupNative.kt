@@ -5,13 +5,18 @@
 
 package aws.sdk.kotlin.crt.io
 
-import aws.sdk.kotlin.crt.*
 import aws.sdk.kotlin.crt.Allocator
+import aws.sdk.kotlin.crt.AsyncShutdown
+import aws.sdk.kotlin.crt.Closeable
+import aws.sdk.kotlin.crt.NativeHandle
 import aws.sdk.kotlin.crt.util.ShutdownChannel
 import aws.sdk.kotlin.crt.util.shutdownChannel
 import cnames.structs.aws_event_loop_group
 import kotlinx.cinterop.*
-import libcrt.*
+import libcrt.aws_event_loop_group_new
+import libcrt.aws_event_loop_group_options
+import libcrt.aws_event_loop_group_release
+import libcrt.aws_shutdown_callback_options
 
 /**
  * Creates a new event loop group for the I/O subsystem to use to run blocking I/O requests
