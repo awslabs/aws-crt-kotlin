@@ -90,7 +90,7 @@ class HashFunctionTest {
             md5.update(data, 4, 1)
         }
     }
-    
+
     @Test
     fun testSha1UpdateOutOfBounds() {
         val sha1 = Sha1()

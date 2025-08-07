@@ -63,7 +63,7 @@ internal class Sha(val initializeFn: InitializeHashFn) : HashFunction {
         require(offset + length <= input.size) {
             "offset + length must not exceed input size: $offset + $length > ${input.size}"
         }
-                
+
         if (input.isEmpty() || length == 0) {
             return
         }
