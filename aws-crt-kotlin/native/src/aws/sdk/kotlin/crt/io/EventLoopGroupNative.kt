@@ -60,6 +60,7 @@ public actual class EventLoopGroup actual constructor(maxThreads: Int) :
 
     actual override fun close() {
         aws_event_loop_group_release(ptr)
+        channelStableRef.dispose()
     }
 }
 
