@@ -126,7 +126,7 @@ public actual object AwsSigner {
 
 private fun signChunkSignable(signable: CPointer<aws_signable>, config: AwsSigningConfig): AwsSigningResult = memScoped {
     val callbackChannel = Channel<ByteArray>(1)
-    val callbackChannelStableRef = StableRef.create(callbackChannel) // Done
+    val callbackChannelStableRef = StableRef.create(callbackChannel)
 
     val nativeConfig: CPointer<aws_signing_config_base> = config.toNativeSigningConfig().reinterpret()
 
