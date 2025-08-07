@@ -69,4 +69,3 @@ See also:
 * https://www.iosdev.recipes/simctl/
 
 ### Windows
-Not supported yet.
