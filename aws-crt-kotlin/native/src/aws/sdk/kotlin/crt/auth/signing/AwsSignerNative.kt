@@ -33,34 +33,36 @@ public actual object AwsSigner {
         request: HttpRequest,
         config: AwsSigningConfig,
     ): AwsSigningResult = memScoped {
-        val nativeRequest = request.toNativeRequest().pin()
+        request.toNativeRequest().usePinned { nativeRequest ->
+            // Pair of HTTP request and callback channel containing the signature
+            val userData = nativeRequest to Channel<ByteArray>(1)
+            val userDataStableRef = StableRef.create(userData)
 
-        // Pair of HTTP request and callback channel containing the signature
-        val userData = nativeRequest to Channel<ByteArray>(1)
-        val userDataStableRef = StableRef.create(userData)
+            val signable = checkNotNull(
+                aws_signable_new_http_request(
+                    allocator = Allocator.Default.allocator,
+                    request = nativeRequest.get(),
+                ),
+            ) { "aws_signable_new_http_request" }
 
-        val signable = checkNotNull(
-            aws_signable_new_http_request(
-                allocator = Allocator.Default.allocator,
-                request = nativeRequest.get(),
-            ),
-        ) { "aws_signable_new_http_request" }
+            val nativeSigningConfig: CPointer<aws_signing_config_base> = config.toNativeSigningConfig().reinterpret()
 
-        val nativeSigningConfig: CPointer<aws_signing_config_base> = config.toNativeSigningConfig().reinterpret()
+            awsAssertOpSuccess(
+                aws_sign_request_aws(
+                    allocator = Allocator.Default.allocator,
+                    signable = signable,
+                    base_config = nativeSigningConfig,
+                    on_complete = staticCFunction(::signCallback),
+                    userdata = userDataStableRef.asCPointer(),
+                ),
+            ) { "sign() aws_sign_request_aws" }
 
-        awsAssertOpSuccess(
-            aws_sign_request_aws(
-                allocator = Allocator.Default.allocator,
-                signable = signable,
-                base_config = nativeSigningConfig,
-                on_complete = staticCFunction(::signCallback),
-                userdata = userDataStableRef.asCPointer(),
-            ),
-        ) { "sign() aws_sign_request_aws" }
-
-        val callbackChannel = userDataStableRef.get().second
-        val signature = callbackChannel.receive() // wait for async signing to complete....
-        return AwsSigningResult(nativeRequest.get().toHttpRequest(), signature)
+            val callbackChannel = userDataStableRef.get().second
+            val signature = callbackChannel.receive() // wait for async signing to complete....
+            return AwsSigningResult(nativeRequest.get().toHttpRequest(), signature).also {
+                userDataStableRef.dispose()
+            }
+        }
     }
 
     public actual suspend fun signChunk(
