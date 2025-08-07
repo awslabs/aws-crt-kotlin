@@ -5,10 +5,7 @@
 
 package aws.sdk.kotlin.crt.io
 
-import aws.sdk.kotlin.crt.Allocator
-import aws.sdk.kotlin.crt.AsyncShutdown
-import aws.sdk.kotlin.crt.Closeable
-import aws.sdk.kotlin.crt.NativeHandle
+import aws.sdk.kotlin.crt.*
 import aws.sdk.kotlin.crt.util.ShutdownChannel
 import aws.sdk.kotlin.crt.util.shutdownChannel
 import cnames.structs.aws_event_loop_group
@@ -28,6 +25,7 @@ import libcrt.aws_shutdown_callback_options
  */
 @OptIn(ExperimentalForeignApi::class)
 public actual class EventLoopGroup actual constructor(maxThreads: Int) :
+    WithCrt(),
     NativeHandle<aws_event_loop_group>,
     Closeable,
     AsyncShutdown {
