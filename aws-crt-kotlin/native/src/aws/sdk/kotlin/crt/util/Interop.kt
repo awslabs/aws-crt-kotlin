@@ -4,8 +4,8 @@
  */
 package aws.sdk.kotlin.crt.util
 
-import kotlinx.coroutines.channels.Channel
 import kotlinx.cinterop.StableRef
+import kotlinx.coroutines.channels.Channel
 
 /**
  * Channel used to signal async shutdown from C callback to a suspend fn

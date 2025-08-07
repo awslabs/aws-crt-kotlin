@@ -14,12 +14,12 @@ import aws.sdk.kotlin.crt.util.asAwsByteCursor
 import aws.sdk.kotlin.crt.util.initFromCursor
 import aws.sdk.kotlin.crt.util.toAwsString
 import aws.sdk.kotlin.crt.util.toKString
+import aws.sdk.kotlin.crt.util.use
 import kotlinx.cinterop.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.runBlocking
 import libcrt.*
 import platform.posix.UINT64_MAX
-import aws.sdk.kotlin.crt.util.use
 
 /**
  * Static class for a variety of AWS signing APIs.
