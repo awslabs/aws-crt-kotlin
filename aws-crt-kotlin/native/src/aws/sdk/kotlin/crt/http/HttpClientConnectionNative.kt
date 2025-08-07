@@ -29,7 +29,7 @@ internal class HttpClientConnectionNative(
     override fun makeRequest(httpReq: HttpRequest, handler: HttpStreamResponseHandler): HttpStream {
         val nativeReq = httpReq.toNativeRequest()
         val cbData = HttpStreamContext(handler, nativeReq)
-        val stableRef = StableRef.create(cbData) // FIXME Close this StableRef somehow...
+        val stableRef = StableRef.create(cbData) // FIXME Dispose this StableRef somehow...
         val reqOptions = cValue<aws_http_make_request_options> {
             self_size = sizeOf<aws_http_make_request_options>().convert()
             request = nativeReq
