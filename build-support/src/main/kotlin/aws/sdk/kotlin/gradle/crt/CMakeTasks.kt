@@ -124,7 +124,7 @@ private fun Project.registerCmakeConfigureTask(
             }
 
             // The default CMake generator on Windows is "NMake Makefiles", requiring nmake.exe which is not installed by default on many hosts.
-            // We use msys2/GCC to build, so configure "MSYS Makefiles" instead
+            // We use msys2/GCC to build, so configure "Unix Makefiles" instead
             if (HostManager.hostIsMingw && knTarget.konanTarget.family == Family.MINGW) {
                 args.addAll(listOf("-G", "Unix Makefiles"))
             }
