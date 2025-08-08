@@ -151,10 +151,11 @@ jobs:
       - name: Set up MSYS2
         uses: msys2/setup-msys2@v2
         with:
-          msystem: MINGW64
+          msystem: MSYS
           install: >-
-            mingw-w64-x86_64-cmake
-            mingw-w64-x86_64-gcc
+            cmake
+            make
+            gcc
       - name: Setup build environment
         uses: ./.github/actions/setup-build
       - name: Build and Test ${{ env.PACKAGE_NAME }}
