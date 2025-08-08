@@ -126,7 +126,7 @@ private fun Project.registerCmakeConfigureTask(
             // The default CMake generator on Windows is "NMake Makefiles", requiring nmake.exe which is not installed by default on many hosts.
             // We use msys2/GCC to build, so configure "MSYS Makefiles" instead
             if (HostManager.hostIsMingw && knTarget.konanTarget.family == Family.MINGW) {
-                args.addAll(listOf("-G", "Unix Makefiles"))
+                // args.addAll(listOf("-G", "Unix Makefiles"))
             }
 
             // FIXME? Compiling s2n-tls on GitHub Actions Ubuntu image (without Docker / cross-compilation) has errors like:
