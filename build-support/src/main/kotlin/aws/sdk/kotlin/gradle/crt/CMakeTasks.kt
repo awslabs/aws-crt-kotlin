@@ -123,12 +123,6 @@ private fun Project.registerCmakeConfigureTask(
                 }
             }
 
-            // The default CMake generator on Windows is "NMake Makefiles", requiring nmake.exe which is not installed by default on many hosts.
-            // We use msys2/GCC to build, so configure "Unix Makefiles" instead
-            if (HostManager.hostIsMingw && knTarget.konanTarget.family == Family.MINGW) {
-                args.addAll(listOf("-G", "MSYS Makefiles"))
-            }
-
             // FIXME? Compiling s2n-tls on GitHub Actions Ubuntu image (without Docker / cross-compilation) has errors like:
             // In function ‘s2n_hash_algorithms_init’
             // error: implicit declaration of function ‘EVP_MD_free’;
