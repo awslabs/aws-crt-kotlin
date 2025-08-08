@@ -14,6 +14,7 @@ import aws.sdk.kotlin.crt.util.asAwsByteCursor
 import aws.sdk.kotlin.crt.util.initFromCursor
 import aws.sdk.kotlin.crt.util.toAwsString
 import aws.sdk.kotlin.crt.util.toKString
+import aws.sdk.kotlin.crt.util.use
 import kotlinx.cinterop.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.runBlocking
@@ -33,34 +34,35 @@ public actual object AwsSigner {
         request: HttpRequest,
         config: AwsSigningConfig,
     ): AwsSigningResult = memScoped {
-        val nativeRequest = request.toNativeRequest().pin()
+        request.toNativeRequest().usePinned { nativeRequest ->
+            // Pair of HTTP request and callback channel containing the signature
+            val userData = nativeRequest to Channel<ByteArray>(1)
 
-        // Pair of HTTP request and callback channel containing the signature
-        val userData = nativeRequest to Channel<ByteArray>(1)
-        val userDataStableRef = StableRef.create(userData)
+            val signable = checkNotNull(
+                aws_signable_new_http_request(
+                    allocator = Allocator.Default.allocator,
+                    request = nativeRequest.get(),
+                ),
+            ) { "aws_signable_new_http_request" }
 
-        val signable = checkNotNull(
-            aws_signable_new_http_request(
-                allocator = Allocator.Default.allocator,
-                request = nativeRequest.get(),
-            ),
-        ) { "aws_signable_new_http_request" }
+            val nativeSigningConfig: CPointer<aws_signing_config_base> = config.toNativeSigningConfig().reinterpret()
 
-        val nativeSigningConfig: CPointer<aws_signing_config_base> = config.toNativeSigningConfig().reinterpret()
+            StableRef.create(userData).use { userDataStableRef ->
+                awsAssertOpSuccess(
+                    aws_sign_request_aws(
+                        allocator = Allocator.Default.allocator,
+                        signable = signable,
+                        base_config = nativeSigningConfig,
+                        on_complete = staticCFunction(::signCallback),
+                        userdata = userDataStableRef.asCPointer(),
+                    ),
+                ) { "sign() aws_sign_request_aws" }
 
-        awsAssertOpSuccess(
-            aws_sign_request_aws(
-                allocator = Allocator.Default.allocator,
-                signable = signable,
-                base_config = nativeSigningConfig,
-                on_complete = staticCFunction(::signCallback),
-                userdata = userDataStableRef.asCPointer(),
-            ),
-        ) { "sign() aws_sign_request_aws" }
-
-        val callbackChannel = userDataStableRef.get().second
-        val signature = callbackChannel.receive() // wait for async signing to complete....
-        return AwsSigningResult(nativeRequest.get().toHttpRequest(), signature)
+                val callbackChannel = userDataStableRef.get().second
+                val signature = callbackChannel.receive() // wait for async signing to complete....
+                return AwsSigningResult(nativeRequest.get().toHttpRequest(), signature)
+            }
+        }
     }
 
     public actual suspend fun signChunk(
@@ -194,7 +196,7 @@ private fun AwsSigningConfig.toNativeSigningConfig(): CPointer<aws_signing_confi
         aws_date_time_init_epoch_millis(date.ptr, this@toNativeSigningConfig.date.toULong())
 
         this@toNativeSigningConfig.shouldSignHeader?.let {
-            val shouldSignHeaderStableRef = StableRef.create(it)
+            val shouldSignHeaderStableRef = StableRef.create(it) // FIXME Dispose this StableRef somehow...
             should_sign_header = staticCFunction(::nativeShouldSignHeaderFn)
             should_sign_header_ud = shouldSignHeaderStableRef.asCPointer()
         }

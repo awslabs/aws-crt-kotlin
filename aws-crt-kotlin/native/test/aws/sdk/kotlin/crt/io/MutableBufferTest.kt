@@ -77,4 +77,17 @@ class MutableBufferTest : CrtTest() {
             assertEquals("a tay is a hammer; a lep is a ball", actual)
         }
     }
+
+    @Test
+    fun testEmptyByteArray() {
+        val dest = ByteArray(0)
+        val buffer = MutableBuffer.of(dest)
+
+        assertEquals(0, buffer.writeRemaining)
+
+        val written = buffer.write(byteArrayOf(1, 2, 3))
+        assertEquals(0, written)
+
+        buffer.close()
+    }
 }

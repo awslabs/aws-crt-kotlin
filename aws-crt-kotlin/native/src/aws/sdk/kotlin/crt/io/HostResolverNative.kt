@@ -57,6 +57,7 @@ public actual class HostResolver private constructor(
 
     actual override fun close() {
         aws_host_resolver_release(ptr)
+        channelStableRef.dispose()
 
         if (manageElg) elg.close()
     }
