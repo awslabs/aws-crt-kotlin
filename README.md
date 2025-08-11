@@ -69,3 +69,5 @@ See also:
 * https://www.iosdev.recipes/simctl/
 
 ### Windows
+Ensure Docker is installed, then build the image using `./docker-images/build-all.sh`. 
+Run a `./gradlew build` and the build and tests should be routed through to the container.
