@@ -29,7 +29,7 @@ internal class HttpClientConnectionNative(
     override fun makeRequest(httpReq: HttpRequest, handler: HttpStreamResponseHandler): HttpStream {
         val nativeReq = httpReq.toNativeRequest()
         val cbData = HttpStreamContext(handler, nativeReq)
-        val stableRef = StableRef.create(cbData) // FIXME Dispose this StableRef somehow...
+        val stableRef = StableRef.create(cbData)
         val reqOptions = cValue<aws_http_make_request_options> {
             self_size = sizeOf<aws_http_make_request_options>().convert()
             request = nativeReq
@@ -84,7 +84,8 @@ private fun onResponseHeaders(
     numHeaders: size_t,
     userdata: COpaquePointer?,
 ): Int {
-    val ctx = userdata?.asStableRef<HttpStreamContext>()?.get() ?: return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
+    val ctxStableRef = userdata?.asStableRef<HttpStreamContext>() ?: return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
+    val ctx = ctxStableRef?.get() ?: return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
     val stream = nativeStream?.let { HttpStreamNative(it) } ?: return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
 
     val hdrCnt = numHeaders.toInt()
@@ -105,6 +106,8 @@ private fun onResponseHeaders(
     } catch (ex: Exception) {
         log(LogLevel.Error, "onResponseHeaders: $ex")
         return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
+    } finally {
+        ctxStableRef.dispose()
     }
     return AWS_OP_SUCCESS
 }

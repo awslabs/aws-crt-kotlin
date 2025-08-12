@@ -112,7 +112,7 @@ internal fun inputStream(khandler: HttpRequestBodyStream): CPointer<aws_input_st
     val stream: aws_input_stream = Allocator.Default.alloc()
     stream.vtable = requestStreamVtable
     val impl = RequestBodyStream(khandler)
-    val stableRef = StableRef.create(impl) // FIXME Dispose this StableRef somehow...
+    val stableRef = StableRef.create(impl)
     stream.impl = stableRef.asCPointer()
     return stream.ptr
 }

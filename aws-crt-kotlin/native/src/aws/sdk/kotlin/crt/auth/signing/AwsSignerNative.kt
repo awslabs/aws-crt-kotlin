@@ -196,7 +196,7 @@ private fun AwsSigningConfig.toNativeSigningConfig(): CPointer<aws_signing_confi
         aws_date_time_init_epoch_millis(date.ptr, this@toNativeSigningConfig.date.toULong())
 
         this@toNativeSigningConfig.shouldSignHeader?.let {
-            val shouldSignHeaderStableRef = StableRef.create(it) // FIXME Dispose this StableRef somehow...
+            val shouldSignHeaderStableRef = StableRef.create(it)
             should_sign_header = staticCFunction(::nativeShouldSignHeaderFn)
             should_sign_header_ud = shouldSignHeaderStableRef.asCPointer()
         }
@@ -227,9 +227,12 @@ private fun nativeShouldSignHeaderFn(headerName: CPointer<aws_byte_cursor>?, use
         return true
     }
 
-    val kShouldSignHeaderFn = userData.asStableRef<ShouldSignHeaderFunction>().get()
+    val kShouldSignHeaderStableRef = userData.asStableRef<ShouldSignHeaderFunction>()
+    val kShouldSignHeaderFn = kShouldSignHeaderStableRef.get()
     val kHeaderName = headerName.pointed.toKString()
-    return kShouldSignHeaderFn(kHeaderName)
+    return kShouldSignHeaderFn(kHeaderName).also {
+        kShouldSignHeaderStableRef.dispose()
+    }
 }
 
 /**
