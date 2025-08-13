@@ -226,11 +226,10 @@ private fun nativeShouldSignHeaderFn(headerName: CPointer<aws_byte_cursor>?, use
         return true
     }
 
-    val kShouldSignHeaderStableRef = userData.asStableRef<ShouldSignHeaderFunction>()
-    val kShouldSignHeaderFn = kShouldSignHeaderStableRef.get()
-    val kHeaderName = headerName.pointed.toKString()
-    return kShouldSignHeaderFn(kHeaderName).also {
-        kShouldSignHeaderStableRef.dispose()
+    val kShouldSignHeaderStableRef = userData.asStableRef<ShouldSignHeaderFunction>().use {
+        val kShouldSignHeaderFn = it.get()
+        val kHeaderName = headerName.pointed.toKString()
+        return kShouldSignHeaderFn(kHeaderName)
     }
 }
 
