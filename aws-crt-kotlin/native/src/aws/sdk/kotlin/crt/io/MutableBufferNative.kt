@@ -91,7 +91,7 @@ private sealed interface InnerBuffer {
         init {
             pointer.pointed.len = 0.convert()
             pointer.pointed.capacity = dest.size.convert()
-            pointer.pointed.buffer =  pinned.takeUnless { dest.isEmpty() }
+            pointer.pointed.buffer = pinned.takeUnless { dest.isEmpty() }
                 ?.addressOf(0)
                 ?.reinterpret()
         }
