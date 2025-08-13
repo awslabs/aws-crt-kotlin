@@ -5,10 +5,7 @@
 
 package aws.sdk.kotlin.crt.io
 
-import aws.sdk.kotlin.crt.Allocator
-import aws.sdk.kotlin.crt.AsyncShutdown
-import aws.sdk.kotlin.crt.Closeable
-import aws.sdk.kotlin.crt.NativeHandle
+import aws.sdk.kotlin.crt.*
 import aws.sdk.kotlin.crt.util.ShutdownChannel
 import aws.sdk.kotlin.crt.util.shutdownChannel
 import kotlinx.cinterop.*
@@ -23,7 +20,8 @@ public actual class ClientBootstrap private constructor(
     private val manageElg: Boolean,
     private val hr: HostResolver,
     private val manageHr: Boolean,
-) : NativeHandle<aws_client_bootstrap>,
+) : WithCrt(),
+    NativeHandle<aws_client_bootstrap>,
     Closeable,
     AsyncShutdown {
 
