@@ -88,7 +88,7 @@ class HttpClientConnectionTest : CrtTest() {
     }
 
     /**
-     * Assert that an attempt to connect to the given [url] fails with the given [exceptionMessage]
+     * Assert that an attempt to connect to the given [url] fails with any of the given [exceptionMessages]
      */
     private suspend fun assertConnectFails(url: String, exceptionMessages: List<String>) {
         val ex = assertFails { connectAllCiphers(url) }
