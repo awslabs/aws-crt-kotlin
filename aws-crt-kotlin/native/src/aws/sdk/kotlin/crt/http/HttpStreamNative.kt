@@ -9,8 +9,8 @@ import aws.sdk.kotlin.crt.CrtRuntimeException
 import aws.sdk.kotlin.crt.NativeHandle
 import aws.sdk.kotlin.crt.awsAssertOpSuccess
 import aws.sdk.kotlin.crt.util.asAwsByteCursor
-import kotlinx.atomicfu.atomic
 import aws.sdk.kotlin.crt.util.use
+import kotlinx.atomicfu.atomic
 import kotlinx.cinterop.*
 import libcrt.*
 import kotlin.coroutines.Continuation
