@@ -5,15 +5,13 @@
 package aws.sdk.kotlin.crt.http
 
 import aws.sdk.kotlin.crt.*
-import aws.sdk.kotlin.crt.Allocator
-import aws.sdk.kotlin.crt.NativeHandle
-import aws.sdk.kotlin.crt.awsAssertOpSuccess
 import aws.sdk.kotlin.crt.io.Buffer
 import aws.sdk.kotlin.crt.io.ByteCursorBuffer
 import aws.sdk.kotlin.crt.util.asAwsByteCursor
 import aws.sdk.kotlin.crt.util.initFromCursor
 import aws.sdk.kotlin.crt.util.toKString
 import aws.sdk.kotlin.crt.util.withAwsByteCursor
+import kotlinx.atomicfu.atomic
 import kotlinx.cinterop.*
 import libcrt.*
 import platform.posix.size_t
@@ -21,14 +19,17 @@ import platform.posix.size_t
 internal class HttpClientConnectionNative(
     private val manager: HttpClientConnectionManager,
     override val ptr: CPointer<cnames.structs.aws_http_connection>,
-) : Closeable,
+) : WithCrt(),
+    Closeable,
     HttpClientConnection,
     NativeHandle<cnames.structs.aws_http_connection> {
+
+    private val closed = atomic(false)
 
     override val id: String = ptr.rawValue.toString()
     override fun makeRequest(httpReq: HttpRequest, handler: HttpStreamResponseHandler): HttpStream {
         val nativeReq = httpReq.toNativeRequest()
-        val cbData = HttpStreamContext(handler, nativeReq)
+        val cbData = HttpStreamContext(null, handler, nativeReq)
         val stableRef = StableRef.create(cbData)
         val reqOptions = cValue<aws_http_make_request_options> {
             self_size = sizeOf<aws_http_make_request_options>().convert()
@@ -50,7 +51,7 @@ internal class HttpClientConnectionNative(
             throw CrtRuntimeException("aws_http_connection_make_request()")
         }
 
-        return HttpStreamNative(stream)
+        return HttpStreamNative(stream).also { cbData.stream = it }
     }
 
     override fun shutdown() {
@@ -58,7 +59,9 @@ internal class HttpClientConnectionNative(
     }
 
     override fun close() {
-        manager.releaseConnection(this)
+        if (closed.compareAndSet(false, true)) {
+            manager.releaseConnection(this)
+        }
     }
 }
 
@@ -66,6 +69,12 @@ internal class HttpClientConnectionNative(
  * Userdata passed through the native callbacks for HTTP responses
  */
 private class HttpStreamContext(
+    /**
+     * The Kotlin stream object. This starts as null because the context is created before the stream itself. We need
+     * the stream in callbacks so we set it lazily.
+     */
+    var stream: HttpStreamNative? = null,
+
     /**
      * The actual Kotlin handler for each callback
      */
@@ -85,7 +94,7 @@ private fun onResponseHeaders(
     userdata: COpaquePointer?,
 ): Int {
     val ctx = userdata?.asStableRef<HttpStreamContext>()?.get() ?: return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
-    val stream = nativeStream?.let { HttpStreamNative(it) } ?: return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
+    val stream = ctx.stream ?: return AWS_OP_ERR
 
     val hdrCnt = numHeaders.toInt()
     val headers: List<HttpHeader>? = if (hdrCnt > 0 && headerArray != null) {
@@ -106,6 +115,7 @@ private fun onResponseHeaders(
         log(LogLevel.Error, "onResponseHeaders: $ex")
         return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
     }
+
     return AWS_OP_SUCCESS
 }
 
@@ -115,7 +125,8 @@ private fun onResponseHeaderBlockDone(
     userdata: COpaquePointer?,
 ): Int {
     val ctx = userdata?.asStableRef<HttpStreamContext>()?.get() ?: return AWS_OP_ERR
-    val stream = nativeStream?.let { HttpStreamNative(it) } ?: return AWS_OP_ERR
+    val stream = ctx.stream ?: return AWS_OP_ERR
+
     try {
         ctx.handler.onResponseHeadersDone(stream, blockType.value.toInt())
     } catch (ex: Exception) {
@@ -132,7 +143,7 @@ private fun onIncomingBody(
     userdata: COpaquePointer?,
 ): Int {
     val ctx = userdata?.asStableRef<HttpStreamContext>()?.get() ?: return AWS_OP_ERR
-    val stream = nativeStream?.let { HttpStreamNative(it) } ?: return AWS_OP_ERR
+    val stream = ctx.stream ?: return AWS_OP_ERR
 
     try {
         val body = if (data != null) ByteCursorBuffer(data) else Buffer.Empty
@@ -159,7 +170,8 @@ private fun onStreamComplete(
 ) {
     val stableRef = userdata?.asStableRef<HttpStreamContext>() ?: return
     val ctx = stableRef.get()
-    val stream = nativeStream?.let { HttpStreamNative(it) } ?: return
+    val stream = ctx.stream ?: return
+
     try {
         ctx.handler.onResponseComplete(stream, errorCode)
     } catch (ex: Exception) {

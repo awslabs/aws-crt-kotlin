@@ -4,12 +4,13 @@
  */
 package aws.sdk.kotlin.crt.util
 
+import aws.sdk.kotlin.crt.WithCrt
 import aws.sdk.kotlin.crt.util.hashing.Sha256
 
 /**
  * Utility object for various hash functions
  */
-public actual object Digest {
+public actual object Digest : WithCrt() {
     /**
      * Calculate the SHA-256 hash of the input [buffer]
      */

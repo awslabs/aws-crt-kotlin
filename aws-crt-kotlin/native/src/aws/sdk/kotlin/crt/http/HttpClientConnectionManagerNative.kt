@@ -6,14 +6,13 @@
 package aws.sdk.kotlin.crt.http
 
 import aws.sdk.kotlin.crt.*
-import aws.sdk.kotlin.crt.Allocator
-import aws.sdk.kotlin.crt.awsAssertOpSuccess
 import aws.sdk.kotlin.crt.io.SocketDomain
 import aws.sdk.kotlin.crt.io.SocketOptions
 import aws.sdk.kotlin.crt.io.SocketType
 import aws.sdk.kotlin.crt.io.requiresTls
 import aws.sdk.kotlin.crt.util.*
 import cnames.structs.aws_http_connection_manager
+import kotlinx.atomicfu.atomic
 import kotlinx.cinterop.*
 import libcrt.*
 import kotlin.coroutines.Continuation
@@ -23,8 +22,12 @@ import kotlin.coroutines.suspendCoroutine
 
 public actual class HttpClientConnectionManager actual constructor(
     public actual val options: HttpClientConnectionManagerOptions,
-) : Closeable,
+) : WithCrt(),
+    Closeable,
     AsyncShutdown {
+
+    private val closed = atomic(false)
+
     public actual val managerMetrics: HttpManagerMetrics
         get() = memScoped {
             val metrics = alloc<aws_http_manager_metrics>()
@@ -152,7 +155,9 @@ public actual class HttpClientConnectionManager actual constructor(
     }
 
     actual override fun close() {
-        aws_http_connection_manager_release(manager)
+        if (closed.compareAndSet(false, true)) {
+            aws_http_connection_manager_release(manager)
+        }
     }
 }
 

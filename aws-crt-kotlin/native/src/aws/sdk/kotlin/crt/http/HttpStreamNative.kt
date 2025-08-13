@@ -9,6 +9,7 @@ import aws.sdk.kotlin.crt.CrtRuntimeException
 import aws.sdk.kotlin.crt.NativeHandle
 import aws.sdk.kotlin.crt.awsAssertOpSuccess
 import aws.sdk.kotlin.crt.util.asAwsByteCursor
+import kotlinx.atomicfu.atomic
 import kotlinx.cinterop.*
 import libcrt.*
 import kotlin.coroutines.Continuation
@@ -20,6 +21,8 @@ internal class HttpStreamNative(
     override val ptr: CPointer<cnames.structs.aws_http_stream>,
 ) : HttpStream,
     NativeHandle<cnames.structs.aws_http_stream> {
+
+    private val closed = atomic(false)
 
     override val responseStatusCode: Int
         get() {
@@ -90,7 +93,9 @@ internal class HttpStreamNative(
     }
 
     override fun close() {
-        aws_http_stream_release(ptr)
+        if (closed.compareAndSet(false, true)) {
+            aws_http_stream_release(ptr)
+        }
     }
 }
 
