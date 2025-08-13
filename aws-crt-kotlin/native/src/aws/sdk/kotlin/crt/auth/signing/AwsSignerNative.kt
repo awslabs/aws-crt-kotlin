@@ -6,9 +6,7 @@
 package aws.sdk.kotlin.crt.auth.signing
 
 import aws.sdk.kotlin.crt.*
-import aws.sdk.kotlin.crt.Allocator
 import aws.sdk.kotlin.crt.auth.credentials.Credentials
-import aws.sdk.kotlin.crt.awsAssertOpSuccess
 import aws.sdk.kotlin.crt.http.*
 import aws.sdk.kotlin.crt.util.asAwsByteCursor
 import aws.sdk.kotlin.crt.util.initFromCursor
@@ -23,7 +21,7 @@ import platform.posix.UINT64_MAX
 /**
  * Static class for a variety of AWS signing APIs.
  */
-public actual object AwsSigner {
+public actual object AwsSigner : WithCrt() {
     public actual suspend fun signRequest(
         request: HttpRequest,
         config: AwsSigningConfig,
