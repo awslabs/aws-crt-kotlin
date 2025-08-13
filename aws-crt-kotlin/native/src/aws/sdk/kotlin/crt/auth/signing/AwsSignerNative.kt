@@ -12,6 +12,7 @@ import aws.sdk.kotlin.crt.util.asAwsByteCursor
 import aws.sdk.kotlin.crt.util.initFromCursor
 import aws.sdk.kotlin.crt.util.toAwsString
 import aws.sdk.kotlin.crt.util.toKString
+import aws.sdk.kotlin.crt.util.use
 import kotlinx.cinterop.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.runBlocking
@@ -226,7 +227,7 @@ private fun nativeShouldSignHeaderFn(headerName: CPointer<aws_byte_cursor>?, use
         return true
     }
 
-    val kShouldSignHeaderStableRef = userData.asStableRef<ShouldSignHeaderFunction>().use {
+    userData.asStableRef<ShouldSignHeaderFunction>().use {
         val kShouldSignHeaderFn = it.get()
         val kHeaderName = headerName.pointed.toKString()
         return kShouldSignHeaderFn(kHeaderName)
