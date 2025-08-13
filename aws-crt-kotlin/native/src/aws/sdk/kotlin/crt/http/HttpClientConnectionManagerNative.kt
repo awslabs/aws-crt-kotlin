@@ -135,9 +135,8 @@ public actual class HttpClientConnectionManager actual constructor(
     public actual suspend fun acquireConnection(): HttpClientConnection =
         suspendCoroutine { cont ->
             val cb = staticCFunction(::onConnectionAcquired)
-            StableRef.create(HttpConnectionAcquisitionRequest(cont, this)).use { userdata ->
-                aws_http_connection_manager_acquire_connection(manager, cb, userdata.asCPointer())
-            }
+            val userdata = StableRef.create(HttpConnectionAcquisitionRequest(cont, this))
+            aws_http_connection_manager_acquire_connection(manager, cb, userdata.asCPointer())
         }
 
     /**
@@ -158,7 +157,6 @@ public actual class HttpClientConnectionManager actual constructor(
     actual override fun close() {
         if (closed.compareAndSet(false, true)) {
             aws_http_connection_manager_release(manager)
-            shutdownCompleteStableRef.dispose()
         }
     }
 }
