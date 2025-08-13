@@ -10,6 +10,7 @@ import aws.sdk.kotlin.crt.io.ByteCursorBuffer
 import aws.sdk.kotlin.crt.util.asAwsByteCursor
 import aws.sdk.kotlin.crt.util.initFromCursor
 import aws.sdk.kotlin.crt.util.toKString
+import aws.sdk.kotlin.crt.util.use
 import aws.sdk.kotlin.crt.util.withAwsByteCursor
 import kotlinx.atomicfu.atomic
 import kotlinx.cinterop.*
@@ -94,32 +95,32 @@ private fun onResponseHeaders(
     userdata: COpaquePointer?,
 ): Int {
     val ctxStableRef = userdata?.asStableRef<HttpStreamContext>() ?: return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
-    val ctx = ctxStableRef?.get() ?: return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
-    val stream = ctx.stream ?: return AWS_OP_ERR
+    ctxStableRef.use {
+        val ctx = it.get()
+        val stream = ctx.stream ?: return AWS_OP_ERR
 
-    val hdrCnt = numHeaders.toInt()
-    val headers: List<HttpHeader>? = if (hdrCnt > 0 && headerArray != null) {
-        val kheaders = mutableListOf<HttpHeader>()
-        for (i in 0 until hdrCnt) {
-            val nativeHdr = headerArray[i]
-            val hdr = HttpHeader(nativeHdr.name.toKString(), nativeHdr.value.toKString())
-            kheaders.add(hdr)
+        val hdrCnt = numHeaders.toInt()
+        val headers: List<HttpHeader>? = if (hdrCnt > 0 && headerArray != null) {
+            val kheaders = mutableListOf<HttpHeader>()
+            for (i in 0 until hdrCnt) {
+                val nativeHdr = headerArray[i]
+                val hdr = HttpHeader(nativeHdr.name.toKString(), nativeHdr.value.toKString())
+                kheaders.add(hdr)
+            }
+            kheaders
+        } else {
+            null
         }
-        kheaders
-    } else {
-        null
-    }
 
-    try {
-        ctx.handler.onResponseHeaders(stream, stream.responseStatusCode, blockType.value.toInt(), headers)
-    } catch (ex: Exception) {
-        log(LogLevel.Error, "onResponseHeaders: $ex")
-        return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
-    } finally {
-        ctxStableRef.dispose()
-    }
+        try {
+            ctx.handler.onResponseHeaders(stream, stream.responseStatusCode, blockType.value.toInt(), headers)
+        } catch (ex: Exception) {
+            log(LogLevel.Error, "onResponseHeaders: $ex")
+            return aws_raise_error(AWS_ERROR_HTTP_CALLBACK_FAILURE.toInt())
+        }
 
-    return AWS_OP_SUCCESS
+        return AWS_OP_SUCCESS
+    }
 }
 
 private fun onResponseHeaderBlockDone(
