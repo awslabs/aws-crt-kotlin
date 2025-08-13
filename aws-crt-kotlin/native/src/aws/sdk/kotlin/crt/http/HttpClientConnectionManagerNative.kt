@@ -157,6 +157,7 @@ public actual class HttpClientConnectionManager actual constructor(
     actual override fun close() {
         if (closed.compareAndSet(false, true)) {
             aws_http_connection_manager_release(manager)
+            shutdownCompleteStableRef.dispose()
         }
     }
 }
