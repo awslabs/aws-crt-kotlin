@@ -52,6 +52,7 @@ public actual class ClientBootstrap private constructor(
 
     actual override fun close() {
         aws_client_bootstrap_release(ptr)
+        channelStableRef.dispose()
 
         if (manageHr) hr.close()
         if (manageElg) elg.close()

@@ -29,6 +29,12 @@ public class Md5 :
     private var md5 = checkNotNull(aws_md5_new(Allocator.Default)) { "aws_md5_new" }
 
     override fun update(input: ByteArray, offset: Int, length: Int) {
+        require(offset >= 0) { "offset must not be negative" }
+        require(length >= 0) { "length must not be negative" }
+        require(offset + length <= input.size) {
+            "offset + length must not exceed input size: $offset + $length > ${input.size}"
+        }
+
         if (input.isEmpty() || length == 0) {
             return
         }

@@ -7,6 +7,7 @@ package aws.sdk.kotlin.crt.util.hashing
 import aws.sdk.kotlin.crt.util.encodeToHex
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class HashFunctionTest {
     @Test
@@ -65,6 +66,50 @@ class HashFunctionTest {
             val data = "".encodeToByteArray()
             hash.update(data, 0, 0)
             assertEquals(expected, hash.digest().encodeToHex())
+        }
+    }
+
+    @Test
+    fun testCrcUpdateOutOfBounds() {
+        val crc32 = Crc32()
+        val data = ByteArray(4) { it.toByte() }
+
+        // offset + length exceeds the buffer size
+        assertFailsWith<IllegalArgumentException> {
+            crc32.update(data, 4, 1)
+        }
+    }
+
+    @Test
+    fun testMd5UpdateOutOfBounds() {
+        val md5 = Md5()
+        val data = ByteArray(4) { it.toByte() }
+
+        // offset + length exceeds the buffer size
+        assertFailsWith<IllegalArgumentException> {
+            md5.update(data, 4, 1)
+        }
+    }
+
+    @Test
+    fun testSha1UpdateOutOfBounds() {
+        val sha1 = Sha1()
+        val data = ByteArray(4) { it.toByte() }
+
+        // offset + length exceeds the buffer size
+        assertFailsWith<IllegalArgumentException> {
+            sha1.update(data, 4, 1)
+        }
+    }
+
+    @Test
+    fun testSha256UpdateOutOfBounds() {
+        val sha256 = Sha256()
+        val data = ByteArray(4) { it.toByte() }
+
+        // offset + length exceeds the buffer size
+        assertFailsWith<IllegalArgumentException> {
+            sha256.update(data, 4, 1)
         }
     }
 }
