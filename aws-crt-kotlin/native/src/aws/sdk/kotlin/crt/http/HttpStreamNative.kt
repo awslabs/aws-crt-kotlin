@@ -10,6 +10,7 @@ import aws.sdk.kotlin.crt.NativeHandle
 import aws.sdk.kotlin.crt.awsAssertOpSuccess
 import aws.sdk.kotlin.crt.util.asAwsByteCursor
 import kotlinx.atomicfu.atomic
+import aws.sdk.kotlin.crt.util.use
 import kotlinx.cinterop.*
 import libcrt.*
 import kotlin.coroutines.Continuation
@@ -66,18 +67,19 @@ internal class HttpStreamNative(
                 throw CrtRuntimeException("aws_input_stream_new_from_cursor()")
             }
 
-            val req = StableRef.create(WriteChunkRequest(cont, byteBuf, stream))
-            val chunkOpts = cValue<aws_http1_chunk_options> {
-                chunk_data_size = chunkData.size.convert()
-                chunk_data = stream
-                on_complete = staticCFunction(::onWriteChunkComplete)
-                user_data = req.asCPointer()
-            }
-            awsAssertOpSuccess(
-                aws_http1_stream_write_chunk(ptr, chunkOpts),
-            ) {
-                cleanupWriteChunkCbData(req)
-                "aws_http1_stream_write_chunk()"
+            StableRef.create(WriteChunkRequest(cont, byteBuf, stream)).use { req ->
+                val chunkOpts = cValue<aws_http1_chunk_options> {
+                    chunk_data_size = chunkData.size.convert()
+                    chunk_data = stream
+                    on_complete = staticCFunction(::onWriteChunkComplete)
+                    user_data = req.asCPointer()
+                }
+                awsAssertOpSuccess(
+                    aws_http1_stream_write_chunk(ptr, chunkOpts),
+                ) {
+                    cleanupWriteChunkCbData(req)
+                    "aws_http1_stream_write_chunk()"
+                }
             }
         }
 
