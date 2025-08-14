@@ -5,15 +5,14 @@
 package aws.sdk.kotlin.gradle.crt
 
 import org.gradle.api.Project
-import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
-fun KotlinNativeTarget.namedSuffix(prefix: String, capitalized: Boolean = false): String =
-    prefix + if (capitalized) name.capitalized() else name
+fun KotlinNativeTarget.namedSuffix(prefix: String, uppercase: Boolean = false): String =
+    prefix + if (uppercase) name.uppercase() else name
 
 val KonanTarget.isSimulatorSdk: Boolean
     get() = when (this) {
@@ -80,13 +79,13 @@ val Project.cmakeLists: File
     get() = rootProject.projectDir.resolve("CMakeLists.txt")
 
 val KotlinNativeTarget.cmakeConfigureTaskName: String
-    get() = namedSuffix("cmakeConfigure", capitalized = true)
+    get() = namedSuffix("cmakeConfigure", uppercase = true)
 
 val KotlinNativeTarget.cmakeBuildTaskName: String
-    get() = namedSuffix("cmakeBuild", capitalized = true)
+    get() = namedSuffix("cmakeBuild", uppercase = true)
 
 val KotlinNativeTarget.cmakeInstallTaskName: String
-    get() = namedSuffix("cmakeInstall", capitalized = true)
+    get() = namedSuffix("cmakeInstall", uppercase = true)
 
 val File.slashPath: String
     get() = path.replace(File.separatorChar, '/')
