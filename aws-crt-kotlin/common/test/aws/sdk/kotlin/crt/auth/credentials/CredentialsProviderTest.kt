@@ -42,7 +42,7 @@ class CredentialsProviderTest : CrtTest() {
         }
     }
 
-    @Ignore // FIXME Enable when Kotlin/Native implementation is complete
+    @Ignore // FIXME Enable if we decide to implement Kotlin/Native credentials providers
     @Test
     fun testCacheStatic() = runTest {
         val provider = CachedCredentialsProvider.build {
