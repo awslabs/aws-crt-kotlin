@@ -17,7 +17,7 @@ import kotlin.test.assertEquals
 private val EXPECTED_CREDENTIALS = Credentials("access_key_id", "secret_access_key", "session_token")
 
 class CredentialsProviderTest : CrtTest() {
-    @Ignore // FIXME Enable when Kotlin/Native implementation is complete
+    @Ignore // FIXME Enable if we decide to implement Kotlin/Native credentials providers
     @Test
     fun testStaticProvider() = runTest {
         val provider = StaticCredentialsProvider.fromCredentials(EXPECTED_CREDENTIALS)
@@ -25,7 +25,7 @@ class CredentialsProviderTest : CrtTest() {
         assertEquals(EXPECTED_CREDENTIALS, actual)
     }
 
-    @Ignore // FIXME Enable when Kotlin/Native implementation is complete
+    @Ignore // FIXME Enable if we decide to implement Kotlin/Native credentials providers
     @Test
     fun testCreateDestroyDefaultChain() {
         val elg = EventLoopGroup(1)
