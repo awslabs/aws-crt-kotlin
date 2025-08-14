@@ -1,13 +1,5 @@
 name: Setup build
-description: >
-  Common repository and build tool setup
-
-inputs:
-  # note nested virtualization is not supported on current arm64 mac runners: https://github.com/runfinch/finch/issues/812
-  install-finch:
-    description: 'Flag to install finch OCI tooling on mac hosts'
-    default: 'false'
-    required: false
+description: Common repository and build tool setup
 
 runs:
   using: composite
@@ -19,6 +11,7 @@ runs:
         distribution: 'corretto'
         java-version: 17
         cache: 'gradle'
+
     # Cache the Kotlin/Native toolchain based on the input Kotlin version from version catalog
     # see https://kotlinlang.org/docs/native-improving-compilation-time.html
     - name: Cache Kotlin Native toolchain
@@ -29,10 +22,3 @@ runs:
         key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml') }}
         restore-keys: |
           ${{ runner.os }}-konan-
-    - name: Install finch OCI client
-      if:  ${{ runner.os == 'macOS' && inputs.install-finch == 'true' }}
-      shell: bash
-      run: |
-        brew update
-        brew install --cask finch
-        finch vm init
