@@ -50,8 +50,8 @@ jobs:
           name: test-reports-jvm-${{ matrix.java-version }}
           path: '**/build/reports'
 
-  # macos-14 build and test for targets: jvm, macoArm64, iosSimulatorArm64, watchosSimulatorArm65, tvosSimulatorArm64
-  # macos-13 build and test for targets: jvm, macoX64, iosX64, tvosX64, watchosX64
+  # macos-14 build and test for targets: jvm, macosArm64, iosSimulatorArm64, watchosSimulatorArm65, tvosSimulatorArm64
+  # macos-13 build and test for targets: jvm, macosX64, iosX64, tvosX64, watchosX64
   macos:
     strategy:
       fail-fast: false
