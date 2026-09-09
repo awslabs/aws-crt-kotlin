@@ -6,7 +6,7 @@ aws-kotlin-repo-tools-version = "0.6.3"
 # libs
 crt-java-version = "0.48.4"
 coroutines-version = "1.11.0"
-binary-compatibility-validator-version = "0.18.1"
+binary-compatibility-validator-version = "0.18.2"
 
 # testing
 okhttp-version = "5.5.0"
