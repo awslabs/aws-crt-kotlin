@@ -30,7 +30,7 @@ permissions:
 jobs:
   jvm:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'workflow_call' }}
+    if: ${{ github.event_name != 'pull_request_target' }}
     strategy:
       fail-fast: false
       matrix:
@@ -71,7 +71,7 @@ jobs:
   # macOS ARM images build and test for targets: jvm, macosArm64, iosSimulatorArm64, watchosSimulatorArm65, tvosSimulatorArm64
   # macos x64 images build and test for targets: jvm, macosX64, iosX64, tvosX64, watchosX64
   macos:
-    if: ${{ github.event_name != 'workflow_call' }}
+    if: ${{ github.event_name != 'pull_request_target' }}
     strategy:
       fail-fast: false
       matrix:
@@ -186,7 +186,7 @@ jobs:
   # windows JVM & native
   windows:
     runs-on: windows-2022
-    if: ${{ github.event_name != 'workflow_call' }}
+    if: ${{ github.event_name != 'pull_request_target' }}
     steps:
       - uses: actions/checkout@v4
         with:
