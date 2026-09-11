@@ -28,7 +28,7 @@ jobs:
       contents: read
     steps:
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@6.2.4
+        uses: aws-actions/configure-aws-credentials@v6.2.4
         with:
           role-to-assume: '${{ env.IAM_ROLE_ARN }}'
           role-session-name: PullRequestBuildGitHubAction
